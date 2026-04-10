@@ -1,579 +1,1077 @@
-<!-- Container for the React app -->
-<div id="cade-pitch-deck-root" style="width: 100%; height: 100vh; position: relative;"></div>
+import { useState, useEffect, useRef } from "react";
 
-<!-- 1. Load React and ReactDOM from CDN -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+/* ── Design System ── */
+const DS = { bg:"#FFFFF0", copper:"#C78F56", dark:"#1a1a1a", gray:"#595959", lgray:"#999999", glass:"rgba(0,0,0,0.03)", glassBorder:"rgba(0,0,0,0.1)", glassHL:"rgba(0,0,0,0.15)", white:"#fff", black:"#0a0a0a", success:"#1A8754", successBg:"rgba(26,135,84,0.08)", copperBg:"rgba(199,143,86,.08)", copperLight:"#E8C9A0", red:"#c0392b" };
+const mono="'Roboto Mono',monospace", serif="'Playfair Display',serif", sans="'Montserrat',sans-serif";
 
-<!-- 2. Load Babel to compile JSX in the browser -->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+/* ── Reveal Animation ── */
+function R({ children, delay=0, dir="up", dist=28, dur=0.7, style={}, className="" }) {
+  const ref=useRef(null); const [v,setV]=useState(false);
+  useEffect(()=>{const el=ref.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting){setV(true);o.disconnect()}},{threshold:.12});o.observe(el);return()=>o.disconnect()},[]);
+  const t={up:`translateY(${dist}px)`,down:`translateY(-${dist}px)`,left:`translateX(${dist}px)`,right:`translateX(-${dist}px)`,none:"none"};
+  return <div ref={ref} className={className} style={{opacity:v?1:0,transform:v?"translate(0,0)":t[dir],transition:`opacity ${dur}s cubic-bezier(.16,1,.3,1) ${delay}s, transform ${dur}s cubic-bezier(.16,1,.3,1) ${delay}s`,willChange:"opacity,transform",...style}}>{children}</div>;
+}
 
-<!-- 3. The React Application -->
-<script type="text/babel">
-  const { useState, useEffect } = React;
+function Lbl({children,style={}}){return <span style={{fontFamily:mono,fontSize:11,fontWeight:400,letterSpacing:3,color:DS.gray,textTransform:"uppercase",display:"block",...style}}>{children}</span>}
+function Glass({children,style={}}){return <div style={{background:DS.glass,backdropFilter:"blur(25px)",WebkitBackdropFilter:"blur(25px)",border:`1px solid ${DS.glassBorder}`,borderTopColor:DS.glassHL,borderRadius:20,boxShadow:"0 8px 32px rgba(0,0,0,.05),inset 0 0 0 1px rgba(0,0,0,.05)",...style}}>{children}</div>}
+function Num({n,dark}){return <span style={{fontFamily:sans,fontSize:14,fontWeight:700,color:dark?DS.copperLight:DS.copper,display:"inline-block",width:36,height:36,lineHeight:"36px",textAlign:"center",borderRadius:10,background:dark?"rgba(255,255,255,.08)":DS.copperBg}}>{n}</span>}
+function Pill({children,color=DS.copper}){return <span style={{fontFamily:mono,fontSize:9,fontWeight:400,letterSpacing:2,textTransform:"uppercase",color:DS.white,background:color,padding:"5px 14px",borderRadius:20,display:"inline-block"}}>{children}</span>}
+function Divider(){return <div style={{width:48,height:2,background:DS.copper,margin:"40px 0"}}/>}
 
-  const C = { bg:"#FEF9EF", copper:"#C78F56", dark:"#1a1a1a", gray:"#595959", lgray:"#999999", xlight:"#e8e8e0", white:"#F5EEE2", black:"#0a0a0a", success:"#1A8754", copperLight:"#E8C9A0", copperBg:"rgba(199,143,86,.08)", red:"#DC2626" };
-  const mono="'Roboto Mono',monospace", serif="'Playfair Display',serif", sans="'Montserrat',sans-serif";
+const sec={minHeight:"100vh",padding:"clamp(80px,10vh,120px) clamp(24px,5vw,80px)",display:"flex",flexDirection:"column",justifyContent:"center",position:"relative",scrollSnapAlign:"start"};
+const secT={...sec,justifyContent:"flex-start",paddingTop:"clamp(100px,12vh,140px)"};
 
-  function Lbl({children,style,className=""}){return <span className={className} style={{fontFamily:mono,fontSize:"clamp(11px, 1vw, 14px)",fontWeight:400,letterSpacing:3,color:C.gray,textTransform:"uppercase",display:"block",...style}}>{children}</span>}
-  function Num({n,style,className=""}){return <span className={className} style={{fontFamily:sans,fontSize:16,fontWeight:700,color:C.copper,display:"inline-block",width:40,height:40,lineHeight:"40px",textAlign:"center",borderRadius:10,background:C.copperBg,...style}}>{n}</span>}
-  function Card({children,style,accent,className=""}){return <div className={`card ${className}`} style={{background:C.white,borderRadius:24,padding:"40px 48px",boxShadow:"0 4px 24px rgba(0,0,0,.03)",border:`1px solid ${C.xlight}`,borderTop:accent?`4px solid ${accent}`:undefined,...style}}>{children}</div>}
-  function BigStat({num,label,sub,color=C.dark,className="",style}){return <div className={className} style={{textAlign:"center",flex:"1 1 220px",minWidth:200,...style}}><div className="big-stat-num" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(64px,9vw,110px)",fontStyle:"italic",color,lineHeight:1}}>{num}</div><div style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 24px)",fontWeight:600,color:C.dark,marginTop:16}}>{label}</div>{sub&&<div style={{fontFamily:sans,fontSize:"clamp(14px, 1.2vw, 18px)",color:C.lgray,marginTop:8}}>{sub}</div>}</div>}
+/* ── NAV ── */
+const NAV=[{id:"cover",l:"COVER"},{id:"exec",l:"SUMMARY"},{id:"culture",l:"CULTURE"},{id:"collateral",l:"COLLATERAL"},{id:"website",l:"WEBSITE"},{id:"competitive",l:"COMPETITIVE"},{id:"programs",l:"PROGRAMS"},{id:"cc",l:"CONNECTED CARE"},{id:"cgm",l:"CGM"},{id:"sales",l:"SALES STRATEGY"},{id:"pipeline",l:"PIPELINE"},{id:"auc",l:"AUC PROJECT"},{id:"recs",l:"RECOMMENDATIONS"},{id:"engine",l:"NARRATIVE ENGINE"},{id:"demo",l:"ENGINE DEMO"},{id:"phase2",l:"PHASE 2"},{id:"close",l:"CLOSE"}];
 
-  const slide={minHeight:"100vh",padding:"clamp(64px,8vh,120px) clamp(32px,5vw,100px) clamp(40px,6vh,100px)",display:"flex",flexDirection:"column",justifyContent:"center",scrollSnapAlign:"start",position:"relative",boxSizing:"border-box"};
+/* ── Copy Helper (sandbox-safe fallback) ── */
+function CopyBtn({text}){
+  const [copied,setCopied]=useState(false);
+  const copy=()=>{
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=text;
+      ta.style.cssText="position:fixed;left:-9999px;top:-9999px;opacity:0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok=document.execCommand("copy");
+      document.body.removeChild(ta);
+      if(ok){setCopied(true);setTimeout(()=>setCopied(false),2000)}
+    }catch(e){
+      try{navigator.clipboard?.writeText(text).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)})}catch(e2){}
+    }
+  };
+  return <button onClick={copy} style={{fontFamily:mono,fontSize:9,letterSpacing:2,textTransform:"uppercase",color:copied?DS.success:DS.lgray,background:copied?"rgba(26,135,84,.12)":"none",border:`1px solid ${copied?DS.success:"rgba(255,255,255,.15)"}`,borderRadius:8,padding:"6px 14px",cursor:"pointer",transition:"all .3s"}}>{copied?"✓ COPIED":"COPY"}</button>;
+}
 
-  function PitchDeck() {
-    const [cur,setCur]=useState(0);
-    const total=18;
+/* ── ENGINE DEMO SLIDE ── */
+function EngineDemo(){
+  const [tab,setTab]=useState("build");
+  const [prospectType,setProspectType]=useState("clinic");
+  const [specialty,setSpecialty]=useState("cardiology");
+  const [size,setSize]=useState("small");
 
-    useEffect(()=>{
-      const el=document.getElementById("deck");
-      if(!el)return;
-      
-      // Observer to track which slide is currently in the middle of the screen
-      const sections = el.querySelectorAll("section");
-      const slideObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const index = Array.from(sections).indexOf(entry.target);
-            if (index !== -1) setCur(index);
-          }
-        });
-      }, { 
-        root: el, 
-        rootMargin: "-49% 0px -49% 0px" // Triggers exactly when a slide crosses the center of the screen
-      });
+  const tabs=[{id:"build",l:"Build a Deck"},{id:"system",l:"Design System"},{id:"objections",l:"Objections"},{id:"templates",l:"Templates"}];
 
-      sections.forEach(sec => slideObserver.observe(sec));
+  const designSystemPrompt=`You are an expert front-end developer and UI/UX designer. Your task is to generate a single-file interactive pitch deck/report using HTML, Tailwind CSS (via CDN), and React 18 (via CDN with Babel for JSX).
 
-      // Observer for the text animations
-      const animObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-          } else {
-            entry.target.classList.remove('is-visible');
-          }
-        });
-      }, { root: el, threshold: 0.15 });
+You must strictly adhere to the following Design System and Architecture Rules. Do not invent new styles, colors, or layouts. Use only what is defined here.
 
-      document.querySelectorAll('.animate-up').forEach(node => animObserver.observe(node));
+### 1. HEAD & SCRIPTS
+Include in <head>:
+- React 18 + ReactDOM (production, via unpkg CDN)
+- Tailwind CSS (via cdn.tailwindcss.com)
+- Google Fonts: Montserrat (400-700, italic), Playfair Display (400-700, italic), Roboto Mono (400-700)
+- Configure tailwind.config to extend fontFamily with sans: Montserrat, serif: Playfair Display, mono: Roboto Mono
 
-      return () => {
-        slideObserver.disconnect();
-        animObserver.disconnect();
-      };
-    },[]);
+### 2. DESIGN SYSTEM
 
-    return(
-      <div id="deck" style={{fontFamily:sans,background:C.bg,color:C.dark,height:"100vh",overflowY:"auto",scrollSnapType:"y mandatory",position:"absolute", top:0, left:0, right:0, bottom:0}}>
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet"/>
-        
-        <style>{`
-          * { box-sizing: border-box; }
-          h1, h2, h3 { font-weight: 400 !important; }
-          .animate-up {
-            opacity: 0;
-            transform: translateY(32px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-          }
-          .animate-up.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          #deck::-webkit-scrollbar { display: none; }
-          #deck { -ms-overflow-style: none; scrollbar-width: none; }
-          #deck .fixed-bottom { position: fixed; bottom: 40px; right: 48px; }
-          #deck .fixed-top { position: fixed; top: 0; left: 0; right: 0; }
-          
-          /* Mobile Responsiveness Rules */
-          @media (max-width: 768px) {
-            #deck { scroll-snap-type: none !important; }
-            #deck > section { 
-              scroll-snap-align: none !important; 
-              padding: 100px 24px 80px 24px !important;
-              height: auto !important;
-              min-height: 100vh !important;
-            }
-            .mobile-stack { flex-direction: column !important; gap: 24px !important; }
-            .mobile-stack > * { flex: 1 1 100% !important; min-width: 100% !important; width: 100% !important; }
-            .mobile-stack-center { flex-direction: column !important; text-align: center !important; align-items: center !important; }
-            .mobile-stack-center > div { text-align: center !important; }
-            
-            .card { padding: 28px !important; min-width: 100% !important; width: 100% !important; }
-            
-            /* Typography fallbacks for mobile */
-            h1 { font-size: 44px !important; line-height: 1.1 !important; }
-            h2 { font-size: 36px !important; line-height: 1.2 !important; }
-            h3 { font-size: 24px !important; }
-            p { font-size: 16px !important; line-height: 1.6 !important; }
-            .big-stat-num { font-size: 56px !important; }
-            
-            .timeline-card { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
-            .timeline-divider { display: none !important; }
-            .econ-row { flex-direction: column !important; gap: 20px !important; }
-            .econ-row > div { width: 100% !important; min-width: 100% !important; }
-            
-            #deck .fixed-bottom { right: 24px !important; bottom: 24px !important; }
-            #deck .fixed-top { padding: 0 24px !important; height: 64px !important; }
-            table th, table td { padding: 12px 10px !important; font-size: 14px !important; }
-          }
-        `}</style>
+{
+  "colors": {
+    "bg": "#FEF9EF",
+    "copper": "#C78F56",
+    "copperLight": "#E8C9A0",
+    "copperBg": "rgba(199,143,86,.08)",
+    "dark": "#1a1a1a",
+    "gray": "#595959",
+    "lgray": "#999999",
+    "xlight": "#e8e8e0",
+    "white": "#F5EEE2",
+    "black": "#0a0a0a",
+    "success": "#1A8754",
+    "successBg": "rgba(26,135,84,.08)",
+    "red": "#DC2626"
+  },
+  "fonts": {
+    "sans": "Montserrat, sans-serif — body text, UI elements, labels",
+    "serif": "Playfair Display, serif — ALWAYS italic for headings, stats, quotes",
+    "mono": "Roboto Mono, monospace — labels, metadata, data values, tracking-[3px]"
+  },
+  "typography": {
+    "h1": "font-serif italic text-[clamp(56px,8vw,110px)] text-dark leading-[1.05] tracking-[-.03em]",
+    "h2": "font-serif italic text-[clamp(40px,5vw,84px)] text-dark leading-[1.1]",
+    "h3": "font-serif italic text-[clamp(20px,2vw,32px)] text-dark",
+    "body": "font-sans text-[clamp(16px,1.6vw,24px)] text-gray leading-[1.7]",
+    "label": "font-mono text-[clamp(11px,1vw,14px)] font-normal tracking-[3px] text-gray uppercase",
+    "stat_number": "font-serif italic text-[clamp(64px,9vw,110px)] leading-none",
+    "stat_label": "font-sans text-[clamp(18px,1.8vw,24px)] font-semibold text-dark mt-[16px]",
+    "data_value": "font-mono font-normal — used for table cells, percentages, financial figures"
+  },
+  "emphasis_rules": {
+    "copper_accent": "Use color copper (#C78F56) for key words in headlines — typically the emotional word or outcome word. Example: 'Care between visits you can <span copper>count on</span>'",
+    "line_breaks": "Drop the copper-accented phrase to its own line using <br/> for dramatic emphasis",
+    "dark_on_dark": "On dark (#0a0a0a) backgrounds, headings use #F5EEE2, body uses #999999, labels use #999999, accent stays copper",
+    "never_bold_headings": "All h1/h2/h3 use font-weight 400 (normal) + italic. Never bold a heading."
+  }
+}
 
-        {/* Page indicator */}
-        <div className="fixed-bottom" style={{fontFamily:mono,fontSize:14,fontWeight:400,color:C.lgray,zIndex:100,background:"rgba(254,249,239,.85)",backdropFilter:"blur(12px)",padding:"10px 20px",borderRadius:24,border:"1px solid rgba(0,0,0,.06)"}}>{String(cur+1).padStart(2,"0")} / {total}</div>
+### 3. REQUIRED COMPONENTS
 
-        {/* Logo bar */}
-        <div className="fixed-top" style={{height:80,display:"flex",alignItems:"center",padding:"0 clamp(32px,5vw,100px)",zIndex:100,background:"rgba(254,249,239,.9)",backdropFilter:"blur(12px)",borderBottom:"1px solid rgba(0,0,0,.04)"}}>
-          <img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE Medical" style={{height: 40}} />
+Build and use these exact React components:
+
+**<Lbl>** — Small uppercase monospace label
+- font: Roboto Mono, clamp(11px,1vw,14px), weight 400
+- letter-spacing: 3px, uppercase, color: #595959
+- Renders as <span> with display: block
+
+**<Num n="01">** — Section number badge
+- 40x40px, rounded-[10px], text-center
+- bg: rgba(199,143,86,.08), color: #C78F56, font-sans bold 16px
+- Dark variant: bg rgba(255,255,255,.08), color: #E8C9A0
+
+**<Card>** — Content container
+- bg: #F5EEE2, rounded-[24px], padding: 40px 48px
+- shadow: 0 4px 24px rgba(0,0,0,.03)
+- border: 1px solid #e8e8e0
+- Optional "accent" prop: adds 4px solid top border OR left border in accent color
+- Use for feature cards, stat cards, comparison cards
+
+**<BigStat>** — Large metric display
+- Number: font-serif italic clamp(64px,9vw,110px), default color dark, optional copper
+- Label: font-sans semibold clamp(18px,1.8vw,24px), color dark, mt-16px
+- Sub: font-sans clamp(14px,1.2vw,18px), color #999999, mt-8px
+- Container: text-center, flex-[1_1_220px], min-w-[200px]
+
+**<Pill>** — Status/tag badge
+- font-mono, 9px, tracking 2px, uppercase, white text
+- Colored background (copper, dark, success, lgray, or red)
+- padding: 5px 14px, border-radius: 20px
+
+### 4. SLIDE ARCHITECTURE
+
+Each slide is a <section> with:
+- min-height: 100vh
+- padding: clamp(100px,12vh,140px) clamp(32px,5vw,100px) clamp(40px,6vh,100px)
+- display: flex, flex-direction: column, justify-content: center
+- position: relative, box-sizing: border-box
+
+**Slide background patterns:**
+- Light slides: bg #FEF9EF (default)
+- Dark slides: bg #0a0a0a (use for contrast sections — gap analysis, projections, competitive, why us)
+- Copper wash slides: bg rgba(199,143,86,.08) (use for section dividers, patient journey intro, program definitions)
+- Gradient dark: background linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%) for variety on dark slides
+
+**Slide content rules:**
+- Max content width: 1300-1400px for card grids, 900-1100px for text-heavy slides
+- Cards in flex-wrap grids: gap 24px-32px, flex-[1_1_calc(50%-24px)] min-w-[360px]
+- Always start each slide with <Num> badge + <Lbl> section label + <h2> headline
+- Headline always contains one copper-accented word/phrase on its own line
+
+### 5. ANIMATION SYSTEM
+
+CSS class .animate-up:
+- Default: opacity 0, transform translateY(32px)
+- Visible: opacity 1, transform translateY(0)
+- Transition: 0.8s cubic-bezier(.16, 1, .3, 1) on both opacity and transform
+- Triggered by IntersectionObserver (threshold 0.15) adding class .is-visible
+
+**Stagger pattern:** Apply sequential transitionDelay inline styles:
+- Section badge: 0ms
+- Label: 0ms (appears with badge)
+- Headline: 100ms
+- Body text: 200ms
+- First card row: 200-400ms (100ms between cards)
+- Second card row: 300-500ms
+- Callout/quote: 400-600ms
+
+### 6. FIXED ELEMENTS
+
+**Top navigation bar:**
+- Fixed, top 0, left 0, right 0, height 80px
+- bg: rgba(254,249,239,.9), backdrop-filter: blur(12px)
+- border-bottom: 1px solid rgba(0,0,0,.04)
+- Contains brand logo (left-aligned, height 40px)
+
+**Page counter (bottom-right):**
+- Fixed, bottom 40px, right 48px
+- font-mono, 14px, color #999999
+- bg: rgba(254,249,239,.85), backdrop-filter: blur(12px)
+- padding: 10px 20px, border-radius: 24px
+- border: 1px solid rgba(0,0,0,.06)
+- Format: "01 / 10"
+
+**Dot navigation (right side, hidden on mobile):**
+- Fixed, right 24px, top 50%, transform translateY(-50%)
+- Array of 8px circular buttons, one per slide
+- Active: bg copper, scale 1.5. Inactive: bg #999, opacity 0.4
+- onClick scrolls to corresponding section
+
+### 7. MOBILE RESPONSIVE (@media max-width: 768px)
+
+- Sections: padding 100px 24px 80px, height auto, min-height 100vh
+- Flex layouts: flex-direction column, gap 24px
+- Cards: min-width 100%, padding 28px
+- h1: 44px, h2: 36px, h3: 24px, body: 16px
+- BigStat numbers: 56px
+- Hide dot navigation
+- Page counter: right 24px, bottom 24px
+
+### 8. SCROLLBAR & GLOBAL STYLES
+
+Hide scrollbars:
+#deck::-webkit-scrollbar { display: none; }
+#deck { -ms-overflow-style: none; scrollbar-width: none; }
+
+All headings: font-weight 400 !important (enforce via CSS rule)
+
+### 9. CONTENT INSTRUCTIONS
+
+Generate the report using the outline provided in the content prompt. Apply the stagger animation pattern to every element. Ensure all slides follow the Num → Lbl → h2 → body → cards hierarchy.
+
+**Brand:** CADE Medical
+**Logo:** https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public
+
+Write the complete, functional, single-file HTML document. Ensure all components are modular and all styling exactly matches this Design System. Do not deviate.`;
+
+  const prospectTypes={
+    clinic:{label:"Independent Clinic"},
+    urgent:{label:"Urgent Care System"},
+    health_system:{label:"Health System"},
+    fqhc:{label:"FQHC / Rural Health"},
+    payer:{label:"Insurance Payer"}
+  };
+  const specialties={
+    cardiology:{label:"Cardiology",programs:"RPM + CCM"},
+    endocrinology:{label:"Endocrinology",programs:"RPM + CCM + RTM"},
+    pulmonology:{label:"Pulmonology",programs:"RPM + CCM + RTM"},
+    primary:{label:"Primary Care",programs:"RPM + CCM + APCM"},
+    orthopedic:{label:"Orthopedic / MSK",programs:"RTM + CCM"},
+    multispecialty:{label:"Multi-Specialty",programs:"Full Stack"},
+    wound:{label:"Wound Care",programs:"RTM + CCM"}
+  };
+  const sizes={
+    solo:{label:"Solo Provider",patients:"200-800"},
+    small:{label:"Small Group (2-10)",patients:"1,000-5,000"},
+    mid:{label:"Mid-Market (10-50)",patients:"5,000-25,000"},
+    enterprise:{label:"Enterprise (50+)",patients:"25,000+"}
+  };
+
+  const contentPrompt=`NARRATIVE STRUCTURE (Golden Circle):
+
+WHY: ${prospectType==="payer"?"Connected Care reduces total cost of care by preventing ER visits and hospitalizations. The data proves it.":prospectType==="health_system"?"Your patients deserve continuous care between visits. Your outcomes depend on it. Your value-based contracts reward it.":prospectType==="fqhc"?"The communities you serve face the greatest barriers to continuous care. Connected Care bridges that gap — and CMS funds it.":"Your patients trust you with their health. Right now, no one is watching between visits. Connected Care changes that — and Medicare reimburses the effort."}
+
+HOW: CADE Medical provides the entire program — not just software. A dedicated clinical care team (NPs, RNs, MAs) monitors patients daily, calls weekly, and escalates to your providers when needed. Cellular devices ship directly to patients. No WiFi. No app. No setup burden on your staff.
+
+WHAT: ${specialties[specialty]?.programs} powered by the 1bios platform. 30,000+ patients managed nationally since 2016. Zero audit recoupments.
+
+PROSPECT DETAILS:
+- Type: ${prospectTypes[prospectType]?.label}
+- Specialty: ${specialties[specialty]?.label}
+- Size: ${sizes[size]?.label} (Est. ${sizes[size]?.patients} patients)
+- Recommended Programs: ${specialties[specialty]?.programs}
+
+SLIDE STRUCTURE:
+01. Cover — [Prospect Name] + CADE Medical
+02. The WHY — Why Connected Care exists for ${specialties[specialty]?.label}
+03. The Data — ${prospectType==="payer"?"Clinical outcomes and cost reduction metrics":"Patient volume opportunity and qualification estimates"}
+04. What is Connected Care — Programs overview (${specialties[specialty]?.programs})
+05. The Gap — What happens between visits today vs. what could happen
+06. Patient Experience — Zero-touch or hands-on enrollment models
+07. ${prospectType==="payer"?"Clinical Outcomes — Published metrics, BP/glucose reduction data":"Per Patient Economics — Revenue per patient per month by program"}
+08. ${prospectType==="health_system"?"Readmission Reduction — 30-day readmission data, value-based benchmarks":"Revenue Projections — Three scenarios (Conservative / Base / Aggressive)"}
+09. How We Work Together — AUC responsibilities vs. CADE responsibilities
+10. Why CADE — Since 1999, Experity compatible, you get paid first
+11. Next Steps — From here to live in 30 days
+
+BACKGROUNDS: Slides 01, 05, 10 = dark (#0a0a0a). Slide 06 = copper wash. All others = light (#FEF9EF).`;
+
+  const objections=[
+    {q:"We don't have the staff to manage another program.",a:"You don't manage it — we do. CADE provides the entire clinical team. Your staff involvement is a 30-second patient intro at the visit and reviewing escalated alerts. That's it."},
+    {q:"How do we know patients will actually use the devices?",a:"Our devices are cellular — no WiFi, no app, no pairing. The patient presses one button. Industry adherence rates average 80-90%. Our care team calls weekly to keep engagement high."},
+    {q:"What if insurance doesn't reimburse?",a:"You get paid first. CADE invoices only after you receive payer reimbursement. If the program doesn't generate revenue, you owe nothing. Ever."},
+    {q:"We tried remote monitoring before and it didn't work.",a:"Most programs fail because the provider is expected to run them. We handle enrollment, devices, monitoring, documentation, and billing. You focus on patients."},
+    {q:"Our EHR won't support this.",a:"We integrate with 175+ EHRs including Experity, Epic, athenahealth, eClinicalWorks, and Cerner. No workflow disruption."},
+    {q:"What about CMS compliance and audits?",a:"Our care team has managed 30,000+ patients since 2016 with zero audit recoupments nationally. Every interaction is time-stamped, documented, and audit-ready."},
+    {q:"This sounds too good to be true — what's the catch?",a:"The catch is that it requires patients with chronic conditions and eligible insurance. If your patient population qualifies, the program works. We can verify eligibility before you commit."},
+    {q:"We're too small for this.",a:"Solo providers with 200+ patients can generate $15,000-$25,000 in annual recurring revenue. The program scales down just as well as it scales up."},
+    {q:"How is this different from Prevounce or other competitors?",a:"Prevounce is software. We're the entire operation — software, devices, clinical staff, logistics, billing. And we're physically present in your market, not a SaaS platform in another state."},
+    {q:"What does the patient pay?",a:"For Medicare patients, Connected Care is a covered benefit. Most patients pay zero out of pocket. We handle benefit verification before enrollment."}
+  ];
+
+  const templates=[
+    {name:"Urgent Care — Multi-Location — Full Stack",desc:"The AUC model. For urgent care systems where 10%+ of patients visit 3+ times/year.",status:"BUILT",color:DS.success},
+    {name:"Primary Care — Small Group — RPM + CCM",desc:"Solo or small group PCP offices. Lead with per-patient economics and zero staff burden.",status:"READY",color:DS.copper},
+    {name:"Cardiology Practice — RPM + CCM",desc:"Hypertension + CHF monitoring. Lead with clinical outcomes and BP reduction data.",status:"READY",color:DS.copper},
+    {name:"Health System — Enterprise — Full Stack",desc:"C-suite audience. Lead with readmission reduction, value-based benchmarks, total cost of care.",status:"READY",color:DS.copper},
+    {name:"Endocrinology — RPM + CCM + RTM",desc:"Diabetes management. Glucose monitoring + care coordination + therapy adherence.",status:"READY",color:DS.copper},
+    {name:"FQHC / Rural Health — RPM + CCM",desc:"Health equity narrative. Cellular devices for low-connectivity areas. Community health positioning.",status:"DRAFT",color:DS.lgray},
+    {name:"Insurance Payer — HMSA / MA Plans",desc:"Utilization management language. Clinical outcome metrics. Total cost reduction proof.",status:"DRAFT",color:DS.lgray},
+    {name:"Orthopedic / MSK — RTM + CCM",desc:"Post-surgical rehab monitoring. Therapy adherence tracking. Recovery milestone data.",status:"DRAFT",color:DS.lgray},
+    {name:"Pulmonology — RPM + CCM + RTM",desc:"COPD + respiratory therapy monitoring. Readmission prevention for high-utilization patients.",status:"DRAFT",color:DS.lgray},
+    {name:"Wound Care — RTM + CCM",desc:"Treatment protocol adherence. Healing trajectory monitoring. Post-acute coordination.",status:"DRAFT",color:DS.lgray}
+  ];
+
+  // Tab button component
+  const TabBtn=({id,label})=><button onClick={()=>setTab(id)} style={{fontFamily:mono,fontSize:10,fontWeight:400,letterSpacing:2,textTransform:"uppercase",color:tab===id?DS.white:DS.lgray,background:tab===id?"rgba(199,143,86,.3)":"transparent",border:"1px solid "+(tab===id?"rgba(199,143,86,.4)":"rgba(255,255,255,.1)"),borderRadius:8,padding:"10px 18px",cursor:"pointer",transition:"all .3s",whiteSpace:"nowrap"}}>{label}</button>;
+
+  const Select=({value,onChange,options})=><select value={value} onChange={e=>onChange(e.target.value)} style={{fontFamily:mono,fontSize:11,color:DS.white,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.15)",borderRadius:8,padding:"10px 14px",cursor:"pointer",appearance:"none",width:"100%"}}>{Object.entries(options).map(([k,v])=><option key={k} value={k} style={{background:DS.black}}>{v.label}</option>)}</select>;
+
+  const CodeBlock=({code,label})=><div style={{background:"rgba(0,0,0,.4)",border:"1px solid rgba(255,255,255,.08)",borderRadius:12,overflow:"hidden"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderBottom:"1px solid rgba(255,255,255,.06)"}}>
+      <Lbl style={{fontSize:9,color:DS.lgray,margin:0}}>{label}</Lbl>
+      <CopyBtn text={code}/>
+    </div>
+    <pre style={{fontFamily:mono,fontSize:11,color:DS.copperLight,lineHeight:1.6,padding:"16px",margin:0,overflow:"auto",maxHeight:340,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{code}</pre>
+  </div>;
+
+  return(
+    <section id="demo" style={{...secT,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`,minHeight:"auto",paddingBottom:"clamp(60px,8vh,120px)"}}>
+      <R><Num n="14" dark/></R>
+      <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>NARRATIVE ENGINE — LIVE PREVIEW</Lbl></R>
+      <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 8px",maxWidth:700}}>The rep <span style={{color:DS.copper}}>sales engine</span></h2></R>
+      <R delay={.2}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.7,maxWidth:600,marginBottom:28}}>Select a prospect profile. The system generates the design prompt, content narrative, and slide structure — ready to paste into Claude or Gemini and produce a web-hosted pitch in minutes.</p></R>
+
+      {/* Tabs */}
+      <R delay={.25}>
+        <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap"}}>
+          {tabs.map(t=><TabBtn key={t.id} id={t.id} label={t.l}/>)}
+        </div>
+      </R>
+
+      {/* ── BUILD TAB ── */}
+      {tab==="build"&&<R delay={.1}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:900}}>
+          {/* Selectors */}
+          <div style={{flex:"0 0 240px",minWidth:220,display:"flex",flexDirection:"column",gap:14}}>
+            <div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>PROSPECT TYPE</Lbl><Select value={prospectType} onChange={setProspectType} options={prospectTypes}/></div>
+            <div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>SPECIALTY</Lbl><Select value={specialty} onChange={setSpecialty} options={specialties}/></div>
+            <div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>SIZE</Lbl><Select value={size} onChange={setSize} options={sizes}/></div>
+            <div style={{background:"rgba(199,143,86,.08)",borderRadius:12,padding:16,marginTop:8}}>
+              <Lbl style={{fontSize:8,color:DS.copper,marginBottom:8}}>GENERATED PROFILE</Lbl>
+              <div style={{fontFamily:sans,fontSize:12,color:DS.white,lineHeight:1.8}}>
+                {prospectTypes[prospectType]?.label}<br/>
+                <span style={{color:DS.lgray}}>Specialty:</span> {specialties[specialty]?.label}<br/>
+                <span style={{color:DS.lgray}}>Size:</span> {sizes[size]?.label}<br/>
+                <span style={{color:DS.lgray}}>Patients:</span> {sizes[size]?.patients}<br/>
+                <span style={{color:DS.lgray}}>Programs:</span> {specialties[specialty]?.programs}
+              </div>
+            </div>
+          </div>
+          {/* Prompts */}
+          <div style={{flex:1,minWidth:300,display:"flex",flexDirection:"column",gap:16}}>
+            <CodeBlock label="STEP 1 — DESIGN SYSTEM PROMPT (paste first)" code={designSystemPrompt}/>
+            <CodeBlock label="STEP 2 — CONTENT & NARRATIVE PROMPT (paste second)" code={contentPrompt}/>
+          </div>
+        </div>
+      </R>}
+
+      {/* ── DESIGN SYSTEM TAB ── */}
+      {tab==="system"&&<R delay={.1}>
+        <div style={{maxWidth:900}}>
+          <p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>The single source of truth for every visual element. This JSON drives every pitch deck, one-pager, and web experience CADE produces. Update it once — everything rebuilds to match.</p>
+          <CodeBlock label="CADE DESIGN SYSTEM — JSON" code={`{
+  "brand": "CADE Medical",
+  "version": "2.0 — Glossy Blanc",
+  "logo": "https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public",
+  "colors": {
+    "bg": "#FEF9EF",
+    "copper": "#C78F56",
+    "copperLight": "#E8C9A0",
+    "copperBg": "rgba(199,143,86,.08)",
+    "dark": "#1a1a1a",
+    "gray": "#595959",
+    "lgray": "#999999",
+    "xlight": "#e8e8e0",
+    "white": "#F5EEE2",
+    "black": "#0a0a0a",
+    "success": "#1A8754",
+    "successBg": "rgba(26,135,84,.08)",
+    "red": "#DC2626"
+  },
+  "typography": {
+    "display": {
+      "family": "Playfair Display, serif",
+      "style": "italic",
+      "weight": "400 — NEVER bold headings",
+      "h1": "clamp(56px, 8vw, 110px), leading-[1.05], tracking-[-.03em]",
+      "h2": "clamp(40px, 5vw, 84px), leading-[1.1]",
+      "h3": "clamp(20px, 2vw, 32px)"
+    },
+    "body": {
+      "family": "Montserrat, sans-serif",
+      "weights": "400, 500, 600, 700",
+      "size": "clamp(16px, 1.6vw, 24px)",
+      "lineHeight": 1.7,
+      "color": "#595959"
+    },
+    "labels": {
+      "family": "Roboto Mono, monospace",
+      "weight": 400,
+      "size": "clamp(11px, 1vw, 14px)",
+      "tracking": "3px",
+      "transform": "uppercase",
+      "color": "#595959"
+    },
+    "data": {
+      "family": "Roboto Mono, monospace",
+      "weight": 400,
+      "usage": "table cells, percentages, financial figures, metadata"
+    }
+  },
+  "emphasis": {
+    "copper_accent": "Use #C78F56 for the key emotional/outcome word in headlines",
+    "line_break": "Drop copper phrase to its own line with <br/> for drama",
+    "dark_mode": "On #0a0a0a: headings #F5EEE2, body #999, labels #999, accent stays copper"
+  },
+  "components": {
+    "Card": {
+      "bg": "#F5EEE2",
+      "radius": "24px",
+      "padding": "40px 48px",
+      "shadow": "0 4px 24px rgba(0,0,0,.03)",
+      "border": "1px solid #e8e8e0",
+      "accent": "optional 4px top OR left border in accent color"
+    },
+    "Num": {
+      "size": "40x40px",
+      "radius": "10px",
+      "bg": "rgba(199,143,86,.08)",
+      "color": "#C78F56",
+      "font": "Montserrat, bold, 16px, centered",
+      "darkVariant": { "bg": "rgba(255,255,255,.08)", "color": "#E8C9A0" }
+    },
+    "Lbl": {
+      "element": "span, display block",
+      "font": "Roboto Mono, 400",
+      "tracking": "3px",
+      "transform": "uppercase",
+      "color": "#595959"
+    },
+    "BigStat": {
+      "number": "Playfair Display, italic, clamp(64px,9vw,110px), leading-none",
+      "label": "Montserrat, semibold, clamp(18px,1.8vw,24px), #1a1a1a, mt-16px",
+      "sub": "Montserrat, clamp(14px,1.2vw,18px), #999999, mt-8px",
+      "container": "text-center, flex-[1_1_220px], min-w-[200px]"
+    },
+    "Pill": {
+      "font": "Roboto Mono, 9px, tracking 2px, uppercase",
+      "color": "#fff on colored bg",
+      "padding": "5px 14px",
+      "radius": "20px"
+    }
+  },
+  "slides": {
+    "layout": "min-h-screen, flex col, justify-center",
+    "padding": "clamp(100px,12vh,140px) clamp(32px,5vw,100px) clamp(40px,6vh,100px)",
+    "backgrounds": {
+      "light": "#FEF9EF",
+      "dark": "#0a0a0a",
+      "gradientDark": "linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)",
+      "copperWash": "rgba(199,143,86,.08)"
+    },
+    "hierarchy": "Num badge → Lbl section label → h2 headline (with copper accent) → body → cards/content",
+    "cardGrids": "flex-wrap, gap 24-32px, flex-[1_1_calc(50%-24px)] min-w-[360px]",
+    "maxWidth": "1300-1400px for grids, 900-1100px for text"
+  },
+  "fixedElements": {
+    "topNav": {
+      "height": "80px",
+      "bg": "rgba(254,249,239,.9)",
+      "backdropFilter": "blur(12px)",
+      "borderBottom": "1px solid rgba(0,0,0,.04)",
+      "logo": "left-aligned, height 40px"
+    },
+    "pageCounter": {
+      "position": "bottom 40px, right 48px",
+      "font": "Roboto Mono, 14px, #999",
+      "bg": "rgba(254,249,239,.85), blur(12px)",
+      "padding": "10px 20px",
+      "radius": "24px",
+      "format": "01 / 10"
+    },
+    "dotNav": {
+      "position": "right 24px, vertical center",
+      "dots": "8px circles, active = copper + scale 1.5",
+      "hiddenOnMobile": true
+    }
+  },
+  "animation": {
+    "class": "animate-up",
+    "trigger": "IntersectionObserver, threshold 0.15",
+    "from": "opacity 0, translateY(32px)",
+    "to": "opacity 1, translateY(0)",
+    "easing": "cubic-bezier(.16, 1, .3, 1)",
+    "duration": "0.8s",
+    "stagger": "100ms sequential transitionDelay between siblings"
+  },
+  "mobile": {
+    "breakpoint": "768px",
+    "sections": "padding 100px 24px 80px, height auto, min-height 100vh",
+    "cards": "min-width 100%, padding 28px",
+    "typography": { "h1": "44px", "h2": "36px", "h3": "24px", "body": "16px", "stat": "56px" },
+    "hide": ["dot navigation"]
+  }
+}`}/>
+        </div>
+      </R>}
+
+      {/* ── OBJECTIONS TAB ── */}
+      {tab==="objections"&&<R delay={.1}>
+        <div style={{maxWidth:900}}>
+          <p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>Every objection Colin and the team have encountered in the field — with the recommended response language. Reps should have these internalized before every first meeting.</p>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {objections.map((o,i)=>(
+              <div key={i} style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",borderLeft:`3px solid ${i%2===0?DS.copper:DS.copperLight}`}}>
+                <div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
+                  <span style={{fontFamily:mono,fontSize:9,color:DS.red,flexShrink:0,marginTop:2,letterSpacing:1}}>OBJECTION</span>
+                  <p style={{fontFamily:serif,fontSize:14,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>{o.q}</p>
+                </div>
+                <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                  <span style={{fontFamily:mono,fontSize:9,color:DS.success,flexShrink:0,marginTop:2,letterSpacing:1}}>RESPONSE</span>
+                  <p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.6,margin:0}}>{o.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </R>}
+
+      {/* ── TEMPLATES TAB ── */}
+      {tab==="templates"&&<R delay={.1}>
+        <div style={{maxWidth:900}}>
+          <p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>Pre-built prompt templates by prospect type and specialty. Select any template in the "Build a Deck" tab to generate the full prompt — or use these as starting points for custom builds.</p>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {templates.map((t,i)=>(
+              <div key={i} style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+                <div style={{flex:1,minWidth:240}}>
+                  <h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 4px"}}>{t.name}</h3>
+                  <p style={{fontFamily:sans,fontSize:11,color:DS.lgray,lineHeight:1.5,margin:0}}>{t.desc}</p>
+                </div>
+                <Pill color={t.color}>{t.status}</Pill>
+              </div>
+            ))}
+          </div>
+        </div>
+      </R>}
+    </section>
+  );
+}
+
+export default function Report(){
+  const [active,setActive]=useState("cover");
+  const [activeIdx,setActiveIdx]=useState(0);
+  const [hovered,setHovered]=useState(false);
+  useEffect(()=>{const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){setActive(e.target.id);const idx=NAV.findIndex(n=>n.id===e.target.id);if(idx>=0)setActiveIdx(idx)}})},{threshold:.2});NAV.forEach(n=>{const el=document.getElementById(n.id);if(el)obs.observe(el)});return()=>obs.disconnect()},[]);
+  const go=id=>document.getElementById(id)?.scrollIntoView({behavior:"smooth"});
+  const goPrev=()=>{if(activeIdx>0)go(NAV[activeIdx-1].id)};
+  const goNext=()=>{if(activeIdx<NAV.length-1)go(NAV[activeIdx+1].id)};
+  const atTop=activeIdx===0,atBottom=activeIdx===NAV.length-1;
+  const currentLabel=NAV[activeIdx]?.l||"";
+
+  /* Chevron SVG */
+  const Chev=({up,disabled,onClick})=>(
+    <button onClick={onClick} style={{background:"none",border:"none",cursor:disabled?"default":"pointer",padding:"8px 12px",opacity:disabled?.15:.5,transition:"opacity .3s",display:"flex",alignItems:"center",justifyContent:"center"}} onMouseEnter={e=>{if(!disabled)e.currentTarget.style.opacity="1"}} onMouseLeave={e=>{if(!disabled)e.currentTarget.style.opacity=".5"}}>
+      <svg width="14" height="8" viewBox="0 0 14 8" fill="none" style={{transform:up?"rotate(180deg)":"none",transition:"transform .2s"}}>
+        <path d="M1 1L7 7L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </button>
+  );
+
+  return(
+    <div style={{fontFamily:sans,background:DS.bg,color:DS.dark,height:"100vh",overflowY:"auto",scrollSnapType:"y proximity",position:"relative"}}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet"/>
+      <div style={{position:"fixed",top:"-20%",right:"-15%",width:600,height:600,borderRadius:"50%",background:"rgba(199,143,86,.06)",filter:"blur(90px)",pointerEvents:"none",zIndex:0}}/>
+      <div style={{position:"fixed",bottom:"-10%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"rgba(200,200,200,.1)",filter:"blur(90px)",pointerEvents:"none",zIndex:0}}/>
+
+      {/* Navigation — Apple-style minimal */}
+      <div onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} style={{position:"fixed",bottom:28,left:"50%",transform:"translateX(-50%)",zIndex:100,display:"flex",alignItems:"center",gap:0,background:"rgba(255,255,240,.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:40,border:"1px solid rgba(0,0,0,.06)",boxShadow:"0 2px 20px rgba(0,0,0,.06)",overflow:"hidden",transition:"all .4s cubic-bezier(.25,.46,.45,.94)"}}>
+        <Chev up disabled={atTop} onClick={goPrev}/>
+        <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 4px",minWidth:hovered?160:48,transition:"min-width .4s cubic-bezier(.25,.46,.45,.94)",overflow:"hidden",justifyContent:"center"}}>
+          <span style={{fontFamily:mono,fontSize:11,fontWeight:400,color:DS.copper,letterSpacing:1,flexShrink:0}}>{String(activeIdx).padStart(2,"0")}</span>
+          <span style={{fontFamily:mono,fontSize:9,fontWeight:400,color:DS.lgray,letterSpacing:2,textTransform:"uppercase",whiteSpace:"nowrap",overflow:"hidden",maxWidth:hovered?140:0,opacity:hovered?1:0,transition:"all .4s cubic-bezier(.25,.46,.45,.94)"}}>{currentLabel}</span>
+          <span style={{fontFamily:mono,fontSize:11,fontWeight:400,color:"rgba(0,0,0,.2)",flexShrink:0,opacity:hovered?1:0,transition:"opacity .3s"}}>/ {String(NAV.length-1).padStart(2,"0")}</span>
+        </div>
+        <Chev disabled={atBottom} onClick={goNext}/>
+      </div>
+
+      {/* ═══ COVER ═══ */}
+      <section id="cover" style={{...sec,textAlign:"center",alignItems:"center"}}>
+        <R delay={0.1}><Lbl style={{fontSize:10,letterSpacing:4}}>DISCOVERY REPORT</Lbl></R>
+        <R delay={0.25}><h1 style={{fontFamily:serif,fontSize:"clamp(40px,6.5vw,72px)",fontStyle:"italic",color:DS.dark,lineHeight:1.05,letterSpacing:"-.03em",margin:"16px 0 12px"}}>Sales & Marketing Strategy</h1></R>
+        <R delay={0.35}><p style={{fontFamily:sans,fontSize:"clamp(16px,1.8vw,22px)",color:DS.gray,lineHeight:1.7,maxWidth:560}}>Connected Care & CGM Service Lines</p></R>
+        <R delay={0.45}><Divider/></R>
+        <R delay={0.55}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray}}>Prepared by <strong style={{color:DS.dark}}>Matt Weaver</strong> | April 2026</p></R>
+        <R delay={0.65}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,marginTop:4}}>Commissioned by Chris Thibodeaux</p></R>
+        <div style={{position:"absolute",bottom:32}}><Lbl style={{fontSize:9,color:DS.lgray}}>CONFIDENTIAL</Lbl></div>
+      </section>
+
+      {/* ═══ EXECUTIVE SUMMARY ═══ */}
+      <section id="exec" style={{...sec,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`}}>
+        <R><Num n="01" dark/></R>
+        <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>EXECUTIVE SUMMARY</Lbl></R>
+        <R delay={.2}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,52px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>The service is <span style={{color:DS.copper}}>exceptional.</span><br/>The presentation isn't.</h2></R>
+        <R delay={.3}><p style={{fontFamily:sans,fontSize:"clamp(15px,1.5vw,18px)",color:DS.lgray,lineHeight:1.8,maxWidth:660,marginBottom:24}}>Through interviews with Dylan Dyer, Gavin De Jong, Gregg Hoshida, and Colin Smith — alongside a full review of cademed.com, 13+ collateral pieces, and competitor materials — one finding emerged above all others:</p></R>
+        <R delay={.4}><Glass style={{padding:"28px 32px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
+          <p style={{fontFamily:serif,fontSize:"clamp(18px,2vw,24px)",fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>CADE delivers a strong, differentiated service — but the brand, messaging, and materials don't reflect the caliber of what's actually being offered.</p>
+        </Glass></R>
+        <R delay={.5}>
+          <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:32,maxWidth:700}}>
+            {["Brand identity gap in Hawaii","Collateral fragmentation across 13+ pieces","Sales funnel misalignment — too much, too soon","Case study deficit — 30,000 patients, zero proof points"].map((t,i)=>(
+              <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}><span style={{color:DS.copper,fontSize:18,lineHeight:1,marginTop:2}}>—</span><span style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.6}}>{t}</span></div>
+            ))}
+          </div>
+        </R>
+      </section>
+
+      {/* ═══ CULTURAL INTELLIGENCE ═══ */}
+      <section id="culture" style={secT}>
+        <R><Num n="02"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>CULTURAL INTELLIGENCE & BRAND IDENTITY</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Be present, be consistent.<br/><span style={{color:DS.copper}}>Drop the Haole energy.</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>The "CADE" name reads mainland in Hawaii. Dylan suggested renaming to "Kai Medical." Gregg — a native Hawaiian — rejected it immediately.</p></R>
+        <R delay={.35} direction="left">
+          <Glass style={{padding:28,borderLeft:`3px solid ${DS.copper}`,maxWidth:660,marginBottom:28}}>
+            <p style={{fontFamily:serif,fontSize:18,fontStyle:"italic",color:DS.dark,lineHeight:1.5,margin:0}}>"That would be like a Caucasian walking onto an Indian reservation and introducing himself as Chief Big Horn."</p>
+            <p style={{fontFamily:mono,fontSize:10,color:DS.lgray,marginTop:12,letterSpacing:2}}>— GREGG HOSHIDA, CGM SALES</p>
+          </Glass>
+        </R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:700}}>
+          {[{t:"70%+ Asian/Polynesian",d:"Websites without representation are immediately flagged as non-local."},
+            {t:"Drop the word 'local'",d:"Colin and Gregg both recommended removing it. Actually local businesses hear this constantly and see right through it."},
+            {t:"Enterprise Rent-A-Car model",d:"A mainland brand that succeeds in Hawaii by showing up — not by announcing it. Hire locally, activate at events, let the community notice."},
+            {t:"Recommendation",d:"Do not rename. Do not use 'local' in messaging. Invest in authentic representation — photography, staff visibility, community presence."}
+          ].map((item,i)=>(
+            <R key={i} delay={.2+i*.08} style={{flex:"1 1 320px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
+              </Glass>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ COLLATERAL AUDIT ═══ */}
+      <section id="collateral" style={secT}>
+        <R><Num n="03"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>COLLATERAL AUDIT</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>13+ pieces. Zero <span style={{color:DS.copper}}>cohesion.</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>No unified design system exists. Different reps produce different materials with different layouts, fonts, color schemes, and messaging hierarchies. The company brochure positions CADE as a commodity DME supplier while Connected Care materials position as an innovative care partner — these identities conflict. CADE is actively trying to break into the Hawaii market while already serving clients in California, Montana, and Arizona — yet the web presence doesn't differentiate between these markets or their distinct needs. Either a unified corporate site needs to be created or separate mainland and Hawaii/Pacific Islands market sites should be developed.</p></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
+          {[{item:"Rep Education Deck",grade:"C+",note:"15-slide internal training tool. Serves its purpose for onboarding, but no equivalent external sales deck exists — leaving reps without the right collateral for first meetings."},
+            {item:"Dylan's CC Flyer",grade:"A-",note:"Strongest individual piece. Clean messaging, clear value prop. But operates outside any unified system."},
+            {item:"CGM One-Pagers (×2)",grade:"C",note:"Two overlapping versions creating confusion about which to use and when."},
+            {item:"Patient Flyer",grade:"C-",note:"Contains a typo ('avaialable'). Small, but erodes credibility with providers."},
+            {item:"Company Brochure",grade:"D+",note:"Positions CADE as commodity supplier. Conflicts with the innovative positioning of Connected Care materials."},
+          ].map((c,i)=>(
+            <R key={i} delay={.15+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",display:"flex",gap:16,alignItems:"flex-start",height:"100%"}}>
+                <div style={{fontFamily:serif,fontSize:28,fontStyle:"italic",color:c.grade.startsWith("A")?DS.success:c.grade.startsWith("D")?DS.red:DS.copper,lineHeight:1,flexShrink:0,width:48,textAlign:"center"}}>{c.grade}</div>
+                <div><h3 style={{fontFamily:sans,fontSize:13,fontWeight:600,color:DS.dark,margin:"0 0 6px"}}>{c.item}</h3><p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:0}}>{c.note}</p></div>
+              </Glass>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ WEBSITE ANALYSIS ═══ */}
+      <section id="website" style={{...sec,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`}}>
+        <R><Num n="04" dark/></R>
+        <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>CADEMED.COM</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>A list of services<br/>without a <span style={{color:DS.copper}}>story.</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>CADE has 25+ years serving providers, a clinical care team with over a decade of Connected Care experience, and 30,000+ patients managed nationally. None of that comes through on the website. The site lists services without narrative structure — no belief, no proof, no journey. A decision maker landing on cademed.com should think: these people have done this longer, better, and more passionately than anyone else. I trust them. Right now, they'd never know.</p></R>
+
+        <R delay={.3}><Lbl style={{color:DS.copper,marginBottom:16}}>WHAT THE SITE COMMUNICATES TODAY</Lbl></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:36}}>
+          {[{t:"Services without narrative",d:"The site lists what CADE does but never explains why it matters, who it's for, or what makes CADE different. There's no story arc — just a flat inventory of offerings."},
+            {t:"No self-segmentation",d:"Providers, health systems, FQHCs, and payers all land on the same pages. Competitors use 'Who We Serve' navigation to route visitors to role-specific messaging instantly."},
+            {t:"25 years of credibility — invisible",d:"CADE's longevity, local relationships, and operational track record are the most powerful trust signals in the business. The site barely mentions them. A decade of Connected Care experience and 30,000+ patients go unstated."},
+            {t:"Missing programs entirely",d:"PCM and APCM do not appear anywhere. Dual enrollment — the revenue multiplier — goes unmentioned. Decision makers researching these programs will find competitors, not CADE."},
+            {t:"No proof of outcomes",d:"No clinical data, no case studies, no ROI calculator, no CPT billing guides, no compliance certifications. Every competitor publishes at least two of these trust signals."},
+            {t:"No emotional resonance",d:"The site doesn't convey passion, mission, or the human side of what CADE does. It reads as transactional — not as a care partner with deep conviction about keeping patients safe at home."}
+          ].map((item,i)=>(
+            <R key={i} delay={.2+i*.06} style={{flex:"1 1 340px",minWidth:280}}>
+              <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"20px 24px",borderLeft:`3px solid ${DS.lgray}`,height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.65,margin:0}}>{item.d}</p>
+              </div>
+            </R>
+          ))}
         </div>
 
-        {/* ═══ 01 COVER ═══ */}
-        <section style={{...slide,background:C.bg,paddingTop:80,alignItems:"center",textAlign:"center"}}>
-          <div style={{maxWidth:1100}}>
-            <h1 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(56px,8vw,110px)",fontStyle:"italic",color:C.dark,lineHeight:1.05,letterSpacing:"-.03em",margin:"0 0 32px",transitionDelay:"0ms"}}>Care between visits<br/>you can <span style={{color:C.copper}}>count on</span></h1>
-            <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",color:C.gray,lineHeight:1.7,maxWidth:700,margin:"0 auto 56px",transitionDelay:"100ms"}}>Measured. Managed. Reimbursed.</p>
-            <div className="animate-up mobile-stack-center" style={{display:"flex",justifyContent:"center",alignItems:"center",gap:32,transitionDelay:"200ms",textAlign:"left"}}>
-              <img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/051e0f36-cdce-4883-cbc4-1052def32800/public" alt="Accelerated Urgent Care" style={{height: 64, objectFit: "contain"}} />
-              <div>
-                <div style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 26px)",fontWeight:600}}>Hunter Erickson</div>
-                <div style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray}}>Director of Business Development</div>
-                <div style={{fontFamily:mono,fontSize:"clamp(12px, 1.2vw, 16px)",fontWeight:400,color:C.lgray,textTransform:"uppercase",letterSpacing:1.5,marginTop:6}}>16 LOCATIONS + TELEHEALTH</div>
+        <R delay={.5}><Lbl style={{color:DS.copper,marginBottom:16}}>WHAT A DECISION MAKER SHOULD FEEL</Lbl></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:32}}>
+          {[{t:"Simple sophistication",d:"The site should feel premium and confident — not cluttered, not salesy. Clean design, generous whitespace, and a narrative that unfolds naturally. The sophistication of the presentation should mirror the sophistication of the care."},
+            {t:"25+ years of authority",d:"CADE's longevity needs to be a centerpiece, not a footnote. Serving providers since 1999, navigating every CMS change, every payer evolution, every industry shift. That track record is the trust signal no competitor can manufacture."},
+            {t:"A clinical team that's been doing this for over a decade",d:"30,000+ patients. A care team operating since 2016. Zero audit recoupments. These aren't features — they're proof. They should be impossible to miss on the homepage."},
+            {t:"Audience-segmented pathways",d:"'Who We Serve' as primary navigation — dedicated pages for independent practices, health systems, FQHCs, and payers. Each speaking the language of that decision maker's priorities and pain points."},
+            {t:"Interactive financial proof",d:"Embedded ROI calculator where providers input patient count and payer mix and see projected revenue. The prototype already exists from the AUC project. Make the math undeniable."},
+            {t:"Every program — clearly defined",d:"RPM, CCM, PCM, RTM, APCM, dual enrollment. Each with a dedicated page explaining what it is, who qualifies, and what the provider does — at the right depth for the right reader."},
+            {t:"Patient journey visualization",d:"Show — don't tell — how simple the devices are. The patient unpacks, presses one button, data transmits. No WiFi. No app. Video loops and step-by-step infographics, not paragraphs of description."},
+            {t:"Regional market strategy",d:"CADE serves Hawaii, California, Montana, and Arizona. Either a unified corporate site with regional messaging or distinct market-specific sites — the Hawaii audience and the mainland audience have fundamentally different expectations."}
+          ].map((item,i)=>(
+            <R key={i} delay={.3+i*.05} style={{flex:"1 1 340px",minWidth:280}}>
+              <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"20px 24px",borderLeft:`3px solid ${DS.copper}`,height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.65,margin:0}}>{item.d}</p>
               </div>
-            </div>
-          </div>
-          <div style={{position:"absolute",bottom:48,left:0,right:0,textAlign:"center"}}>
-            <Lbl style={{fontSize:12,color:C.lgray}}>CONFIDENTIAL | APRIL 2026</Lbl>
-          </div>
-        </section>
+            </R>
+          ))}
+        </div>
 
-        {/* ═══ 02 THE WHY - STATEMENT ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="02" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(44px,6vw,84px)",fontStyle:"italic",color:C.dark,lineHeight:1.1,margin:"32px 0 36px",maxWidth:1200,transitionDelay:"100ms"}}>Your patients chose you.<br/>Now give them the care<br/>they're <span style={{color:C.copper}}>missing</span></h2>
-          <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",color:C.gray,lineHeight:1.8,maxWidth:1000,transitionDelay:"200ms"}}>Traditionally, urgent care would not be the ideal candidate for a Connected Care program. The model is built on episodic visits - come in, get treated, go home. No follow-up. No continuity.</p>
-          <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",color:C.gray,lineHeight:1.8,maxWidth:1000,marginTop:24,transitionDelay:"300ms"}}>But AUC isn't operating like a traditional urgent care anymore.</p>
-        </section>
+        <R delay={.7}>
+          <Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
+            <p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>A decision maker should land on cademed.com and think one thing: these people have done this longer, better, and more passionately than anyone else. I trust them. Everything on the site should serve that single conviction.</p>
+          </Glass>
+        </R>
+      </section>
 
-        {/* ═══ 03 THE WHY - DATA ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="03" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"32px 0 36px",maxWidth:1100,transitionDelay:"100ms"}}>191,894 patients have chosen AUC as their <span style={{color:C.copper}}>primary care provider</span></h2>
-          <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 28px)",color:C.gray,lineHeight:1.75,maxWidth:900,marginBottom:48,transitionDelay:"200ms"}}>They visited your locations 3 or more times over the past three years. They didn't go to a PCP. They didn't establish care somewhere else. They came back to you - and right now, no one is managing their chronic conditions between visits.</p>
-          <Card className="animate-up" style={{maxWidth:1000,borderLeft:`4px solid ${C.copper}`,transitionDelay:"300ms",padding:"48px"}}>
-            <p style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:C.dark,lineHeight:1.5,margin:0}}>AUC is in a unique position to reach a patient population that might not otherwise get access to a program like this - because for many of them, AUC is the only care relationship they have.</p>
-          </Card>
-        </section>
-
-        {/* ═══ 04 THE 2026 LANDSCAPE ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="04" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>THE 2026 LANDSCAPE</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 40px",maxWidth:1100,transitionDelay:"100ms"}}>New flexible codes.<br/>Less red tape. <span style={{color:C.copper}}>More opportunity.</span></h2>
-          
-          <div className="animate-up mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:32,maxWidth:1300,marginBottom:40,transitionDelay:"200ms"}}>
-            <p style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 28px)",color:C.gray,lineHeight:1.65,margin:"0 0 16px",width:"100%"}}>Driven by the Trump administration's MAGA-aligned push to cut bureaucratic red tape, the 2026 introduction of flexible new billing codes has fundamentally shifted the economics of remote care.</p>
-            
-            <Card style={{flex:"1 1 calc(50% - 32px)",minWidth:320,padding:"40px 48px",boxShadow:"none",background:"rgba(0,0,0,0.03)",border:"none"}} accent={C.lgray}>
-              <Lbl style={{marginBottom:32}}>BEFORE 2026</Lbl>
-              <div style={{display:"flex", alignItems:"flex-start", gap:24, marginBottom:32}}>
-                <span style={{color:C.red, fontSize:40, fontWeight:700, lineHeight:1}}>↑</span>
-                <div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(20px, 2vw, 28px)", fontWeight:600, color:C.dark}}>Higher Burden</div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(16px, 1.5vw, 22px)", color:C.gray, marginTop:8, lineHeight:1.5}}>Providers were required to gather more clinical minutes and excessive patient data.</div>
+      {/* ═══ COMPETITIVE ═══ */}
+      <section id="competitive" style={secT}>
+        <R><Num n="05"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>COMPETITIVE MARKETING ANALYSIS</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Weaker services.<br/><span style={{color:DS.copper}}>Stronger materials.</span></h2></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
+          {[{name:"Prevounce",d:"Polished deck, named case studies, 36K+ patients, strong LinkedIn. Leads with stories and outcomes, not CPT codes. The benchmark.",grade:"A"},
+            {name:"Thoroughcare",d:"Educational video library, LinkedIn thought leadership. Makes Connected Care accessible to providers who've never heard of it.",grade:"A-"},
+            {name:"ADS",d:"Initiated pharmacy-to-DME pipeline. Relevant to CADE's CGM opportunity from pharmacy dropouts.",grade:"B"},
+            {name:"CADE Medical",d:"On-island presence competitors can never replicate. 25+ years of relationships. 1bios platform with 30,000+ patients. The moat is real — the marketing doesn't reflect it.",grade:"C+"}
+          ].map((c,i)=>(
+            <R key={i} delay={.2+i*.1} style={{flex:"1 1 340px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",borderLeft:i===3?`3px solid ${DS.copper}`:undefined,height:"100%"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <h3 style={{fontFamily:serif,fontSize:18,fontStyle:"italic",color:DS.dark,margin:0}}>{c.name}</h3>
+                  <span style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:c.grade.startsWith("A")?DS.success:c.grade.startsWith("C")?DS.copper:DS.dark}}>{c.grade}</span>
                 </div>
-              </div>
-              <div style={{display:"flex", alignItems:"flex-start", gap:24}}>
-                <span style={{color:C.red, fontSize:40, fontWeight:700, lineHeight:1}}>↓</span>
-                <div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(20px, 2vw, 28px)", fontWeight:600, color:C.dark}}>Lower Reimbursement</div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(16px, 1.5vw, 22px)", color:C.gray, marginTop:8, lineHeight:1.5}}>Strict barriers kept billable amounts and financial incentives low.</div>
-                </div>
-              </div>
-            </Card>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{c.d}</p>
+              </Glass>
+            </R>
+          ))}
+        </div>
+      </section>
 
-            <Card style={{flex:"1 1 calc(50% - 32px)",minWidth:320,padding:"40px 48px",boxShadow:"none",border:`1px solid ${C.copperLight}`}} accent={C.copper}>
-              <Lbl style={{marginBottom:32, color:C.copper}}>2026 DEREGULATION</Lbl>
-              <div style={{display:"flex", alignItems:"flex-start", gap:24, marginBottom:32}}>
-                <span style={{color:C.success, fontSize:40, fontWeight:700, lineHeight:1}}>↓</span>
-                <div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(20px, 2vw, 28px)", fontWeight:600, color:C.dark}}>Lower Burden</div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(16px, 1.5vw, 22px)", color:C.gray, marginTop:8, lineHeight:1.5}}>Requires significantly fewer minutes and far less data tracking to qualify.</div>
-                </div>
-              </div>
-              <div style={{display:"flex", alignItems:"flex-start", gap:24}}>
-                <span style={{color:C.success, fontSize:40, fontWeight:700, lineHeight:1}}>↑</span>
-                <div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(20px, 2vw, 28px)", fontWeight:600, color:C.dark}}>Higher Reimbursement</div>
-                  <div style={{fontFamily:sans, fontSize:"clamp(16px, 1.5vw, 22px)", color:C.gray, marginTop:8, lineHeight:1.5}}>Providers are able to bill more and generate higher revenue per patient.</div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="animate-up" style={{borderLeft:`4px solid ${C.copper}`,paddingLeft:32,maxWidth:1100,transitionDelay:"300ms"}}>
-            <p style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",color:C.dark,lineHeight:1.7,margin:0}}>
-              <strong>Why the shift?</strong> Medicare is actively increasing reimbursements because these programs have proven highly effective at preventing costly ER visits. This presents a massive opportunity to transition patients into proactive care while generating <strong>scalable, recurring revenue.</strong>
-            </p>
-          </div>
-        </section>
-
-        {/* ═══ 05 WHAT IS CONNECTED CARE ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="05" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>WHAT IS CONNECTED CARE</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 40px",maxWidth:1000,transitionDelay:"100ms"}}>The infrastructure to care <span style={{color:C.copper}}>between visits</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1400}}>
-            {[{a:"RPM",n:"Remote Patient Monitoring",d:"Blood pressure, glucose, weight, oxygen - connected devices transmit readings automatically to a clinical team."},
-              {a:"CCM",n:"Chronic Care Management",d:"Monthly coordination for patients with 2+ chronic conditions. Care planning, medication review, proactive follow-up."},
-              {a:"PCM",n:"Principal Care Management",d:"Monthly coordination for patients with a single, high-risk chronic condition. Specialized care planning and targeted follow-up."},
-              {a:"RTM",n:"Remote Therapeutic Monitoring",d:"Tracking therapy adherence and treatment response. Common in MSK, respiratory, wound care."},
-              {a:"AWVs",n:"Annual Wellness Visits",d:"Yearly preventative care visits to create or update a personalized prevention plan."}
-            ].map((s,i)=>(
-              <Card key={i} className="animate-up" style={{flex:"1 1 calc(50% - 24px)",minWidth:360,transitionDelay:`${i*100+200}ms`}} accent={C.copper}>
-                <div style={{display:"flex",alignItems:"baseline",gap:16,marginBottom:16}}>
-                  <span style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(32px, 3vw, 44px)",fontStyle:"italic",color:C.copper}}>{s.a}</span>
-                  <span style={{fontFamily:sans,fontSize:"clamp(16px, 1.6vw, 24px)",fontWeight:600}}>{s.n}</span>
-                </div>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray,lineHeight:1.65,margin:0}}>{s.d}</p>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 06 THE GAP ═══ */}
-        <section style={{...slide,background:C.black}}>
-          <Num n="06" className="animate-up" style={{background:"rgba(245,238,226,.1)",color:C.copperLight,transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{color:C.lgray,marginTop:24,transitionDelay:"0ms"}}>THE GAP</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.white,lineHeight:1.1,margin:"20px 0 56px",maxWidth:1000,transitionDelay:"100ms"}}>The system assumes<br/>someone else is <span style={{color:C.copper}}>watching</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1400}}>
-            <Card className="animate-up" style={{flex:"1 1 calc(50% - 24px)",minWidth:360,transitionDelay:"200ms"}} accent={C.lgray}>
-              <Lbl style={{fontSize:14,marginBottom:16}}>WHAT'S HAPPENING TODAY</Lbl>
-              <p style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 26px)",color:C.gray,lineHeight:1.7,margin:0}}>A patient with hypertension visits AUC three times a year. They get treated, go home, and nobody checks their blood pressure until the next visit - or until they end up in the ER at 2am with a reading of 190/110.</p>
-            </Card>
-            <Card className="animate-up" style={{flex:"1 1 calc(50% - 24px)",minWidth:360,transitionDelay:"300ms"}} accent={C.copper}>
-              <Lbl style={{fontSize:14,marginBottom:16}}>WHAT COULD BE HAPPENING</Lbl>
-              <p style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 26px)",color:C.gray,lineHeight:1.7,margin:0}}>That same patient goes home with a connected BP cuff. A nurse reviews their readings daily, calls them weekly, and catches the upward trend at 155/95 - two weeks before it would have become a crisis.</p>
-            </Card>
-          </div>
-        </section>
-
-        {/* ═══ 07 PATIENT JOURNEY INTRO ═══ */}
-        <section style={{...slide,background:C.copperBg}}>
-          <div style={{maxWidth:1000}}>
-            <Num n="07" className="animate-up" style={{transitionDelay:"0ms", marginBottom:24}}/>
-            <Lbl className="animate-up" style={{marginBottom:20,transitionDelay:"100ms"}}>THE PROCESS</Lbl>
-            <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(56px,7vw,100px)",fontStyle:"italic",color:C.dark,lineHeight:1.05,margin:"0 0 32px",transitionDelay:"200ms"}}>The patient experience</h2>
-            <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(24px, 2.5vw, 36px)",color:C.gray,lineHeight:1.7,transitionDelay:"300ms"}}>What Connected Care looks like from the patient's perspective - from the first conversation to ongoing, continuous care.</p>
-          </div>
-        </section>
-
-        {/* ═══ 08 ZERO TOUCH MODEL ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="08" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>ENGAGEMENT MODEL</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 48px",maxWidth:1000,transitionDelay:"100ms"}}>The <span style={{color:C.copper}}>Zero-Touch</span> Model</h2>
-          
-          <div className="animate-up mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:48,alignItems:"center",transitionDelay:"200ms",maxWidth:1300}}>
-            <div style={{flex:"1 1 600px"}}>
-              <p style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",color:C.gray,lineHeight:1.7,margin:"0 0 32px"}}>Through seamless EHR API integration, CADE Medical's clinical staff automatically identifies and qualifies eligible patients. <strong>Your providers don't have to pitch the program or change their workflow.</strong></p>
-              <p style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",color:C.gray,lineHeight:1.7,margin:0}}>CADE's team calls the patient directly. They explain the program in simple terms, answer questions, and collect verbal consent. Everything happens by phone.</p>
-            </div>
-            <Card accent={C.black} style={{flex:"1 1 400px", padding:"48px"}}>
-              <div style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(80px,9vw,130px)",fontStyle:"italic",color:C.dark,lineHeight:1}}>30%</div>
-              <div style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",fontWeight:600,color:C.dark,marginTop:16}}>Average Adoption Rate</div>
-              <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray,lineHeight:1.6,margin:"12px 0 0"}}>A baseline capture of eligible patients with absolutely zero provider effort required.</p>
-            </Card>
-          </div>
-
-          <div className="animate-up mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,marginTop:64,maxWidth:1500,transitionDelay:"300ms"}}>
-            {[
-              {ph:"DAY 3-7",t:"Device Arrives",d:"Cellular-connected device arrives. No WiFi pairing. No app download required."},
-              {ph:"WEEKLY",t:"Care Team Check-Ins",d:"Assigned nurse calls every week to review trends and support the patient."},
-              {ph:"DAILY",t:"Continuous Monitoring",d:"Readings transmit automatically. CADE escalates abnormal vitals immediately."}
-            ].map((s,i)=>(
-              <Card key={i} style={{flex:"1 1 calc(33.33% - 24px)",minWidth:320,padding:"32px 36px",boxShadow:"none",background:"rgba(0,0,0,0.02)",border:"none"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-                  <span style={{fontFamily:mono,fontSize:12,fontWeight:400,letterSpacing:2,color:C.dark}}>{s.ph}</span>
-                </div>
-                <h3 style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(22px, 2.2vw, 32px)",fontStyle:"italic",color:C.dark,margin:"0 0 12px"}}>{s.t}</h3>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray,lineHeight:1.6,margin:0}}>{s.d}</p>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 09 HANDS-ON APPROACH ═══ */}
-        <section style={{...slide,background:C.copperBg}}>
-          <Num n="09" className="animate-up" style={{transitionDelay:"0ms",background:C.white}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>ENGAGEMENT MODEL</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 48px",maxWidth:1000,transitionDelay:"100ms"}}>The <span style={{color:C.copper}}>Hands-On</span> Approach</h2>
-          
-          <div className="animate-up mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:48,alignItems:"center",transitionDelay:"200ms",maxWidth:1300}}>
-            <div style={{flex:"1 1 600px"}}>
-              <p style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",color:C.dark,lineHeight:1.7,margin:"0 0 32px"}}>Both models are possible, but we choose to meet our clients where they are. If you want to double down and be more aggressive, your medical providers and staff can introduce the program to patients directly.</p>
-              <div style={{background:C.white, borderLeft:`6px solid ${C.copper}`, padding:"32px", borderRadius:"0 20px 20px 0", marginBottom:32, boxShadow:"0 4px 24px rgba(0,0,0,.04)"}}>
-                <p style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",color:C.dark,lineHeight:1.6,margin:0,fontStyle:"italic"}}>“We have a program that can monitor your blood pressure at home between visits. Your insurance covers it, and we'll send the device right to your door.”</p>
-              </div>
-            </div>
-            <Card accent={C.copper} style={{flex:"1 1 400px", padding:"48px"}}>
-              <div style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(80px,9vw,130px)",fontStyle:"italic",color:C.copper,lineHeight:1}}>70%</div>
-              <div style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 30px)",fontWeight:600,color:C.dark,marginTop:16}}>Average Adoption Rate</div>
-              <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray,lineHeight:1.6,margin:"12px 0 0"}}>A massive increase in capture simply by having a trusted provider introduce the concept.</p>
-            </Card>
-          </div>
-
-          <div className="animate-up mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,marginTop:64,maxWidth:1500,transitionDelay:"300ms"}}>
-            {[
-              {ph:"DAY 3-7",t:"Device Arrives",d:"Cellular-connected device arrives. No WiFi pairing. No app download required."},
-              {ph:"WEEKLY",t:"Care Team Check-Ins",d:"Assigned nurse calls every week to review trends and support the patient."},
-              {ph:"DAILY",t:"Continuous Monitoring",d:"Readings transmit automatically. CADE escalates abnormal vitals immediately."}
-            ].map((s,i)=>(
-              <Card key={i} style={{flex:"1 1 calc(33.33% - 24px)",minWidth:320,padding:"32px 36px",boxShadow:"none",background:"rgba(255,255,255,0.4)",border:"none"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-                  <span style={{fontFamily:mono,fontSize:12,fontWeight:400,letterSpacing:2,color:C.dark}}>{s.ph}</span>
-                </div>
-                <h3 style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(22px, 2.2vw, 32px)",fontStyle:"italic",color:C.dark,margin:"0 0 12px"}}>{s.t}</h3>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:C.gray,lineHeight:1.6,margin:0}}>{s.d}</p>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 10 TELEHEALTH ═══ */}
-        <section style={{...slide,background:C.black}}>
-          <Num n="10" className="animate-up" style={{background:"rgba(245,238,226,.1)",color:C.copperLight,transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{color:C.lgray,marginTop:24,transitionDelay:"0ms"}}>TELEHEALTH ADVANTAGE</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.white,lineHeight:1.1,margin:"20px 0 48px",maxWidth:1000,transitionDelay:"100ms"}}>Your telehealth patients are <span style={{color:C.copper}}>already primed</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1500}}>
-            {[{t:"Already Comfortable with Remote Care",d:"They understand quality care doesn't require a physical visit for every interaction."},
-              {t:"Higher Digital Engagement",d:"Accustomed to devices and digital communication - the same behaviors Connected Care requires."},
-              {t:"Natural Enrollment Conversation",d:"\"Between our video visits, we can monitor your vitals at home and your insurance covers it.\""},
-              {t:"Chronic Conditions Drive Repeat Telehealth",d:"Hypertension checks, diabetes management, medication reviews - exactly the patients who benefit most."}
-            ].map((item,i)=>(
-              <Card key={i} className="animate-up" style={{flex:"1 1 calc(33.33% - 24px)",minWidth:360,transitionDelay:`${i*100+200}ms`}} accent={C.copper}>
-                <h3 style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:C.dark,margin:"0 0 16px"}}>{item.t}</h3>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.6vw, 24px)",color:C.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 11 AUC DATA - PROOF POINTS ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="11" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>AUC AT A GLANCE</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 56px",transitionDelay:"100ms"}}>Your practice. Your <span style={{color:C.copper}}>opportunity.</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:48,maxWidth:1200,marginBottom:64}}>
-            <BigStat className="animate-up" style={{transitionDelay:"200ms"}} num="~400K" label="Unique patients per year" sub="Across all 16 locations + telehealth"/>
-            <BigStat className="animate-up" style={{transitionDelay:"300ms"}} num="191,894" label="Target Connected Care patients" sub="Visited 3+ times over 3 years" color={C.copper}/>
-            <BigStat className="animate-up" style={{transitionDelay:"400ms"}} num="16%" label="Of total patient base" sub="Mirrors national PCP utilization rate"/>
-          </div>
-          <Card className="animate-up" style={{maxWidth:1100,background:C.copperBg,border:"none",padding:"48px",transitionDelay:"500ms"}}>
-            <p style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",color:C.gray,lineHeight:1.7,margin:0,fontStyle:"italic"}}>Pulled directly from Experity. This cohort mirrors patients who utilize a PCP an average of 3 times per year - meaning they effectively treat AUC as their primary care provider.</p>
-          </Card>
-        </section>
-
-        {/* ═══ 12 PAYER MIX ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="12" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>TOP PAYERS BY UNIQUE PATIENT VOLUME</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.15,margin:"20px 0 40px",transitionDelay:"100ms"}}>2024-2025 combined</h2>
-          <div className="animate-up" style={{overflowX:"auto",maxWidth:1100,transitionDelay:"200ms", width:"100%"}}>
-            <table style={{width:"100%",borderCollapse:"collapse"}}>
-              <thead><tr>{["PAYER","PATIENTS","SHARE"].map(h=><th key={h} style={{fontFamily:mono,fontSize:14,fontWeight:400,letterSpacing:2,textTransform:"uppercase",color:C.lgray,textAlign:h==="PAYER"?"left":"center",padding:"20px 24px",borderBottom:`2px solid ${C.xlight}`}}>{h}</th>)}</tr></thead>
-              <tbody>{[["Kern Family Health","88,330","23.0%"],["BCBS","48,107","12.5%"],["IEHP","32,648","8.5%"],["Blue Shield","28,462","7.4%"],["CalViva","18,851","4.9%"],["Medicare","18,311","4.8%"],["BC SISC III","17,609","4.6%"],["Medicaid","9,258","2.4%"]].map((r,i)=>(
-                <tr key={i} style={{borderBottom:`1px solid ${C.xlight}`}}>
-                  <td style={{padding:"20px 24px",fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 26px)",fontWeight:500}}>{r[0]}</td>
-                  <td style={{padding:"20px 24px",textAlign:"center",fontFamily:mono,fontWeight:400,fontSize:"clamp(18px, 1.8vw, 26px)"}}>{r[1]}</td>
-                  <td style={{padding:"20px 24px",textAlign:"center",fontFamily:mono,fontWeight:400,fontSize:"clamp(18px, 1.8vw, 26px)"}}>{r[2]}</td>
-                </tr>))}</tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* ═══ 13 PER PATIENT ECONOMICS ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="13" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>PER PATIENT MONTHLY PROFIT TO AUC</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 32px",maxWidth:1000,transitionDelay:"100ms"}}>Per patient <span style={{color:C.copper}}>economics</span></h2>
-          
-          <div className="animate-up" style={{marginBottom: 32, transitionDelay: "150ms"}}>
-            <span style={{color: C.red, fontSize: "clamp(16px, 1.5vw, 20px)", display: "block", fontFamily: sans}}>*Per Patient Per Month Visual</span>
-            <span style={{color: C.red, fontSize: "clamp(16px, 1.5vw, 20px)", display: "block", fontFamily: sans, marginTop: 6}}>*These figures assume each patient meets the minimum required monthly engagement. Additional time may generate additional revenue.</span>
-          </div>
-
-          <div style={{display:"flex",flexDirection:"column",gap:24,maxWidth:1200}}>
-            {[{svc:"Remote Patient Monitoring",rev:"$179 - $322",cade:"$81 - $145",profit:"$98 - $177"},
-              {svc:"Chronic Care Management / Principal Care",rev:"$139 - $250",cade:"$63 - $113",profit:"$76 - $138"},
-              {svc:"Remote Therapeutic Monitoring",rev:"$182 - $327",cade:"$82 - $147",profit:"$100 - $180"}
-            ].map((p,i)=>(
-              <Card key={i} className="animate-up" style={{transitionDelay:`${i*100+200}ms`, padding:"40px 56px"}}>
-                <div style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(26px, 2.5vw, 40px)",fontStyle:"italic",color:C.dark,marginBottom:24}}>{p.svc}</div>
-                <div className="econ-row" style={{display:"flex",flexWrap:"wrap",gap:48}}>
-                  <div><Lbl style={{fontSize:12}}>CLINIC REVENUE</Lbl><div style={{fontFamily:sans,fontSize:"clamp(24px, 2.5vw, 36px)",fontWeight:600,marginTop:8}}>{p.rev}</div></div>
-                  <div><Lbl style={{fontSize:12}}>CADE FEE</Lbl><div style={{fontFamily:sans,fontSize:"clamp(24px, 2.5vw, 36px)",color:C.lgray,marginTop:8}}>{p.cade}</div></div>
-                  <div><Lbl style={{fontSize:12,color:C.success}}>YOUR PROFIT</Lbl><div style={{fontFamily:serif,fontSize:"clamp(36px, 3.5vw, 56px)",fontStyle:"italic",fontWeight:600,color:C.success,marginTop:8}}>{p.profit}</div></div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 14 REVENUE PROJECTIONS ═══ */}
-        <section style={{...slide,background:C.black}}>
-          <Num n="14" className="animate-up" style={{background:"rgba(245,238,226,.1)",color:C.copperLight,transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{color:C.lgray,marginTop:24,transitionDelay:"0ms"}}>AUC REVENUE PROJECTION</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.white,lineHeight:1.1,margin:"20px 0 48px",transitionDelay:"100ms"}}>Three scenarios based on <span style={{color:C.copper}}>your data</span></h2>
-          <div style={{display:"flex",flexDirection:"column",gap:24,maxWidth:1300}}>
-            {[{l:"CONSERVATIVE",y1:"$6.6M",y2:"$8.7M",y3:"$10.1M",p1:"2,013",p2:"2,415",p3:"2,763",note:"50% dual enrollment, 15% retention",c:C.lgray},
-              {l:"BASE",y1:"$10.5M",y2:"$15.8M",y3:"$20.2M",p1:"3,200",p2:"4,800",p3:"6,100",note:"65% dual enrollment, 50% retention, Medi-Medi included",c:C.copper},
-              {l:"AGGRESSIVE",y1:"$16.8M",y2:"$27.4M",y3:"$36.1M",p1:"5,100",p2:"8,300",p3:"10,900",note:"80% dual enrollment, 90% retention (industry standard)",c:C.copperLight}
-            ].map((sc,i)=>(
-              <div key={i} className="animate-up" style={{background:"rgba(245,238,226,.03)",border:"1px solid rgba(245,238,226,.06)",borderLeft:`4px solid ${sc.c}`,borderRadius:24,padding:"40px 48px",transitionDelay:`${i*100+200}ms`}}>
-                <Lbl style={{color:sc.c, fontSize:14}}>{sc.l}</Lbl>
-                <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:56,marginTop:24}}>
-                  {[{yr:"YEAR 1",rev:sc.y1,pts:sc.p1},{yr:"YEAR 2",rev:sc.y2,pts:sc.p2},{yr:"YEAR 3",rev:sc.y3,pts:sc.p3}].map((yr,j)=>(
-                    <div key={j} style={{textAlign:"center",minWidth:140}}>
-                      <Lbl style={{fontSize:12,color:C.lgray}}>{yr.yr}</Lbl>
-                      <div className="proj-money" style={{fontFamily:serif,fontSize:"clamp(48px, 4.5vw, 72px)",fontStyle:"italic",color:sc.c,lineHeight:1.2,marginTop:8}}>{yr.rev}</div>
-                      <div style={{fontFamily:sans,fontSize:"clamp(14px, 1.4vw, 20px)",color:C.lgray,marginTop:6}}>{yr.pts} enrolled</div>
-                    </div>))}
-                </div>
-                <p style={{fontFamily:sans,fontSize:"clamp(14px, 1.4vw, 20px)",color:C.lgray,fontStyle:"italic",marginTop:24,marginBottom:0}}>{sc.note}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ 15 THE RELATIONSHIP ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="15" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>THE AUC + CADE RELATIONSHIP</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 48px",maxWidth:1000,transitionDelay:"100ms"}}>How we <span style={{color:C.copper}}>work together</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1400,marginBottom:48}}>
-            {[{t:"Optimize What You're Already Doing",d:"Those interactions aren't documented, coded, or reimbursed. Connected Care captures the value of care you're already providing."},
-              {t:"Compliant by Design",d:"Our care team has navigated CMS requirements since 2016 across 30,000+ patients. We capture every billable interaction correctly."},
-              {t:"You Get Paid First",d:"CADE invoices only after you receive payer reimbursement. If the program doesn't generate revenue, you owe nothing."}
-            ].map((p,i)=>(
-              <Card key={i} className="animate-up" style={{flex:"1 1 320px",minWidth:300,transitionDelay:`${i*100+200}ms`}} accent={C.copper}>
-                <h3 style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:C.dark,margin:"0 0 16px"}}>{p.t}</h3>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.6vw, 24px)",color:C.gray,lineHeight:1.65,margin:0}}>{p.d}</p>
-              </Card>
-            ))}
-          </div>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1400}}>
-            <Card className="animate-up" style={{flex:"1 1 500px",minWidth:400,padding:0,overflow:"hidden",transitionDelay:"500ms"}}>
-              <div style={{padding:"24px 32px",background:C.copperBg,borderBottom:`1px solid ${C.xlight}`}}>
-                <Lbl style={{fontSize:14,color:C.red}}>ACCELERATED URGENT CARE</Lbl>
-              </div>
-              <div style={{padding:"32px 32px"}}>
-                {["Sign agreement","Provide Experity EHR access","One 30-min staff training","30-sec patient intro at visits (Optional)","Review escalated alerts"].map((t,i)=><div key={i} style={{display:"flex",gap:12,marginBottom:16,fontSize:"clamp(18px, 1.8vw, 26px)",color:C.dark,lineHeight:1.5}}><span style={{color:C.copper,flexShrink:0}}>-</span>{t}</div>)}
-              </div>
-            </Card>
-            <Card className="animate-up" style={{flex:"1 1 500px",minWidth:400,padding:0,overflow:"hidden",transitionDelay:"600ms"}}>
-              <div style={{padding:"24px 32px",background:C.black}}>
-                <Lbl style={{fontSize:14,color:C.lgray}}>CADE MEDICAL HANDLES</Lbl>
-              </div>
-              <div style={{padding:"32px 32px"}}>
-                {["Insurance verification & eligibility","Patient enrollment & consent","Device procurement & shipping","Daily monitoring & clinical review","Weekly patient calls (no AI)","Documentation & CMS compliance","Monthly CPT billing reports","Performance optimization"].map((t,i)=><div key={i} style={{display:"flex",gap:12,marginBottom:16,fontSize:"clamp(18px, 1.8vw, 26px)",color:C.dark,lineHeight:1.5}}><span style={{color:C.dark,flexShrink:0}}>-</span>{t}</div>)}
-              </div>
-            </Card>
-          </div>
-        </section>
-
-        {/* ═══ 16 CALENDAR OF EVENTS / BILLING ═══ */}
-        <section style={{...slide,background:C.bg}}>
-          <Num n="16" className="animate-up" style={{transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{marginTop:24,transitionDelay:"0ms"}}>CALENDAR OF EVENTS</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.dark,lineHeight:1.12,margin:"20px 0 32px",maxWidth:1000,transitionDelay:"100ms"}}>No upfront costs.<br/><span style={{color:C.copper}}>Zero financial exposure.</span></h2>
-          <p className="animate-up" style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",color:C.gray,lineHeight:1.75,maxWidth:1100,marginBottom:48,transitionDelay:"200ms"}}>Our billing cycle ensures you receive insurance reimbursements before you ever pay CADE Medical. You are billed on <strong>Net 60 terms</strong>, creating a completely risk-free cash flow model.</p>
-          
-          <div className="animate-up" style={{display:"flex",flexDirection:"column",gap:20,maxWidth:1200,transitionDelay:"300ms"}}>
-            {[
-              {mo:"MONTH 1", step:"Monitoring", act:"CADE Medical performs patient monitoring.", note:""},
-              {mo:"MONTH 2", step:"Day 1", act:"CADE provides CPT Code Report to Provider (CSV file).", note:""},
-              {mo:"MONTH 2", step:"Day 5", act:"Provider submits claims.", note:"**CADE can support billing function if needed."},
-              {mo:"MONTH 3", step:"Approx.", act:"Insurance reimbursement received by provider.", note:""},
-              {mo:"MONTH 4", step:"Day 1", act:"Provider remits payment to CADE Medical.", note:"(Paid via Net 60 terms from Month 2 invoice)"}
-            ].map((r,i)=>(
-              <Card key={i} className="timeline-card" style={{padding:"32px 48px", display:"flex", alignItems:"center", gap:40, background: i===4 ? C.black : C.white, border: i===4 ? "none" : undefined}}>
-                <div style={{minWidth: 140}}>
-                  <div className="mo" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:i===4?C.copper:C.dark}}>{r.mo}</div>
-                  <div style={{fontFamily:mono,fontSize:14,fontWeight:400,letterSpacing:2,color:i===4?C.lgray:C.gray,marginTop:8,textTransform:"uppercase"}}>{r.step}</div>
-                </div>
-                <div className="timeline-divider" style={{width: 1, height: 64, background: i===4 ? "#333" : C.xlight}}></div>
+      {/* ═══ PROGRAM DEFINITIONS ═══ */}
+      <section id="programs" style={{...sec,background:DS.copperBg}}>
+        <R><Num n="06"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>CONNECTED CARE PROGRAMS — SINGLE SOURCE OF TRUTH</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 8px",maxWidth:700}}>Every program. <span style={{color:DS.copper}}>Clearly defined.</span></h2></R>
+        <R delay={.2}><p style={{fontFamily:sans,fontSize:14,color:DS.gray,lineHeight:1.7,maxWidth:640,marginBottom:28}}>A consistent issue across CADE's materials is that programs are either over-explained with clinical detail, under-explained with critical info missing, or omitted entirely. PCM and APCM do not appear anywhere in current marketing. Dual enrollment — the revenue multiplier — goes unmentioned in provider-facing materials.</p></R>
+        <div style={{display:"flex",flexDirection:"column",gap:14,maxWidth:780}}>
+          {[{a:"RPM",n:"Remote Patient Monitoring",d:"Daily monitoring of blood pressure, glucose, weight, oxygen via cellular devices. Transmits automatically. No WiFi, no app.",q:"1+ chronic conditions",gap:"Most referenced but buried in CPT detail"},
+            {a:"CCM",n:"Chronic Care Management",d:"Monthly coordination for 2+ chronic conditions. Care planning, medication review, proactive follow-up.",q:"2+ chronic conditions, 12+ months",gap:"Often conflated with RPM in materials"},
+            {a:"PCM",n:"Principal Care Management",d:"Like CCM but for a single high-complexity chronic condition. Fills the gap for patients who don't meet CCM's two-condition threshold.",q:"1 serious, high-risk condition",gap:"ABSENT from all current materials"},
+            {a:"RTM",n:"Remote Therapeutic Monitoring",d:"Tracks therapy adherence and treatment response. Common in MSK, respiratory, wound care, rehab.",q:"Active treatment regimen",gap:"Rarely distinguished from RPM"},
+            {a:"APCM",n:"Advanced Primary Care Mgmt",d:"Newest program. Value-based primary care coordination — access, navigation, proactive outreach. The future of Medicare reimbursement.",q:"Attributed primary care patients",gap:"ABSENT from all current materials"},
+            {a:"DUAL",n:"Dual Enrollment",d:"A single patient can be in RPM + CCM simultaneously — separate reimbursements for each. This is where the revenue model compounds.",q:"Eligible for 2+ programs",gap:"Referenced internally, never communicated to providers"}
+          ].map((p,i)=>(
+            <R key={i} delay={.1+i*.06}>
+              <Glass style={{padding:"20px 24px",display:"flex",gap:20,alignItems:"flex-start"}}>
+                <div style={{fontFamily:serif,fontSize:28,fontStyle:"italic",color:DS.copper,lineHeight:1,flexShrink:0,width:64,textAlign:"center"}}>{p.a}</div>
                 <div style={{flex:1}}>
-                  <div className="act" style={{fontFamily:sans,fontSize:"clamp(20px, 2vw, 32px)",fontWeight:600,color:i===4?C.white:C.dark}}>{r.act}</div>
-                  {r.note && <div className="note" style={{fontFamily:sans,fontSize:"clamp(16px, 1.5vw, 22px)",color:i===2?C.red:C.lgray,marginTop:8,fontStyle:i===2?"italic":"normal"}}>{r.note}</div>}
+                  <h3 style={{fontFamily:sans,fontSize:14,fontWeight:600,color:DS.dark,margin:"0 0 4px"}}>{p.n}</h3>
+                  <p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:"0 0 8px"}}>{p.d}</p>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                    <Pill color={DS.dark}>{p.q}</Pill>
+                    <Pill color={p.gap.includes("ABSENT")?DS.red:DS.lgray}>{p.gap}</Pill>
+                  </div>
                 </div>
-              </Card>
+              </Glass>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ CONNECTED CARE FINDINGS ═══ */}
+      <section id="cc" style={secT}>
+        <R><Num n="07"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>CONNECTED CARE — FIELD FINDINGS</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Universal interest.<br/><span style={{color:DS.copper}}>Universal friction.</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>Colin visited 20+ provider offices in 3 months. Every single one was interested. Every single one had the same concern: administrative burden. Staff training, account management, and the need for a dedicated contact they can call when something goes wrong. Behind the individual friction points lies a deeper structural issue: there are no defined pipeline stages, no stage-specific collateral, and no documented criteria for when a prospect is ready to move from introduction to financial modeling to close.</p></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
+          {[{t:"MDX Deal Collapsed",d:"According to Colin, he couldn't provide customized financial projections for their payer mix. This is a repeatable failure without a structural fix.",icon:"⚠"},
+            {t:"Case Study Deficit",d:"1bios has 30,000+ patients and years of data. Colin says the sales team has not been able to access any of it for prospect conversations.",icon:"📊"},
+            {t:"Collateral Without Standards",d:"Reps build materials for each prospect, but the output isn't polished or consistent. There's no standardized messaging framework — every deck is a one-off with different quality, different language, and different design.",icon:"📑"},
+            {t:"'Turnkey' Creates Skepticism",d:"According to Colin and Hunter, experienced operators have heard this promise before. Replace with specific language: 'You Get Paid First.'",icon:"💬"}
+          ].map((item,i)=>(
+            <R key={i} delay={.2+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",borderTop:`3px solid ${DS.copper}`,height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
+              </Glass>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ CGM FINDINGS ═══ */}
+      <section id="cgm" style={{...secT,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`}}>
+        <R><Num n="08" dark/></R>
+        <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>CGM SERVICE LINE — HAWAII</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>180,000 diabetics in Hawaii.<br/><span style={{color:DS.copper}}>Wide open.</span></h2></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:20,maxWidth:700,marginBottom:32}}>
+          {[{n:"180K",l:"Estimated diabetics in Hawaii",s:"Low CGM saturation — most not yet served"},
+            {n:"70%",l:"HMSA market coverage",s:"Exclusive partnership in pursuit"},
+            {n:"~10%",l:"Adult diabetes prevalence",s:"NHPI communities disproportionately affected"}
+          ].map((s,i)=>(
+            <R key={i} delay={.2+i*.1} style={{flex:"1 1 180px",minWidth:160,textAlign:"center"}}>
+              <div style={{fontFamily:serif,fontSize:"clamp(36px,5vw,52px)",fontStyle:"italic",color:i===1?DS.copper:DS.white,lineHeight:1}}>{s.n}</div>
+              <div style={{fontFamily:mono,fontSize:9,letterSpacing:2,color:DS.lgray,textTransform:"uppercase",marginTop:8}}>{s.l}</div>
+              <div style={{fontFamily:sans,fontSize:11,color:DS.lgray,marginTop:4}}>{s.s}</div>
+            </R>
+          ))}
+        </div>
+
+        <R delay={.35}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.8,maxWidth:660,marginBottom:12}}>Hawaii already has CGM coverage on the books. This is not a coverage-creation play — it's a utilization and access simplification play. The opportunity is making each stakeholder feel the program works for them. That requires five coordinated motions, not one campaign.</p></R>
+
+        <R delay={.4}><Lbl style={{color:DS.copper,marginBottom:14,marginTop:20}}>GO-TO-MARKET — BUILD THE SYSTEM BEFORE CREATING THE DEMAND</Lbl></R>
+        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:740,marginBottom:28}}>
+          {[{n:"01",t:"Payer Alignment",d:"HMSA is the keystone. If that exclusive partnership lands, it unlocks the entire cascade — provider enablement, community trust, and patient demand all become easier. QUEST Medicaid plans (AlohaCare, Kaiser, ʻOhana, UHC) are the next tier.",c:DS.copper},
+            {n:"02",t:"Provider Enablement",d:"Target PAs, NPs, PCPs, OB-GYN, nephrology, cardiology, wound care, and diabetes educators — not just endocrinology. Arm them with referral kits, reimbursement guides, EHR order-set support, and case studies by specialty. The message: we make CGM easy to prescribe, train, support, and document.",c:DS.copper},
+            {n:"03",t:"Community Trust",d:"In Hawaii, being seen in community IS advertising. Church networks, kūpuna programs, health fairs, employer wellness events, culturally grounded content — 'how to manage glucose at a potluck' outperforms every Meta campaign. Partner with trusted nonprofits and local physician champions.",c:DS.copperLight},
+            {n:"04",t:"Patient Demand Capture",d:"Only after coverage, referral, and support are in place. Awareness through community channels, activation through friction-free landing pages with eligibility screening and benefit checks, retention through localized education — meal content, family support, success stories grounded in local life.",c:DS.copperLight},
+            {n:"05",t:"Pharmacy & Employer Amplification",d:"Pharmacies are trust nodes and advertising surfaces, not just distribution. Employer wellness programs, unions, hospitality/tourism workforce, public sector groups — an underused lane in Hawaii's strong employer-coverage culture.",c:DS.lgray}
+          ].map((step,i)=>(
+            <R key={i} delay={.3+i*.06}>
+              <div style={{display:"flex",gap:16,background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",borderLeft:`3px solid ${step.c}`}}>
+                <span style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:step.c,flexShrink:0}}>{step.n}</span>
+                <div>
+                  <h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 6px"}}>{step.t}</h3>
+                  <p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.6,margin:0}}>{step.d}</p>
+                </div>
+              </div>
+            </R>
+          ))}
+        </div>
+
+        <R delay={.6}><Lbl style={{color:DS.copper,marginBottom:14}}>CLINIC PITCHES MUST VARY BY TYPE</Lbl></R>
+        <R delay={.65}>
+          <div style={{display:"flex",flexWrap:"wrap",gap:10,maxWidth:740,marginBottom:28}}>
+            {[{t:"Independent PCPs",d:"Simplicity + adherence support"},{t:"FQHCs",d:"Equity, access, staff relief"},{t:"Multi-Site Groups",d:"Standardized pathways + reporting"},{t:"Rural Sites",d:"Remote support + logistics confidence"},{t:"OB / Specialty",d:"Condition-specific use cases"}].map((c,i)=>(
+              <div key={i} style={{flex:"1 1 calc(33%-10px)",minWidth:200,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:10,padding:"12px 16px"}}>
+                <span style={{fontFamily:serif,fontSize:13,fontStyle:"italic",color:DS.white}}>{c.t}</span>
+                <span style={{fontFamily:sans,fontSize:11,color:DS.lgray,display:"block",marginTop:4}}>{c.d}</span>
+              </div>
             ))}
           </div>
-        </section>
+        </R>
 
-        {/* ═══ 17 WHY CADE ═══ */}
-        <section style={{...slide,background:C.black}}>
-          <Num n="17" className="animate-up" style={{background:"rgba(245,238,226,.1)",color:C.copperLight,transitionDelay:"0ms"}}/>
-          <Lbl className="animate-up" style={{color:C.lgray,marginTop:24,transitionDelay:"0ms"}}>WHY CADE MEDICAL</Lbl>
-          <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(40px,5vw,72px)",fontStyle:"italic",color:C.white,lineHeight:1.1,margin:"20px 0 48px",maxWidth:1000,transitionDelay:"100ms"}}>The entire program.<br/>Not just <span style={{color:C.copper}}>software.</span></h2>
-          <div className="mobile-stack" style={{display:"flex",flexWrap:"wrap",gap:24,maxWidth:1400}}>
-            {[{t:"Since 1999",d:"25+ years serving healthcare providers."},
-              {t:"Experity Compatible",d:"We integrate with your EHR. No disruption."},
-              {t:"CPT Optimization",d:"We identify every reimbursable interaction - documented compliantly."},
-              {t:"Experienced Clinical Team",d:"Providing RPM care since 2016 and currently managing 30,000+ patients."},
-              {t:"Real People, Every Week",d:"Same assigned NPs, RNs, MAs. No foreign call center. No AI."},
-              {t:"You Get Paid First",d:"We invoice after you receive reimbursement. Zero risk."}
-            ].map((r,i)=>(
-              <Card key={i} className="animate-up" style={{flex:"1 1 calc(50% - 24px)",minWidth:360,borderLeft:`3px solid ${C.copper}`,transitionDelay:`${i*100+200}ms`}}>
-                <h3 style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:C.dark,margin:"0 0 12px"}}>{r.t}</h3>
-                <p style={{fontFamily:sans,fontSize:"clamp(16px, 1.6vw, 24px)",color:C.gray,lineHeight:1.6,margin:0}}>{r.d}</p>
-              </Card>
+        <R delay={.7}>
+          <Glass style={{padding:"24px 28px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
+            <p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>"We are saving these individuals from making yet another trip to the pharmacy and giving them access to a tool they can benefit from."</p>
+            <p style={{fontFamily:mono,fontSize:10,color:DS.lgray,marginTop:10,letterSpacing:2}}>— GREGG HOSHIDA</p>
+          </Glass>
+        </R>
+        <R delay={.8}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,maxWidth:640,marginTop:20}}>Target prescribers are PAs and NPs, not physicians. Low tech adoption rate in Hawaii means messaging must lead with patient benefit, not technology sophistication.</p></R>
+      </section>
+
+      {/* ═══ SALES STRATEGY ═══ */}
+      <section id="sales" style={{...sec,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`}}>
+        <R><Num n="09" dark/></R>
+        <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>SALES STRATEGY & MESSAGING</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>Lead with <span style={{color:DS.copper}}>belief,</span> not billing codes</h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>The current pitch leads with information density — CPT codes, reimbursement tables, clinical protocols. Providers in a first meeting need to understand three things: how does this help my patients, how does this help my bottom line, and what do I actually have to do. Each stage below should map to a defined pipeline stage with clear entry criteria, exit criteria, and purpose-built collateral.</p></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:740}}>
+          {[{stage:"STAGE 1",title:"The Intro",d:"8-10 slide deck. WHY-HOW-WHAT. Who CADE is, what Connected Care is, why it matters, high-level economics.",color:DS.copper},
+            {stage:"STAGE 2",title:"The Numbers",d:"Custom financial model using the prospect's own payer mix and patient data. Three scenarios. According to Colin, this is what killed the MDX deal.",color:DS.copperLight},
+            {stage:"STAGE 3",title:"The Close",d:"Case studies from 1bios, performance data, contract terms. Proof that CADE delivers at scale.",color:DS.white}
+          ].map((s,i)=>(
+            <R key={i} delay={.3+i*.12} style={{flex:"1 1 220px",minWidth:200}}>
+              <div style={{background:"rgba(255,255,255,.04)",border:`1px solid rgba(255,255,255,.08)`,borderTop:`3px solid ${s.color}`,borderRadius:16,padding:"20px 24px",height:"100%"}}>
+                <Lbl style={{color:s.color,fontSize:10}}>{s.stage}</Lbl>
+                <h3 style={{fontFamily:serif,fontSize:20,fontStyle:"italic",color:DS.white,margin:"8px 0 10px"}}>{s.title}</h3>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.65,margin:0}}>{s.d}</p>
+              </div>
+            </R>
+          ))}
+        </div>
+        <R delay={.6}><div style={{display:"flex",flexWrap:"wrap",gap:12,marginTop:32}}>
+          {["Optimize What You're Already Doing","Compliant by Design","You Get Paid First"].map((m,i)=>(
+            <Glass key={i} style={{padding:"12px 20px",background:"rgba(255,255,255,.04)",borderLeft:`2px solid ${DS.copper}`}}>
+              <span style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white}}>{m}</span>
+            </Glass>
+          ))}
+        </div></R>
+      </section>
+
+      {/* ═══ SALES PIPELINE ARCHITECTURE ═══ */}
+      <section id="pipeline" style={secT}>
+        <R><Num n="10"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>SALES PIPELINE ARCHITECTURE</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Process first. <span style={{color:DS.copper}}>Then scale.</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>The staged funnel isn't just a collateral strategy — it's the foundation of a pipeline architecture. Without defined stages, entry criteria, and stage-specific materials, every deal relies on individual rep judgment. That works at 5 prospects. It breaks at 50. Before layering AI-generated pitch systems or scaling nationally, the pipeline itself needs to be clean.</p></R>
+        <R delay={.3}><Lbl style={{marginBottom:16,color:DS.copper}}>THE QUESTIONS THAT NEED ANSWERS</Lbl></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:32}}>
+          {[{t:"What defines 'qualified'?",d:"Do Sales, Marketing, and Operations share the same definition? When Colin marks a prospect as interested, what criteria were met? Is it documented?"},
+            {t:"What happens at each stage?",d:"Is there a defined moment where the intro deck is replaced by a financial model? A milestone confirming the economic buyer has been identified? Entry and exit criteria for every stage?"},
+            {t:"What collateral maps where?",d:"Which white paper, one-pager, case study, or interactive tool gets deployed at which moment? Or does the rep decide in the moment based on instinct?"},
+            {t:"Where does the data live?",d:"Does CADE have a CRM with pipeline stages? Are those stages designed for the actual go-to-market motion — or are they generic defaults that nobody configured?"},
+            {t:"What questions should reps ask?",d:"At each stage, what qualifying questions should the rep be asking? Is that documented? Can they find it? Or is tribal knowledge the system?"},
+            {t:"Can you forecast?",d:"Clean stages produce clean data. Clean data produces reliable forecasts. Reliable forecasts produce executive confidence and board-level visibility into growth."}
+          ].map((item,i)=>(
+            <R key={i} delay={.2+i*.06} style={{flex:"1 1 340px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
+              </Glass>
+            </R>
+          ))}
+        </div>
+        <R delay={.6}><Lbl style={{marginBottom:16,color:DS.copper}}>PROPOSED PIPELINE STAGES</Lbl></R>
+        <R delay={.65}>
+          <div style={{display:"flex",flexDirection:"column",gap:2,maxWidth:740}}>
+            {[{stage:"01  PROSPECT IDENTIFIED",entry:"Matches ICP (specialty, size, payer mix, geography)",exit:"Initial outreach scheduled",collateral:"None — research phase",color:DS.lgray},
+              {stage:"02  DISCOVERY CALL",entry:"Decision-maker engaged, 15-min call scheduled",exit:"Pain points confirmed, interest validated, data request made",collateral:"Stage 1 intro deck (WHY-HOW-WHAT)",color:DS.lgray},
+              {stage:"03  DATA RECEIVED",entry:"Prospect has shared payer mix, patient volume, or EHR data",exit:"Custom financial model built and review meeting scheduled",collateral:"Stage 2 financial model, program overview one-pager",color:DS.copper},
+              {stage:"04  PROPOSAL PRESENTED",entry:"Economic buyer in the room, custom projections presented live",exit:"Verbal alignment on scope, pilot locations, timeline",collateral:"Stage 2 deck, interactive web pitch, ROI calculator",color:DS.copper},
+              {stage:"05  NEGOTIATION",entry:"Terms under discussion, contract in review",exit:"Agreement signed",collateral:"Stage 3 case studies, compliance documentation, contract",color:DS.copper},
+              {stage:"06  ONBOARDING",entry:"Agreement signed, kickoff scheduled",exit:"First patients enrolled, devices shipping",collateral:"Implementation guide, staff training materials, EHR setup docs",color:DS.success},
+            ].map((s,i)=>(
+              <div key={i} style={{display:"flex",gap:0,background:DS.white,border:`1px solid rgba(0,0,0,.06)`,borderLeft:`3px solid ${s.color}`,padding:"16px 20px",borderRadius:i===0?"12px 12px 0 0":i===5?"0 0 12px 12px":"0"}}>
+                <div style={{flex:"0 0 220px"}}>
+                  <span style={{fontFamily:mono,fontSize:10,fontWeight:400,letterSpacing:2,color:s.color}}>{s.stage}</span>
+                </div>
+                <div style={{flex:1,display:"flex",flexWrap:"wrap",gap:16}}>
+                  <div style={{flex:"1 1 200px",minWidth:160}}>
+                    <span style={{fontFamily:mono,fontSize:8,letterSpacing:2,color:DS.lgray,textTransform:"uppercase"}}>ENTRY</span>
+                    <p style={{fontFamily:sans,fontSize:11,color:DS.gray,lineHeight:1.5,margin:"4px 0 0"}}>{s.entry}</p>
+                  </div>
+                  <div style={{flex:"1 1 200px",minWidth:160}}>
+                    <span style={{fontFamily:mono,fontSize:8,letterSpacing:2,color:DS.lgray,textTransform:"uppercase"}}>COLLATERAL</span>
+                    <p style={{fontFamily:sans,fontSize:11,color:DS.gray,lineHeight:1.5,margin:"4px 0 0"}}>{s.collateral}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </section>
+        </R>
+        <R delay={.8}>
+          <Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,marginTop:28,maxWidth:700}}>
+            <p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.dark,lineHeight:1.5,margin:0}}>The Narrative Engine generates the collateral. The pipeline architecture tells it when, for whom, and why. Without clean stages, AI produces beautiful decks for undefined moments in an undefined process.</p>
+          </Glass>
+        </R>
+      </section>
 
-        {/* ═══ 18 NEXT STEPS / CLOSE ═══ */}
-        <section style={{...slide,background:C.copperBg}}>
-          <div style={{maxWidth:1000}}>
-            <Num n="18" className="animate-up" style={{transitionDelay:"0ms"}}/>
-            <h2 className="animate-up" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(56px,7vw,100px)",fontStyle:"italic",color:C.dark,lineHeight:1.05,margin:"32px 0 24px",transitionDelay:"100ms"}}>From here to live<br/>in <span style={{color:C.copper}}>30 days</span></h2>
-            <div className="animate-up" style={{display:"flex",flexDirection:"column",gap:24,textAlign:"left",maxWidth:800,margin:"48px 0 0",transitionDelay:"200ms"}}>
-              {[{n:"1",t:"Finalize Agreement",d:"Scope, payer targets, pilot locations.",tm:"WEEK 1"},
-                {n:"2",t:"Onboarding & EHR Setup",d:"Experity integration. Staff training. First cohort.",tm:"WEEK 2"},
-                {n:"3",t:"Launch Pilot",d:"1-3 locations, 20-50 patients. Devices ship.",tm:"WEEK 3-4"},
-                {n:"4",t:"First Revenue",d:"Billing reports → reimbursement → CADE invoices.",tm:"MONTH 2-4"},
-                {n:"5",t:"Scale Across AUC",d:"Expand to all 16 locations. Revenue compounds.",tm:"ONGOING"}
-              ].map((ns,i)=>(
-                <div key={i} style={{display:"flex",gap:20,alignItems:"flex-start"}}>
-                  <div style={{width:48,height:48,borderRadius:"50%",background:i===3?C.success:C.black,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <span style={{fontFamily:mono,fontSize:20,fontWeight:400,color:C.white}}>{ns.n}</span>
-                  </div>
-                  <div style={{flex:1}}>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                      <span className="list-title" style={{fontFamily:serif,fontWeight:400,fontSize:"clamp(24px, 2.5vw, 36px)",fontStyle:"italic",color:C.dark}}>{ns.t}</span>
-                      <Lbl style={{fontSize:12,color:C.copper}}>{ns.tm}</Lbl>
-                    </div>
-                    <p className="list-desc" style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 26px)",color:C.gray,lineHeight:1.5,margin:"8px 0 0"}}>{ns.d}</p>
-                  </div>
+      {/* ═══ AUC ADJACENT PROJECT ═══ */}
+      <section id="auc" style={secT}>
+        <R><Num n="11"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>ADJACENT PROJECT</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Accelerated Urgent Care —<br/><span style={{color:DS.copper}}>what it taught us</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>During discovery, we worked alongside CADE's sales team on a live Connected Care opportunity with AUC — the largest privately held urgent care system in the country. 16 locations, 5 California counties plus telehealth. This wasn't a Phase 1 deliverable, but it provided direct insight into how CADE's sales process operates in the field.</p></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
+          {[{t:"Custom projections move deals forward",d:"When Gavin built the calculator using AUC's actual payer mix, the conversation advanced immediately. Generic numbers don't close enterprise deals."},
+            {t:"Narrative structure eliminates friction",d:"Starting with belief — your patients chose you — creates engagement that starting with CPT codes never could."},
+            {t:"Urgent care is an untapped vertical",d:"AUC's data revealed 16% of patients visit 3+ times over 3 years. Any urgent care with high repeat rates is a Connected Care candidate."},
+            {t:"Telehealth = lowest friction enrollment",d:"Patients already comfortable with remote care require the least behavior change to adopt Connected Care monitoring."}
+          ].map((item,i)=>(
+            <R key={i} delay={.2+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
+              <Glass style={{padding:"20px 24px",height:"100%"}}>
+                <h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
+              </Glass>
+            </R>
+          ))}
+        </div>
+        <R delay={.5}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,fontStyle:"italic",marginTop:20}}>Materials developed: interactive web pitch, 18-slide presentation, financial model, workflow journey map. This opportunity remains active.</p></R>
+      </section>
+
+      {/* ═══ RECOMMENDATIONS ═══ */}
+      <section id="recs" style={{...sec,background:DS.copperBg,paddingTop:"clamp(100px,12vh,140px)",justifyContent:"flex-start"}}>
+        <R><Num n="12"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>20 STRATEGIC RECOMMENDATIONS</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>The path <span style={{color:DS.copper}}>forward</span></h2></R>
+        {[{cat:"BRAND & IDENTITY",items:["Commission authentic Hawaii photography and videography — testimonials, lifestyle pieces, CADE staff, real patients, island settings","Develop unified design system — typography, color, layout, photography guidelines","Consolidate overlapping materials into one high-quality version per use case","Do not rename. Do not use 'local.' Show up and be present.","Determine web strategy: unified corporate site or separate mainland and Hawaii/Pacific Islands market sites — CADE now serves Hawaii, California, Montana, and Arizona"]},
+          {cat:"SALES ENABLEMENT",items:["Implement staged sales funnel: intro → custom financials → close with case studies","Lead with CPT optimization question, not product features","Negotiate 1bios case study access from 30,000+ patient base","Build early Hawaii case studies from first 50-100 patients","Develop repeatable custom financial projection capability"]},
+          {cat:"SALES PIPELINE ARCHITECTURE",items:["Define pipeline stages with entry/exit criteria — align Sales, Marketing, and Operations on what 'qualified' means","Map specific collateral to each pipeline stage — no rep should decide in the moment what to send","Document qualifying questions for each stage so reps know what to ask and when","Audit or implement CRM with stages designed for CADE's actual go-to-market motion","Build the foundation before layering AI — clean stages produce clean data, clean data produces reliable forecasts"]},
+          {cat:"CONNECTED CARE GO-TO-MARKET",items:["Position: Optimize / Compliant by Design / You Get Paid First","Deploy WHY → HOW → WHAT narrative for all conversations","Pursue urgent care systems with high repeat-visit rates as new vertical","Target telehealth cohorts as initial enrollment population"]},
+          {cat:"CGM GO-TO-MARKET — HAWAII",items:["Pursue HMSA exclusive CGM partnership","Target PAs and NPs — they're the prescribers","Education-first campaign: biweekly newsletter at 8:00 AM HST","November Diabetes Awareness Month tentpole activation"]},
+          {cat:"EVENT MATERIAL DESIGN",items:["PMAH Memorial Weekend CME — provider education","EHIIPA Big Island Symposium — expand beyond Oahu","Arthritis Foundation Walk — community activation"]}
+        ].map((section,si)=>(
+          <R key={si} delay={.1+si*.05}>
+            <div style={{marginBottom:24,maxWidth:700}}>
+              <Lbl style={{fontSize:10,color:DS.copper,marginBottom:12}}>{section.cat}</Lbl>
+              {section.items.map((item,ii)=>(
+                <div key={ii} style={{display:"flex",gap:10,marginBottom:8}}>
+                  <span style={{fontFamily:mono,fontSize:11,color:DS.copper,flexShrink:0,marginTop:2}}>{String(si*4+ii+1+(si>0?si-1:0)).padStart(2,"0")}</span>
+                  <span style={{fontFamily:sans,fontSize:13,color:DS.dark,lineHeight:1.6}}>{item}</span>
                 </div>
               ))}
             </div>
-            <div className="animate-up" style={{marginTop:64,transitionDelay:"300ms"}}>
-              <span className="contact-name" style={{fontFamily:sans,fontSize:"clamp(24px, 2.5vw, 36px)",fontWeight:600,color:C.dark}}>Gavin De Jong</span><br/>
-              <span style={{fontFamily:sans,fontSize:"clamp(18px, 1.8vw, 28px)",color:C.gray}}>Finance & Strategy Director</span><br/>
-              <span style={{fontFamily:sans,fontSize:"clamp(16px, 1.6vw, 24px)",color:C.lgray}}>Gavin@cademed.com</span>
-            </div>
-            <div className="animate-up" style={{marginTop:32,transitionDelay:"400ms"}}>
-              <Lbl style={{fontSize:14,color:C.lgray}}>(406) 209-4282</Lbl>
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
+          </R>
+        ))}
+      </section>
 
-  const root = ReactDOM.createRoot(document.getElementById('cade-pitch-deck-root'));
-  root.render(<PitchDeck />);
-</script>
+      {/* ═══ THE NARRATIVE ENGINE ═══ */}
+      <section id="engine" style={{...sec,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`}}>
+        <R><Num n="13" dark/></R>
+        <R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>THE CADE NARRATIVE ENGINE</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>From manual decks<br/>to <span style={{color:DS.copper}}>infinite scale</span></h2></R>
+        <R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>Right now, every pitch is manual, inconsistent, and hard to scale. The AUC deck isn't a one-off — it's the proof of concept for a system that can produce that quality for every prospect, in minutes.</p></R>
+        <div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:740}}>
+          {[{n:"01",t:"Design System",sub:"JSON",d:"Single source of truth for every visual element. When it updates, everything rebuilds to match."},
+            {n:"02",t:"Narrative Library",sub:"PROMPTS",d:"Golden Circle frameworks by prospect type × service focus × size. Pre-built, ready to deploy."},
+            {n:"03",t:"Content Generation",sub:"AI-ASSISTED",d:"Rep inputs prospect data → AI generates full deck content structured to the design system."},
+            {n:"04",t:"Web-Hosted Output",sub:"REACT + WEBFLOW",d:"Minified HTML on cademed.com/offers/[prospect]. Interactive, trackable, shareable via URL."}
+          ].map((layer,i)=>(
+            <R key={i} delay={.3+i*.1} style={{flex:"1 1 340px",minWidth:280}}>
+              <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"24px 28px",height:"100%"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
+                  <span style={{fontFamily:serif,fontSize:32,fontStyle:"italic",color:DS.copper}}>{layer.n}</span>
+                  <div><span style={{fontFamily:sans,fontSize:14,fontWeight:600,color:DS.white}}>{layer.t}</span><br/><Lbl style={{fontSize:8,color:DS.lgray,marginTop:2}}>{layer.sub}</Lbl></div>
+                </div>
+                <p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.65,margin:0}}>{layer.d}</p>
+              </div>
+            </R>
+          ))}
+        </div>
+        <R delay={.7}><Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,marginTop:32,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
+          <p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>The AUC deck is the demo. The system is the product. The retainer is how you access it.</p>
+        </Glass></R>
+      </section>
+
+      {/* ═══ ENGINE DEMO ═══ */}
+      <EngineDemo/>
+
+      {/* ═══ PHASE 2 SCOPE ═══ */}
+      <section id="phase2" style={secT}>
+        <R><Num n="15"/></R>
+        <R delay={.1}><Lbl style={{marginTop:16}}>PHASE 2 IMPLEMENTATION</Lbl></R>
+        <R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>5 priorities. <span style={{color:DS.copper}}>Est. 120 hours.</span></h2></R>
+        <div style={{display:"flex",flexDirection:"column",gap:14,maxWidth:700}}>
+          {[{p:"P1",t:"Brand Foundation",hrs:10,cost:"$1,600",items:"Brand strategy, visual identity, photography & videography brief, messaging framework",wk:"Weeks 1-2"},
+            {p:"P2",t:"Website Overhaul",hrs:50,cost:"$8,000",items:"Audit, sitemap, key page designs, copywriting, development oversight. Corporate vs. regional site strategy for Hawaii, California, Montana, Arizona.",wk:"Weeks 2-8"},
+            {p:"P3",t:"Sales Collateral",hrs:40,cost:"$6,400",items:"Stage 1/2/3 decks, one-pagers (CC + CGM, provider + patient), web pitch template, ROI calculator, workflow map",wk:"Weeks 3-10"},
+            {p:"P4",t:"CGM Campaign — Hawaii",hrs:5,cost:"$800",items:"Campaign setup: email template, launch sequence framework, Diabetes Awareness Month kit structure, HMSA pitch materials",wk:"Week 8-9"},
+            {p:"P5",t:"Event Material Design",hrs:15,cost:"$2,400",items:"Booth design, banner concepts, leave-behind kit, follow-up email template",wk:"Weeks 9-12"}
+          ].map((phase,i)=>(
+            <R key={i} delay={.15+i*.08}>
+              <Glass style={{padding:"20px 24px",display:"flex",gap:20,alignItems:"flex-start"}}>
+                <div style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:DS.copper,flexShrink:0,width:40,textAlign:"center"}}>{phase.p}</div>
+                <div style={{flex:1}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+                    <h3 style={{fontFamily:sans,fontSize:15,fontWeight:600,color:DS.dark,margin:0}}>{phase.t}</h3>
+                    <div style={{display:"flex",gap:12}}>
+                      <Pill color={DS.dark}>Est. {phase.hrs} HRS</Pill>
+                      <Pill color={DS.copper}>{phase.cost}</Pill>
+                    </div>
+                  </div>
+                  <p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:"8px 0 0"}}>{phase.items}</p>
+                  <Lbl style={{fontSize:9,color:DS.lgray,marginTop:6}}>{phase.wk}</Lbl>
+                </div>
+              </Glass>
+            </R>
+          ))}
+        </div>
+        <R delay={.6}><div style={{display:"flex",flexWrap:"wrap",gap:20,marginTop:32,maxWidth:700}}>
+          {[{n:"Est. 120",l:"TOTAL HOURS"},{n:"$160",l:"HOURLY RATE"},{n:"6-12",l:"WEEKS"},{n:"10-20",l:"HRS / WEEK"}].map((s,i)=>(
+            <div key={i} style={{textAlign:"center",flex:"1 1 120px",minWidth:100}}>
+              <div style={{fontFamily:serif,fontSize:32,fontStyle:"italic",color:DS.copper,lineHeight:1}}>{s.n}</div>
+              <div style={{fontFamily:mono,fontSize:9,letterSpacing:2,color:DS.lgray,textTransform:"uppercase",marginTop:6}}>{s.l}</div>
+            </div>
+          ))}
+        </div></R>
+      </section>
+
+      {/* ═══ CLOSE ═══ */}
+      <section id="close" style={{...sec,background:`linear-gradient(160deg,${DS.black} 0%,#1a1a2e 50%,${DS.black} 100%)`,textAlign:"center",alignItems:"center"}}>
+        <R><h2 style={{fontFamily:serif,fontSize:"clamp(36px,6vw,64px)",fontStyle:"italic",color:DS.white,lineHeight:1.05,margin:"0 0 16px"}}>The service is ready.<br/>Let's make the brand <span style={{color:DS.copper}}>match.</span></h2></R>
+        <R delay={.2}><Divider/></R>
+        <R delay={.3}><div style={{fontFamily:sans,fontSize:15,color:DS.white,lineHeight:2.2}}>
+          <strong>Matt Weaver</strong><br/>
+          <span style={{color:DS.lgray}}>Marketing Consultant & Fractional CMO</span>
+        </div></R>
+        <R delay={.4}><div style={{marginTop:24}}><Lbl style={{color:DS.lgray,fontSize:10}}>APRIL 2026 | CONFIDENTIAL</Lbl></div></R>
+      </section>
+    </div>
+  );
+}
