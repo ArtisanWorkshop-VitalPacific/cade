@@ -189,6 +189,49 @@ font-family:var(--sa);background:var(--bg);color:var(--d);height:100vh;overflow-
 .mp a.src-link{color:inherit;text-decoration:underline;text-decoration-color:rgba(199,143,86,.35);text-underline-offset:2px;transition:text-decoration-color .2s}
 .mp a.src-link:hover{text-decoration-color:var(--c)}
 
+/* bento box wrap-up */
+.mp .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto);gap:14px;margin-top:18px}
+.mp .bc{background:var(--kb);border:1px solid rgba(0,0,0,.04);border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;overflow:hidden;position:relative}
+.mp .bc .pre{font-family:var(--mo);font-size:11px;color:var(--lg);letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+.mp .bc .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(44px,5.5vw,68px);color:var(--c);line-height:1;letter-spacing:-.02em}
+.mp .bc .n .plus{font-size:.55em;vertical-align:top;margin-left:2px;opacity:.85}
+.mp .bc .n .x{color:var(--c);margin-left:2px;font-size:.65em;vertical-align:super}
+.mp .bc .l{font-family:var(--sa);font-size:14px;font-weight:600;color:var(--d);margin-top:12px;line-height:1.3}
+.mp .bc .s{font-family:var(--sa);font-size:12.5px;color:var(--gy);margin-top:6px;line-height:1.5}
+/* hero card (center 2x2) */
+.mp .bc.hero{grid-column:span 2;grid-row:span 2;background:var(--d);text-align:center;align-items:center;justify-content:center;padding:34px 30px}
+.mp .bc.hero .logo{max-width:180px;margin:0 auto;filter:brightness(0) invert(1);opacity:.96}
+.mp .bc.hero .kw{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(26px,3vw,36px);color:var(--w);margin-top:18px;line-height:1.1}
+.mp .bc.hero .kw .ac{color:var(--c)}
+.mp .bc.hero .tag{font-family:var(--mo);font-size:10.5px;color:var(--ulg);letter-spacing:3px;text-transform:uppercase;margin-top:16px;font-weight:500}
+/* card spans */
+.mp .bc.w2{grid-column:span 2}
+.mp .bc.w3{grid-column:span 3}
+/* copper accent variant */
+.mp .bc.accent{background:var(--cb);border:1px solid rgba(199,143,86,.2)}
+.mp .bc.accent .pre{color:var(--c)}
+.mp .bc.accent .n{color:var(--d)}
+/* dark variant for contrast */
+.mp .bc.dark{background:var(--d);border:none}
+.mp .bc.dark .pre{color:var(--ulg)}
+.mp .bc.dark .n{color:var(--c)}
+.mp .bc.dark .l{color:var(--w)}
+.mp .bc.dark .s{color:var(--ulg)}
+/* feature cards with icon + text */
+.mp .bc.feat .ic{font-family:var(--se);font-style:italic;font-weight:400;font-size:34px;color:var(--c);line-height:1;margin-bottom:10px}
+.mp .bc.feat .ft{font-family:var(--se);font-style:italic;font-weight:400;font-size:22px;color:var(--d);line-height:1.15;margin-bottom:6px}
+
+/* CTA block below bento */
+.mp .cta-wrap{margin-top:40px;background:var(--d);border-radius:24px;padding:clamp(36px,5vw,56px) clamp(28px,5vw,64px);display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center}
+.mp .cta-l h2{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(30px,4vw,48px);color:var(--w);line-height:1.1;letter-spacing:-.01em;margin:0 0 16px}
+.mp .cta-l h2 .ac{color:var(--c)}
+.mp .cta-l p{font-family:var(--sa);font-size:15px;color:var(--ulg);line-height:1.6;margin:0}
+.mp .cta-r{display:flex;flex-direction:column;gap:14px;border-left:1px solid rgba(255,255,255,.12);padding-left:40px}
+.mp .cta-r .contact{display:flex;flex-direction:column;gap:2px}
+.mp .cta-r .contact .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:18px;color:var(--w)}
+.mp .cta-r .contact .t{font-family:var(--mo);font-size:10.5px;color:var(--ulg);letter-spacing:1.5px;text-transform:uppercase;font-weight:500}
+.mp .cta-r .contact .e{font-family:var(--sa);font-size:13px;color:var(--cl);margin-top:2px;text-decoration:underline;text-decoration-color:rgba(232,201,160,.3)}
+
 /* section 5 — savings calculator */
 .mp .sc-card{padding:22px 24px}
 .mp .sc-card .title{margin-bottom:16px}
@@ -358,6 +401,11 @@ font-family:var(--sa);background:var(--bg);color:var(--d);height:100vh;overflow-
  .mp .scn-total{grid-template-columns:1fr;gap:20px;text-align:center}
  .mp .scn-total-r{text-align:center;border-left:none;border-top:1px solid rgba(255,255,255,.1);padding-left:0;padding-top:20px}
  .mp .scn-total-l{text-align:center}
+ .mp .bento{grid-template-columns:repeat(2,1fr)}
+ .mp .bc.hero,.mp .bc.w2,.mp .bc.w3{grid-column:span 2}
+ .mp .bc.hero{grid-row:auto;padding:36px 28px}
+ .mp .cta-wrap{grid-template-columns:1fr;gap:28px;padding:36px 32px}
+ .mp .cta-r{border-left:none;border-top:1px solid rgba(255,255,255,.12);padding-left:0;padding-top:28px}
  .mp section{padding:clamp(72px,9vh,120px) clamp(20px,5vw,48px)}
 }
 
@@ -389,6 +437,13 @@ font-family:var(--sa);background:var(--bg);color:var(--d);height:100vh;overflow-
  .mp .scn-total{grid-template-columns:1fr;gap:20px;padding:32px 24px}
  .mp .scn-total-r{text-align:center;border-left:none;border-top:1px solid rgba(255,255,255,.1);padding-left:0;padding-top:20px}
  .mp .scn-total-l{text-align:center}
+ .mp .bento{grid-template-columns:1fr;gap:10px}
+ .mp .bc,.mp .bc.hero,.mp .bc.w2,.mp .bc.w3{grid-column:auto;grid-row:auto;padding:24px 22px}
+ .mp .bc .n{font-size:48px}
+ .mp .bc.hero{padding:34px 24px}
+ .mp .bc.hero .kw{font-size:24px}
+ .mp .cta-wrap{padding:32px 24px;border-radius:20px}
+ .mp .cta-r{padding-left:0;padding-top:24px;border-left:none;border-top:1px solid rgba(255,255,255,.12)}
  .mp .brk .prog{font-size:12px;letter-spacing:3.5px;margin-bottom:22px}
  .mp .brk h2{font-size:clamp(52px,14vw,80px)}
  .mp .brk .sub{font-size:18px;margin-top:22px}
@@ -735,15 +790,102 @@ font-family:var(--sa);background:var(--bg);color:var(--d);height:100vh;overflow-
 </div>
 </section>
 
-<!-- 13 CLOSE -->
-<section id="mp-close" class="ctr gbg">
+<!-- 13 CLOSE / WRAP-UP -->
+<section id="mp-close" class="sct">
 <div class="wrap">
-<div class="r"><h2 class="h1 h1w">Let's put 5,000 members<br>on a better <span class="ac">path</span></h2></div>
-<div class="r" data-d="0.2"><p class="w close">We are ready to run the numbers against your actual claims data and build a tailored baseline. The risk is shared from day one.</p></div>
-<div class="r" data-d="0.3"><div class="dv"></div></div>
-<div class="r" data-d="0.4"><img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE" style="height:46px;object-fit:contain;margin:0 auto 10px;filter:brightness(0) invert(1)"></div>
-<div class="r" data-d="0.45"><div style="font-size:13px;color:var(--ulg);letter-spacing:.5px">Value-Based &nbsp;·&nbsp; Risk-Shared &nbsp;·&nbsp; Results-Driven</div></div>
-<div class="r" data-d="0.55"><div style="margin-top:32px"><span class="lbl lbl-lg">CONFIDENTIAL &nbsp;·&nbsp; APRIL 2026</span></div></div>
+<div class="r"><span class="num">11</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">AT A GLANCE</span></div>
+<div class="r" data-d="0.14"><h2 class="h2"><span class="ac">In one frame.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">Everything that matters about this proposal — numbers, structure, and next steps.</p></div>
+
+<div class="r" data-d="0.28"><div class="bento">
+<!-- row 1 -->
+<div class="bc w2 accent">
+<div class="pre">Projected Annual Savings</div>
+<div class="n">$8.7M<span class="plus">+</span></div>
+<div class="s">Hypertension · Diabetes · COPD cohorts combined</div>
+</div>
+<div class="bc">
+<div class="pre">Blended ROI</div>
+<div class="n">2.9<span class="x">×</span></div>
+<div class="l">Year one return</div>
+</div>
+<div class="bc">
+<div class="pre">Break-Even Bar</div>
+<div class="n">0.4%</div>
+<div class="l">Of panel prevented</div>
+</div>
+
+<!-- row 2 -->
+<div class="bc">
+<div class="pre">CADE Network</div>
+<div class="n">100K<span class="plus">+</span></div>
+<div class="l">Active patients</div>
+</div>
+<div class="bc hero">
+<img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE" class="logo">
+<div class="kw">Connected Care.<br><span class="ac">Built differently.</span></div>
+<div class="tag">Rigor · Care · Accountability</div>
+</div>
+<div class="bc">
+<div class="pre">All-In Fee</div>
+<div class="n">$50</div>
+<div class="l">PMPM · Everything included</div>
+</div>
+
+<!-- row 3 -->
+<div class="bc feat">
+<div class="ic">90</div>
+<div class="ft">Day pilot</div>
+<div class="s">500 members · $75K investment · day-90 go/no-go</div>
+</div>
+<div class="bc feat">
+<div class="ic">↔</div>
+<div class="ft">Risk-shared</div>
+<div class="s">We return $5/member if we miss ROI target. Skin in the game.</div>
+</div>
+
+<!-- row 4 -->
+<div class="bc w2 feat">
+<div class="ic">01 + 02</div>
+<div class="ft">Two programs, one partner</div>
+<div class="s">Value-Based Care on the highest-risk 5,000 · Fee-for-Service across your broader provider network</div>
+</div>
+<div class="bc w2 feat">
+<div class="ic">HI</div>
+<div class="ft">Local Hawaii care team</div>
+<div class="s">Dedicated clinical staff on ground. Multi-lingual clinicians with ever expanding language support.</div>
+</div>
+</div></div>
+
+<!-- CTA wrap -->
+<div class="r" data-d="0.4"><div class="cta-wrap">
+<div class="cta-l">
+<h2>Let's put 5,000 members<br>on a <span class="ac">better path.</span></h2>
+<p>We're ready to run the numbers against your actual claims data and build a tailored baseline. The risk is shared from day one.</p>
+</div>
+<div class="cta-r">
+<div class="contact">
+<span class="t">Primary contact</span>
+<span class="n">Dylan Dyer</span>
+<span class="t" style="margin-top:2px">Director of Sales · CADE Connected Care</span>
+<a href="mailto:dylan@cademed.com" class="e">dylan@cademed.com</a>
+</div>
+<div class="contact" style="margin-top:14px">
+<span class="t">Hawaii account</span>
+<span class="n">Colin Smith</span>
+<span class="t" style="margin-top:2px">Hawaii Account Executive</span>
+<a href="mailto:colin@cademed.com" class="e">colin@cademed.com</a>
+</div>
+</div>
+</div></div>
+
+<!-- Footer mark -->
+<div class="r" data-d="0.5" style="margin-top:36px;text-align:center">
+<img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE" style="height:32px;object-fit:contain;margin:0 auto 10px;opacity:.5">
+<div style="font-family:var(--mo);font-size:10.5px;color:var(--lg);letter-spacing:2.5px;text-transform:uppercase;font-weight:500">Confidential · April 2026 · Prepared for MDX Hawaii</div>
+</div>
+
 </div>
 </section>
 
