@@ -1,1013 +1,861 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CADE Medical — Discovery Report</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+<!-- CADE × MDX Connected Care Pitch v2 — responsive rebuild for Webflow HTML Embed -->
+<div class="mp" id="mp">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body,#root{height:100%;overflow:hidden}
-h1,h2,h3{font-weight:400!important}
-::-webkit-scrollbar{width:0;display:none}
-*{-ms-overflow-style:none;scrollbar-width:none}
-select option{background:#0a0a0a;color:#fff}.gs{background:rgba(0,0,0,0.03);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border:1px solid rgba(0,0,0,0.1);border-top-color:rgba(0,0,0,0.15);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.05),inset 0 0 0 1px rgba(0,0,0,.05)}.dk-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px 24px}.dk-card-l{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px 24px;border-left:3px solid #C78F56}.dk-card-lg{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px 24px;border-left:3px solid #999999}.dk-grad{background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%)}.cp-bg{background:rgba(199,143,86,.08)}
+.mp{
+--bg:#F8F5EC;--c:#C78F56;--cl:#E8C9A0;--cb:rgba(199,143,86,.07);--cbh:rgba(199,143,86,.12);
+--d:#1a1a1a;--gy:#595959;--lg:#999999;--ulg:#b8b8b8;
+--gl:rgba(0,0,0,.03);--gb:rgba(0,0,0,.08);--gh:rgba(0,0,0,.12);
+--w:#fff;--s:#1A8754;--rd:#c0392b;--kb:#EFEBDB;
+--gr:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);
+--mo:"JetBrains Mono","Roboto Mono",monospace;
+--se:"Playfair Display",serif;
+--sa:"Montserrat",sans-serif;
+font-family:var(--sa);background:var(--bg);color:var(--d);height:100vh;overflow-y:auto;position:relative;box-sizing:border-box;font-size:15px;line-height:1.5}
+.mp *,.mp *::before,.mp *::after{box-sizing:border-box}
+.mp button{font:inherit;color:inherit}
+.mp img{max-width:100%;display:block}
+.mp h1,.mp h2,.mp h3,.mp h4,.mp p{margin:0}
+
+/* bg blob */
+.mp .blob{position:fixed;top:-20%;right:-15%;width:600px;height:600px;border-radius:50%;background:rgba(199,143,86,.06);filter:blur(90px);pointer-events:none;z-index:0}
+
+/* sections */
+.mp section{position:relative;z-index:1;padding:clamp(72px,9vh,120px) clamp(20px,5vw,64px);min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.mp .sct{justify-content:flex-start;padding-top:clamp(92px,11vh,140px)}
+.mp .ctr{align-items:center;text-align:center}
+.mp .gbg{background:var(--gr)}
+.mp .cbg{background:var(--cb)}
+
+/* wrap container — centered, responsive */
+.mp .wrap{width:100%;max-width:1200px;margin:0 auto;display:flex;flex-direction:column}
+.mp .ctr .wrap{align-items:center}
+
+/* typography */
+/* mono label scale: hero / section / stat-pair / ui-chrome */
+.mp .lbl{font-family:var(--mo);font-weight:500;letter-spacing:2.5px;color:var(--gy);text-transform:uppercase;display:block;line-height:1.4;font-size:14px}
+.mp .lbl-c{color:var(--c);font-size:14px;font-weight:500}
+.mp .lbl-lg{color:var(--ulg);font-size:12px;letter-spacing:3px}
+.mp .lbl-lgc{color:var(--c);font-size:14px;font-weight:500}
+.mp .lbl-cov{font-size:15px;letter-spacing:6px;color:var(--gy);font-weight:500}
+
+.mp h1,.mp h2,.mp h3{font-family:var(--se);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.mp .h1{font-size:clamp(44px,6.5vw,84px);color:var(--d);line-height:1.02;margin:14px 0 10px}
+.mp .h1w{color:var(--w)}
+.mp .h2{font-size:clamp(32px,5vw,60px);color:var(--d);line-height:1.05;margin:14px 0 22px;max-width:780px}
+.mp .h2w{color:var(--w)}
+.mp .ac{color:var(--c)}
+.mp .h3{font-size:22px;color:var(--d);margin:0}
+.mp .h3w{color:var(--w)}
+
+.mp p{font-family:var(--sa);font-size:15px;color:var(--gy);line-height:1.7}
+.mp p.intro{max-width:680px;margin-bottom:clamp(28px,4vh,44px)}
+.mp p.w{color:var(--ulg)}
+.mp p.sm{font-size:13px;line-height:1.6}
+.mp p.close{font-size:16px;max-width:520px;line-height:1.7;margin-bottom:0}
+
+/* num badge */
+.mp .num{font-family:var(--sa);font-size:13px;font-weight:700;color:var(--c);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:var(--cb);letter-spacing:.5px;margin-bottom:14px}
+.mp .num.dk{color:var(--cl);background:rgba(255,255,255,.08)}
+
+/* pill */
+.mp .pill{font-family:var(--mo);font-size:9.5px;font-weight:500;letter-spacing:1.8px;text-transform:uppercase;color:var(--w);padding:6px 14px;border-radius:20px;display:inline-block;background:var(--c);white-space:nowrap;line-height:1}
+.mp .pill.dk{background:var(--d)}
+.mp .pill.sc{background:var(--s)}
+.mp .pill.rd{background:var(--rd)}
+
+/* cards */
+.mp .glass{background:var(--gl);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border:1px solid var(--gb);border-top-color:var(--gh);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.03),inset 0 0 0 1px rgba(0,0,0,.03)}
+.mp .glass.dk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-top-color:rgba(255,255,255,.14)}
+.mp .card{background:var(--kb);border-radius:16px;padding:26px 28px;border:1px solid rgba(0,0,0,.04);box-shadow:0 2px 12px rgba(0,0,0,.02)}
+.mp .card.ac{border-top:2px solid var(--c)}
+.mp .dcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:22px 26px}
+.mp .dcard.ac{border-left:2px solid var(--c)}
+
+/* divider */
+.mp .dv{width:52px;height:2px;background:var(--c);margin:36px 0}
+.mp .ctr .dv{margin-left:auto;margin-right:auto}
+
+/* reveals */
+.mp .r{opacity:0;transform:translateY(24px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1);will-change:opacity,transform}
+.mp .r.v{opacity:1;transform:translateY(0)}
+
+/* slider */
+.mp .sld{display:block}
+.mp .sld-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:12px}
+.mp .sld-hd .l{font-family:var(--mo);font-size:10px;letter-spacing:1.8px;color:var(--lg);text-transform:uppercase}
+.mp .sld-hd .v{font-family:var(--se);font-size:19px;font-style:italic;font-weight:400;color:var(--c);line-height:1}
+.mp .sld.s .sld-hd .v{color:var(--s)}
+.mp .sld.cl .sld-hd .v{color:var(--cl)}
+.mp .sld input[type=range]{width:100%;height:6px;border-radius:3px;-webkit-appearance:none;appearance:none;cursor:pointer;outline:none;background:linear-gradient(to right,var(--c) var(--p,0%),rgba(150,150,150,.22) var(--p,0%));display:block}
+.mp .sld.s input[type=range]{background:linear-gradient(to right,var(--s) var(--p,0%),rgba(150,150,150,.22) var(--p,0%))}
+.mp .sld.cl input[type=range]{background:linear-gradient(to right,var(--cl) var(--p,0%),rgba(150,150,150,.22) var(--p,0%))}
+.mp .sld input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--c);cursor:pointer;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.25)}
+.mp .sld input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--c);cursor:pointer;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.25)}
+.mp .sld.s input::-webkit-slider-thumb{background:var(--s)}.mp .sld.s input::-moz-range-thumb{background:var(--s)}
+.mp .sld.cl input::-webkit-slider-thumb{background:var(--cl)}.mp .sld.cl input::-moz-range-thumb{background:var(--cl)}
+
+/* nav dock */
+.mp .nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;background:rgba(248,245,236,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:40px;border:1px solid rgba(0,0,0,.06);box-shadow:0 4px 24px rgba(0,0,0,.06);overflow:hidden;transition:all .4s ease;font-family:var(--sa)}
+.mp .nav .ch{background:none;border:none;cursor:pointer;padding:10px 14px;opacity:.5;transition:opacity .3s;display:flex;align-items:center;justify-content:center;color:var(--d)}
+.mp .nav .ch:hover:not(:disabled){opacity:1}
+.mp .nav .ch:disabled{opacity:.15;cursor:default}
+.mp .nav .ch svg{width:14px;height:8px}
+.mp .nav .ch.up svg{transform:rotate(180deg)}
+.mp .nav .inf{display:flex;align-items:center;gap:10px;padding:8px 4px;min-width:54px;transition:min-width .4s ease;overflow:hidden;justify-content:center}
+.mp .nav:hover .inf{min-width:170px}
+.mp .nav .idx{font-family:var(--mo);font-size:12px;color:var(--c);letter-spacing:.5px;flex-shrink:0;font-weight:500}
+.mp .nav .lb{font-family:var(--mo);font-size:9.5px;color:var(--lg);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;max-width:0;opacity:0;transition:all .4s ease}
+.mp .nav:hover .lb{max-width:140px;opacity:1}
+.mp .nav .tot{font-family:var(--mo);font-size:12px;color:rgba(0,0,0,.25);flex-shrink:0;opacity:0;transition:opacity .3s}
+.mp .nav:hover .tot{opacity:1}
+
+/* grids */
+.mp .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;grid-auto-rows:1fr}
+.mp .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;grid-auto-rows:1fr}
+.mp .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;grid-auto-rows:1fr}
+.mp .ga{display:grid;gap:14px}
+.mp .g2>.r,.mp .g3>.r,.mp .g4>.r,.mp .wc-diffs>.r,.mp .team-grid>.r,.mp .wc-stats>.r{height:100%}
+.mp .g2>.r>*,.mp .g3>.r>*,.mp .g4>.r>*,.mp .wc-diffs>.r>*,.mp .team-grid>.r>*{height:100%}
+
+/* cover specific */
+.mp .covlog{height:44px;object-fit:contain}
+.mp .covpil{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.mp .covprep{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mp .foot{position:absolute;bottom:28px;left:0;right:0;text-align:center}
+
+/* section 1 — spend bars */
+.mp .spend{display:grid;gap:8px;max-width:680px}
+.mp .spend .row{display:grid;grid-template-columns:220px 1fr 60px;gap:14px;align-items:center}
+.mp .spend .lbl2{font-family:var(--sa);font-size:12px;text-align:right}
+.mp .spend .bar{height:22px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.mp .spend .bar>div{height:100%;border-radius:4px}
+.mp .spend .val{font-family:var(--mo);font-size:11px}
+
+/* section 2 — condition cards */
+.mp .cond .hd{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.mp .cond .stat{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(60px,6.5vw,84px);color:var(--c);line-height:1;margin:4px 0 8px;letter-spacing:-.02em}
+.mp .cond .sl{font-family:var(--sa);font-size:13px;font-weight:600;color:var(--d);margin-top:4px}
+.mp .cond .src{font-family:var(--mo);font-size:10.5px;color:var(--lg);letter-spacing:1.5px;margin-top:6px;font-weight:500}
+.mp .cond .d{font-size:13px;line-height:1.6;margin-top:12px}
+
+/* section 3 — steps */
+.mp .step{padding:24px 26px}
+.mp .step .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:32px;color:var(--c);line-height:1}
+.mp .step h3{font-size:19px;color:var(--w);margin:10px 0 8px;font-family:var(--se);font-style:italic;font-weight:400}
+.mp .step p{font-size:13px;color:var(--ulg);line-height:1.6}
+
+/* section 4 — pricing */
+.mp .prc-row{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:start}
+.mp .prc-big{text-align:center;max-width:340px;margin:0 auto;padding:28px 20px;border-top:1px solid rgba(199,143,86,.3);border-bottom:1px solid rgba(199,143,86,.3)}
+.mp .prc-big .n{font-family:var(--se);font-style:italic;font-size:clamp(64px,7vw,92px);color:var(--d);line-height:.95;font-weight:400}
+.mp .prc-big .sub{font-family:var(--sa);font-size:14px;color:var(--d);margin-top:6px;font-weight:500}
+.mp .prc-big .sub em{font-family:var(--se);font-style:italic;font-weight:400;color:var(--c);font-size:15px}
+.mp .prc-big .u{margin-top:14px;font-family:var(--mo);font-size:12px;color:var(--c);letter-spacing:2.4px;text-transform:uppercase;font-weight:500}
+.mp .prc-incl{margin-top:24px;max-width:340px;margin-left:auto;margin-right:auto}
+.mp .prc-incl .hd{font-family:var(--mo);font-size:11px;color:var(--lg);letter-spacing:2px;text-transform:uppercase;font-weight:500;text-align:center;margin-bottom:14px}
+.mp .prc-incl ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.mp .prc-incl li{display:flex;align-items:flex-start;gap:10px;font-family:var(--sa);font-size:13.5px;color:var(--d);line-height:1.45}
+.mp .prc-incl li svg{flex-shrink:0;margin-top:3px;color:var(--c)}
+.mp .prc-incl .ftr{font-family:var(--sa);font-size:12px;color:var(--lg);text-align:center;margin-top:16px;font-style:italic}
+.mp .tiers{display:grid;gap:12px}
+.mp .tier{padding:18px 22px}
+.mp .tier h3{font-size:17px;color:var(--d);margin:4px 0 4px;font-family:var(--se);font-style:italic;font-weight:400}
+.mp .tier p{font-size:12.5px;line-height:1.5}
+
+/* section break / title slides */
+.mp .brk{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:clamp(80px,10vh,140px) clamp(24px,5vw,80px);position:relative}
+.mp .brk .wrap{align-items:center;max-width:900px}
+.mp .brk .prog{font-family:var(--mo);font-size:15px;letter-spacing:5px;color:var(--c);text-transform:uppercase;font-weight:500;margin-bottom:28px}
+.mp .brk h2{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(64px,10vw,132px);color:var(--d);line-height:.95;letter-spacing:-.02em;margin:0}
+.mp .brk h2 .ac{color:var(--c)}
+.mp .brk .sub{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(20px,2.2vw,28px);color:var(--gy);line-height:1.4;margin-top:28px;max-width:620px}
+.mp .brk .tags{display:flex;gap:10px;margin-top:36px;flex-wrap:wrap;justify-content:center}
+
+/* section 11 — pilot */
+.mp .pl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px;grid-auto-rows:1fr}
+.mp .pl-card{background:var(--kb);border:1px solid rgba(0,0,0,.04);border-radius:14px;padding:28px 22px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.mp .pl-card.ac{border-top:2px solid var(--c)}
+.mp .pl-card .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(40px,5vw,56px);line-height:1;color:var(--c)}
+.mp .pl-card .u{font-family:var(--se);font-style:italic;font-weight:400;font-size:14px;color:var(--d);margin-top:6px;display:block}
+.mp .pl-card .l{font-family:var(--mo);font-size:11px;color:var(--lg);letter-spacing:1.8px;margin-top:12px;text-transform:uppercase;font-weight:500}
+.mp .pl-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
+.mp .pl-col h4{font-family:var(--se);font-style:italic;font-weight:400;font-size:20px;color:var(--d);margin-bottom:14px}
+.mp .pl-col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.mp .pl-col li{display:flex;align-items:flex-start;gap:12px;font-family:var(--sa);font-size:13.5px;color:var(--gy);line-height:1.5}
+.mp .pl-col li .bullet{width:6px;height:6px;border-radius:50%;background:var(--c);flex-shrink:0;margin-top:9px}
+
+/* link styles for sources */
+.mp a.src-link{color:inherit;text-decoration:underline;text-decoration-color:rgba(199,143,86,.35);text-underline-offset:2px;transition:text-decoration-color .2s}
+.mp a.src-link:hover{text-decoration-color:var(--c)}
+
+/* section 5 — savings calculator */
+.mp .sc-card{padding:22px 24px}
+.mp .sc-card .title{margin-bottom:16px}
+.mp .sc-card .sv{font-family:var(--se);font-style:italic;font-weight:400;font-size:32px;color:var(--d);line-height:1;text-align:center;margin-top:18px}
+.mp .sc-card .svl{font-family:var(--mo);font-size:11.5px;color:var(--lg);letter-spacing:2px;text-align:center;margin-top:8px;text-transform:uppercase;font-weight:500}
+.mp .sc-hero{text-align:center;margin-top:32px;padding:44px 28px;background:var(--d);border-radius:20px}
+.mp .sc-hero .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(72px,11vw,148px);color:var(--c);line-height:1;letter-spacing:-.02em}
+.mp .sc-hero .l{font-family:var(--mo);font-size:13px;color:var(--ulg);letter-spacing:3px;margin-top:18px;text-transform:uppercase;font-weight:500}
+.mp .sc-sub{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+.mp .sc-sub .box{background:var(--kb);padding:26px 20px;text-align:center;border-radius:16px;border:1px solid rgba(0,0,0,.04)}
+.mp .sc-sub .box .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(36px,4.5vw,54px);line-height:1}
+.mp .sc-sub .box .n.s{color:var(--s)}
+.mp .sc-sub .box .n.d{color:var(--d)}
+.mp .sc-sub .box .l{font-family:var(--mo);font-size:11.5px;color:var(--lg);letter-spacing:2px;margin-top:10px;text-transform:uppercase;font-weight:500}
+.mp .sc-meta{font-family:var(--sa);font-size:12px;color:var(--lg);margin-top:18px;text-align:center;font-style:italic}
+
+/* section 5 — projected scenarios block */
+.mp .scn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;grid-auto-rows:1fr}
+.mp .scn-card{background:var(--kb);border:1px solid rgba(0,0,0,.04);border-top:2px solid var(--c);border-radius:14px;padding:26px 22px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.mp .scn-card .scn-n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(36px,4.5vw,52px);color:var(--c);line-height:1;letter-spacing:-.01em}
+.mp .scn-card .scn-t{font-family:var(--sa);font-size:14px;font-weight:600;color:var(--d);margin-top:10px}
+.mp .scn-card .scn-s{font-family:var(--mo);font-size:10.5px;color:var(--lg);letter-spacing:1.5px;margin-top:6px;text-transform:uppercase;font-weight:500}
+.mp .scn-total{margin-top:18px;background:var(--d);border-radius:20px;padding:40px 36px;display:grid;grid-template-columns:1.5fr 1fr;gap:28px;align-items:center;border-left:3px solid var(--c)}
+.mp .scn-total-l,.mp .scn-total-r{text-align:left}
+.mp .scn-total-r{text-align:right;border-left:1px solid rgba(255,255,255,.1);padding-left:28px}
+.mp .scn-total-n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(56px,8vw,96px);color:var(--c);line-height:1;letter-spacing:-.02em}
+.mp .scn-total-n .plus{font-size:.65em;vertical-align:super;color:var(--cl);font-style:normal}
+.mp .scn-roi{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(48px,6vw,72px);color:var(--w);line-height:1;letter-spacing:-.02em}
+.mp .scn-roi span{color:var(--c);font-style:italic;font-size:.75em;margin-left:2px}
+.mp .scn-total-lbl{font-family:var(--mo);font-size:11.5px;color:var(--ulg);letter-spacing:2px;margin-top:14px;text-transform:uppercase;font-weight:500;line-height:1.3}
+
+/* section 6 — break even */
+.mp .be-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:20px}
+.mp .be-card{padding:32px 30px}
+.mp .be-hero{text-align:center;padding:18px 0 22px;border-bottom:1px solid rgba(255,255,255,.08)}
+.mp .be-hero .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(90px,13vw,180px);color:var(--cl);line-height:.9;letter-spacing:-.03em}
+.mp .be-hero .lead{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(18px,2vw,24px);color:var(--w);line-height:1.3;margin-top:14px;max-width:380px;margin-left:auto;margin-right:auto}
+.mp .be-hero .lead .ac{color:var(--c)}
+.mp .be-sub{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:22px}
+.mp .be-sub .col{text-align:center}
+.mp .be-sub .n{font-family:var(--se);font-style:italic;font-weight:400;font-size:36px;line-height:1;color:var(--w)}
+.mp .be-sub .lbl3{font-family:var(--mo);font-size:11px;color:var(--ulg);letter-spacing:1.8px;margin-top:10px;text-transform:uppercase;font-weight:500}
+.mp .be-bt{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:18px}
+.mp .be-bt button{font-family:var(--mo);font-size:10px;letter-spacing:1px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;cursor:pointer;text-transform:uppercase;transition:background .2s;font-weight:500}
+.mp .be-bt button:hover{background:rgba(255,255,255,.1)}
+.mp .be-nums{display:none}
+.mp .be-note{background:rgba(199,143,86,.1);border:1px solid rgba(199,143,86,.22);border-radius:10px;padding:14px 18px;margin-top:20px}
+.mp .be-note p{font-size:12.5px;color:var(--cl);line-height:1.6;margin:0}
+.mp .be-note strong{color:#fff;font-weight:600}
+.mp .be-right .big{font-family:var(--se);font-style:italic;font-weight:400;font-size:52px;line-height:1;color:var(--s);margin-top:24px;text-align:center}
+.mp .be-right .mid{font-family:var(--se);font-style:italic;font-weight:400;font-size:36px;line-height:1;text-align:center;margin-top:18px}
+.mp .be-right .lbl3{font-family:var(--mo);font-size:11.5px;color:var(--ulg);letter-spacing:2px;margin-top:10px;text-transform:uppercase;display:block;text-align:center;font-weight:500}
+.mp .be-bars{display:flex;flex-direction:column;gap:5px;margin-top:22px}
+.mp .be-bars .row{display:grid;grid-template-columns:32px 1fr 60px;gap:8px;align-items:center}
+.mp .be-bars .p{font-family:var(--mo);font-size:10.5px;color:var(--ulg);text-align:right;font-weight:500}
+.mp .be-bars .tr{height:18px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.mp .be-bars .tr>div{height:100%;border-radius:4px;transition:width .3s}
+.mp .be-bars .val{font-family:var(--mo);font-size:10.5px;font-weight:500}
+.mp .be-bm{font-family:var(--mo);font-size:10.5px;color:var(--ulg);margin-top:10px;text-align:center;font-weight:500}
+
+/* section 7 — why cade */
+.mp .wc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-bottom:36px;grid-auto-rows:1fr}
+.mp .wc-stats .st{text-align:center;display:flex;flex-direction:column;justify-content:center}
+.mp .wc-stats .st .n{font-family:var(--se);font-style:italic;font-size:clamp(36px,4.5vw,52px);color:var(--c);line-height:1;font-weight:400}
+.mp .wc-stats .st .l{font-family:var(--mo);font-size:12px;letter-spacing:2.2px;color:var(--lg);text-transform:uppercase;margin-top:12px;font-weight:500}
+.mp .wc-diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;grid-auto-rows:1fr}
+.mp .diff{padding:22px 24px}
+.mp .diff h3{font-size:17px;color:var(--d);margin-bottom:8px;font-family:var(--se);font-style:italic;font-weight:400}
+.mp .diff p{font-size:13px;line-height:1.6}
+.mp .team-sec{margin-top:40px}
+.mp .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:14px;grid-auto-rows:1fr}
+.mp .tm{padding:24px 26px}
+.mp .tm .hd{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+.mp .av{width:50px;height:50px;border-radius:50%;background:var(--cb);border:2px solid var(--c);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mp .av span{font-family:var(--se);font-style:italic;font-weight:400;font-size:22px;color:var(--c)}
+.mp .tm .nm{font-family:var(--se);font-style:italic;font-weight:400;font-size:20px;color:var(--d);line-height:1.1}
+.mp .tm .tt{font-family:var(--sa);font-size:12px;color:var(--lg);margin-top:2px}
+.mp .tmi{display:flex;gap:10px;margin-bottom:6px;align-items:flex-start}
+.mp .tmi .dash{color:var(--c);flex-shrink:0;line-height:1.6}
+.mp .tmi .txt{font-size:13px;color:var(--gy);line-height:1.6}
+
+/* roster sub-teams */
+.mp .ros-sec{margin-top:32px}
+.mp .ros-hd{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.mp .ros-hd h4{font-family:var(--se);font-style:italic;font-weight:400;font-size:20px;color:var(--d);line-height:1;margin:0;flex-shrink:0}
+.mp .ros-hd .line{flex:1;height:1px;background:rgba(0,0,0,.08)}
+.mp .ros-hd .count{font-family:var(--mo);font-size:11px;color:var(--lg);letter-spacing:1.5px;flex-shrink:0;font-weight:500}
+.mp .ros-grid{display:grid;gap:12px}
+.mp .ros-grid.cs{grid-template-columns:repeat(2,minmax(0,1fr));max-width:440px}
+.mp .ros-grid.ct{grid-template-columns:repeat(5,1fr)}
+.mp .roster{display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 14px;background:var(--kb);border:1px solid rgba(0,0,0,.04);border-radius:14px}
+.mp .roster .av{width:52px;height:52px;margin:0 0 12px}
+.mp .roster .av span{font-size:18px}
+.mp .roster .nm{font-family:var(--se);font-style:italic;font-weight:400;font-size:16px;color:var(--d);line-height:1.2}
+.mp .roster .tt{font-family:var(--mo);font-size:10.5px;color:var(--lg);margin-top:7px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500}
+
+/* section 8 — FFS */
+.mp .ff-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mp .ff-card{padding:24px 26px}
+.mp .ff-res{display:flex;flex-direction:column;gap:14px}
+.mp .ff-res .big{background:var(--d);border-radius:16px;padding:24px 20px;text-align:center}
+.mp .ff-res .big .n{font-family:var(--se);font-style:italic;font-size:clamp(40px,4.5vw,56px);color:var(--c);line-height:1;font-weight:400}
+.mp .ff-res .big .l{font-family:var(--mo);font-size:11.5px;color:var(--ulg);letter-spacing:2.2px;margin-top:10px;text-transform:uppercase;font-weight:500}
+.mp .ff-res .big .s{font-family:var(--sa);font-size:12px;color:var(--ulg);margin-top:6px}
+.mp .ff-res .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mp .ff-res .pair .box{background:var(--kb);border-radius:12px;padding:18px 14px;text-align:center;border:1px solid rgba(0,0,0,.06)}
+.mp .ff-res .pair .box .n{font-family:var(--se);font-style:italic;font-size:26px;color:var(--d);line-height:1;font-weight:400}
+.mp .ff-res .pair .box .l{font-family:var(--mo);font-size:9px;color:var(--lg);letter-spacing:1.2px;margin-top:6px;text-transform:uppercase}
+.mp .ff-flow{display:flex;flex-direction:column;gap:2px;margin-top:14px;max-width:720px;border-radius:12px;overflow:hidden}
+.mp .ff-flow .row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;gap:12px}
+.mp .ff-flow .row:nth-child(odd){background:var(--kb)}
+.mp .ff-flow .row:nth-child(even){background:var(--bg)}
+.mp .ff-flow .lft{min-width:0}
+.mp .ff-flow .ttl{font-family:var(--sa);font-size:13px;font-weight:600;color:var(--d);display:block}
+.mp .ff-flow .sub{font-family:var(--sa);font-size:11px;color:var(--lg);display:block;margin-top:2px}
+.mp .ff-flow .v{font-family:var(--se);font-style:italic;font-size:19px;color:var(--c);flex-shrink:0;font-weight:400}
+
+/* Risk offset comparison */
+.mp .offset-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch;margin-bottom:18px}
+.mp .offset-card{background:var(--kb);border:1px solid rgba(0,0,0,.05);border-radius:16px;padding:26px 24px;display:flex;flex-direction:column;justify-content:center}
+.mp .offset-card.pos{border-left:3px solid var(--s)}
+.mp .offset-card:not(.pos){border-left:3px solid var(--rd)}
+.mp .offset-tag{font-family:var(--mo);font-size:10.5px;color:var(--lg);letter-spacing:1.8px;text-transform:uppercase;font-weight:500;margin-bottom:10px}
+.mp .offset-n{font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(38px,5vw,56px);line-height:1;letter-spacing:-.01em}
+.mp .offset-n.rd{color:var(--rd)}
+.mp .offset-n.sc{color:var(--s)}
+.mp .offset-n .unit{font-family:var(--sa);font-size:14px;font-style:normal;font-weight:500;color:var(--gy);margin-left:4px}
+.mp .offset-l{font-family:var(--sa);font-size:13px;font-weight:600;color:var(--d);margin-top:12px}
+.mp .offset-s{font-family:var(--sa);font-size:12px;color:var(--gy);margin-top:6px;line-height:1.5}
+.mp .offset-vs{display:flex;align-items:center;justify-content:center;font-family:var(--se);font-style:italic;font-weight:400;font-size:28px;color:var(--lg)}
+.mp .offset-result{background:var(--cb);border:1px solid rgba(199,143,86,.22);border-radius:12px;padding:20px 26px;display:flex;gap:18px;align-items:center}
+.mp .offset-r-icon{font-family:var(--se);font-style:italic;font-size:40px;color:var(--c);line-height:1;flex-shrink:0}
+.mp .offset-r-txt{font-family:var(--sa);font-size:14px;color:var(--d);line-height:1.6}
+.mp .offset-r-txt strong{color:var(--c);font-weight:600}
+
+@media(max-width:767px){
+ .mp .offset-grid{grid-template-columns:1fr;gap:12px}
+ .mp .offset-vs{padding:4px 0}
+ .mp .offset-result{flex-direction:column;text-align:center;gap:12px;padding:18px 22px}
+}
+
+/* section 9 — rollout */
+.mp .tl{display:flex;flex-direction:column;gap:14px;max-width:720px}
+.mp .tl .row{display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:flex-start}
+.mp .tl .row .tg{display:flex;align-items:center}
+.mp .tl h3{font-size:17px;color:var(--d);margin-bottom:4px;font-family:var(--se);font-style:italic;font-weight:400;line-height:1.2}
+.mp .tl p{font-size:13px;line-height:1.6}
+
+/* breakpoints ------------------------------------------------------ */
+
+/* Tablet (768–1023) */
+@media(max-width:1023px){
+ .mp .wrap{max-width:720px}
+ .mp .g3{grid-template-columns:repeat(2,1fr)}
+ .mp .g4{grid-template-columns:repeat(2,1fr)}
+ .mp .wc-stats{grid-template-columns:repeat(4,1fr);gap:20px}
+ .mp .wc-diffs{grid-template-columns:repeat(2,1fr)}
+ .mp .be-grid{grid-template-columns:1fr;gap:16px}
+ .mp .ff-grid{grid-template-columns:1fr}
+ .mp .prc-row{grid-template-columns:1fr;gap:28px}
+ .mp .sc-sum{grid-template-columns:repeat(3,1fr)}
+ .mp .spend .row{grid-template-columns:170px 1fr 60px;gap:12px}
+ .mp .ros-grid.ct{grid-template-columns:repeat(3,1fr)}
+ .mp .pl-grid{grid-template-columns:repeat(2,1fr)}
+ .mp .pl-row{grid-template-columns:1fr;gap:14px}
+ .mp .scn-grid{grid-template-columns:repeat(3,1fr)}
+ .mp .scn-total{grid-template-columns:1fr;gap:20px;text-align:center}
+ .mp .scn-total-r{text-align:center;border-left:none;border-top:1px solid rgba(255,255,255,.1);padding-left:0;padding-top:20px}
+ .mp .scn-total-l{text-align:center}
+ .mp section{padding:clamp(72px,9vh,120px) clamp(20px,5vw,48px)}
+}
+
+/* Mobile (<768) */
+@media(max-width:767px){
+ .mp{font-size:14.5px}
+ .mp .lbl,.mp .lbl-c,.mp .lbl-lgc{font-size:12.5px;letter-spacing:2px}
+ .mp .lbl-cov{font-size:13px;letter-spacing:4.5px}
+ .mp .lbl-lg{font-size:11px;letter-spacing:2.5px}
+ .mp .wc-stats .st .l,.mp .sc-sum .box .l,.mp .be-nums .lbl3,.mp .be-right .lbl3,.mp .ff-res .big .l,.mp .sc-card .svl{font-size:10.5px;letter-spacing:1.8px}
+ .mp .prc-big .u{font-size:10.5px;letter-spacing:2px}
+ .mp .wrap{max-width:100%}
+ .mp .g2,.mp .g3,.mp .g4{grid-template-columns:1fr;gap:14px}
+ .mp .wc-stats{grid-template-columns:repeat(2,1fr);gap:20px}
+ .mp .wc-diffs{grid-template-columns:1fr;gap:12px}
+ .mp .sc-sum{grid-template-columns:1fr;gap:10px}
+ .mp .team-grid{grid-template-columns:1fr}
+ .mp .ros-grid.cs{grid-template-columns:repeat(2,1fr);max-width:none}
+ .mp .ros-grid.ct{grid-template-columns:repeat(2,1fr)}
+ .mp .roster{padding:16px 10px}
+ .mp .roster .av{width:48px;height:48px}
+ .mp .roster .av span{font-size:16px}
+ .mp .roster .nm{font-size:15px}
+ .mp .ros-hd h4{font-size:17px}
+ .mp .pl-grid{grid-template-columns:1fr 1fr;gap:10px}
+ .mp .pl-card{padding:22px 14px}
+ .mp .pl-card .n{font-size:clamp(32px,7vw,44px)}
+ .mp .scn-grid{grid-template-columns:1fr}
+ .mp .scn-total{grid-template-columns:1fr;gap:20px;padding:32px 24px}
+ .mp .scn-total-r{text-align:center;border-left:none;border-top:1px solid rgba(255,255,255,.1);padding-left:0;padding-top:20px}
+ .mp .scn-total-l{text-align:center}
+ .mp .brk .prog{font-size:12px;letter-spacing:3.5px;margin-bottom:22px}
+ .mp .brk h2{font-size:clamp(52px,14vw,80px)}
+ .mp .brk .sub{font-size:18px;margin-top:22px}
+ .mp .sc-hero{padding:32px 20px}
+ .mp .sc-sub{grid-template-columns:1fr}
+ .mp .be-hero .n{font-size:clamp(72px,18vw,110px)}
+ .mp .be-hero .lead{font-size:17px}
+ .mp .be-nums{grid-template-columns:1fr 1fr;gap:14px}
+ .mp .be-nums .n{font-size:44px}
+ .mp .be-bt{grid-template-columns:1fr 1fr;gap:6px}
+ .mp .tl .row{grid-template-columns:1fr;gap:8px}
+ .mp .ff-flow .row{padding:12px 14px}
+ .mp .ff-flow .v{font-size:16px}
+ .mp .ff-flow .ttl{font-size:12.5px}
+ .mp .spend .row{grid-template-columns:110px 1fr 48px;gap:8px}
+ .mp .spend .lbl2{font-size:10.5px}
+ .mp .prc-big{padding:24px 16px;max-width:300px}
+ .mp .prc-big .n{font-size:64px}
+ .mp .card,.mp .dcard{padding:22px 22px}
+ .mp .be-card{padding:24px 22px}
+ .mp .ff-card{padding:22px 22px}
+ .mp section{padding:clamp(72px,9vh,100px) clamp(18px,5vw,32px)}
+ .mp .nav .inf{min-width:150px}
+ .mp .nav .lb{max-width:130px;opacity:1}
+ .mp .nav .tot{opacity:1}
+ .mp .covlog{height:38px}
+ .mp .dv{margin:28px 0}
+}
 </style>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel" data-presets="env,react">
-const { useState, useEffect, useRef } = React;
-const DS = { bg:"#FFFFF0", copper:"#C78F56", dark:"#1a1a1a", gray:"#595959", lgray:"#999999", glass:"rgba(0,0,0,0.03)", glassBorder:"rgba(0,0,0,0.1)", glassHL:"rgba(0,0,0,0.15)", white:"#fff", black:"#0a0a0a", success:"#1A8754", successBg:"rgba(26,135,84,0.08)", copperBg:"rgba(199,143,86,.08)", copperLight:"#E8C9A0", red:"#c0392b" };
-const G=`linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%)`;
-const mono="'Roboto Mono',monospace", serif="'Playfair Display',serif", sans="'Montserrat',sans-serif";
-function R({ children, delay=0, dir="up", dist=28, dur=0.7, style={}, className="" }) {
-const ref=useRef(null); const [v,setV]=useState(false);
-useEffect(()=>{const el=ref.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting){setV(true);o.disconnect()}},{threshold:.12});o.observe(el);return()=>o.disconnect()},[]);
-const t={up:`translateY(${dist}px)`,down:`translateY(-${dist}px)`,left:`translateX(${dist}px)`,right:`translateX(-${dist}px)`,none:"none"};
-return <div ref={ref} className={className} style={{opacity:v?1:0,transform:v?"translate(0,0)":t[dir],transition:`opacity ${dur}s cubic-bezier(.16,1,.3,1) ${delay}s, transform ${dur}s cubic-bezier(.16,1,.3,1) ${delay}s`,willChange:"opacity,transform",...style}}>{children}</div>;
-}
-function Lbl({children,style={}}){return <span style={{fontFamily:mono,fontSize:11,fontWeight:400,letterSpacing:3,color:DS.gray,textTransform:"uppercase",display:"block",...style}}>{children}</span>}
-function Glass({children,style={}}){return <div style={{background:DS.glass,backdropFilter:"blur(25px)",WebkitBackdropFilter:"blur(25px)",border:`1px solid ${DS.glassBorder}`,borderTopColor:DS.glassHL,borderRadius:20,boxShadow:"0 8px 32px rgba(0,0,0,.05),inset 0 0 0 1px rgba(0,0,0,.05)",...style}}>{children}</div>}
-function Num({n,dark}){return <span style={{fontFamily:sans,fontSize:14,fontWeight:700,color:dark?DS.copperLight:DS.copper,display:"inline-block",width:36,height:36,lineHeight:"36px",textAlign:"center",borderRadius:10,background:dark?"rgba(255,255,255,.08)":DS.copperBg}}>{n}</span>}
-function Pill({children,color=DS.copper}){return <span style={{fontFamily:mono,fontSize:9,fontWeight:400,letterSpacing:2,textTransform:"uppercase",color:DS.white,background:color,padding:"5px 14px",borderRadius:20,display:"inline-block"}}>{children}</span>}
-function Divider(){return <div style={{width:48,height:2,background:DS.copper,margin:"40px 0"}}/>}
-const sec={minHeight:"100vh",padding:"clamp(80px,10vh,120px) clamp(24px,5vw,80px)",display:"flex",flexDirection:"column",justifyContent:"center",position:"relative",scrollSnapAlign:"start"};
-const secT={...sec,justifyContent:"flex-start",paddingTop:"clamp(100px,12vh,140px)"};
-const NAV=[{id:"cover",l:"COVER"},{id:"exec",l:"SUMMARY"},{id:"culture",l:"CULTURE"},{id:"collateral",l:"COLLATERAL"},{id:"website",l:"WEBSITE"},{id:"competitive",l:"COMPETITIVE"},{id:"programs",l:"PROGRAMS"},{id:"cc",l:"CONNECTED CARE"},{id:"cgm",l:"CGM"},{id:"sales",l:"SALES STRATEGY"},{id:"pipeline",l:"PIPELINE"},{id:"auc",l:"AUC PROJECT"},{id:"recs",l:"RECOMMENDATIONS"},{id:"engine",l:"NARRATIVE ENGINE"},{id:"demo",l:"ENGINE DEMO"},{id:"phase2",l:"PHASE 2"},{id:"close",l:"CLOSE"}];
-function CopyBtn({text}){
-const [copied,setCopied]=useState(false);
-const copy=()=>{
-try{
-const ta=document.createElement("textarea");
-ta.value=text;
-ta.style.cssText="position:fixed;left:-9999px;top:-9999px;opacity:0";
-document.body.appendChild(ta);
-ta.focus();
-ta.select();
-const ok=document.execCommand("copy");
-document.body.removeChild(ta);
-if(ok){setCopied(true);setTimeout(()=>setCopied(false),2000)}
-}catch(e){
-try{navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)})}catch(e2){}
-}
-};
-return <button onClick={copy} style={{fontFamily:mono,fontSize:9,letterSpacing:2,textTransform:"uppercase",color:copied?DS.success:DS.lgray,background:copied?"rgba(26,135,84,.12)":"none",border:`1px solid ${copied?DS.success:"rgba(255,255,255,.15)"}`,borderRadius:8,padding:"6px 14px",cursor:"pointer",transition:"all .3s"}}>{copied?"✓ COPIED":"COPY"}</button>;
-}
-function EngineDemo(){
-const [tab,setTab]=useState("build");
-const [prospectType,setProspectType]=useState("clinic");
-const [specialty,setSpecialty]=useState("cardiology");
-const [size,setSize]=useState("small");
-const tabs=[{id:"build",l:"Build a Deck"},{id:"system",l:"Design System"},{id:"objections",l:"Objections"},{id:"templates",l:"Templates"}];
-const designSystemPrompt=`You are an expert front-end developer and UI/UX designer. Your task is to generate a single-file interactive pitch deck/report using HTML, Tailwind CSS (via CDN), and React 18 (via CDN with Babel for JSX).
-You must strictly adhere to the following Design System and Architecture Rules. Do not invent new styles, colors, or layouts. Use only what is defined here.
-### 1. HEAD & SCRIPTS
-Include in <head>:
-- React 18 + ReactDOM (production, via unpkg CDN)
-- Tailwind CSS (via cdn.tailwindcss.com)
-- Google Fonts: Montserrat (400-700, italic), Playfair Display (400-700, italic), Roboto Mono (400-700)
-- Configure tailwind.config to extend fontFamily with sans: Montserrat, serif: Playfair Display, mono: Roboto Mono
-### 2. DESIGN SYSTEM
-{
-"colors": {
-"bg": "#FEF9EF",
-"copper": "#C78F56",
-"copperLight": "#E8C9A0",
-"copperBg": "rgba(199,143,86,.08)",
-"dark": "#1a1a1a",
-"gray": "#595959",
-"lgray": "#999999",
-"xlight": "#e8e8e0",
-"white": "#F5EEE2",
-"black": "#0a0a0a",
-"success": "#1A8754",
-"successBg": "rgba(26,135,84,.08)",
-"red": "#DC2626"
-},
-"fonts": {
-"sans": "Montserrat, sans-serif — body text, UI elements, labels",
-"serif": "Playfair Display, serif — ALWAYS italic for headings, stats, quotes",
-"mono": "Roboto Mono, monospace — labels, metadata, data values, tracking-[3px]"
-},
-"typography": {
-"h1": "font-serif italic text-[clamp(56px,8vw,110px)] text-dark leading-[1.05] tracking-[-.03em]",
-"h2": "font-serif italic text-[clamp(40px,5vw,84px)] text-dark leading-[1.1]",
-"h3": "font-serif italic text-[clamp(20px,2vw,32px)] text-dark",
-"body": "font-sans text-[clamp(16px,1.6vw,24px)] text-gray leading-[1.7]",
-"label": "font-mono text-[clamp(11px,1vw,14px)] font-normal tracking-[3px] text-gray uppercase",
-"stat_number": "font-serif italic text-[clamp(64px,9vw,110px)] leading-none",
-"stat_label": "font-sans text-[clamp(18px,1.8vw,24px)] font-semibold text-dark mt-[16px]",
-"data_value": "font-mono font-normal — used for table cells, percentages, financial figures"
-},
-"emphasis_rules": {
-"copper_accent": "Use color copper (#C78F56) for key words in headlines — typically the emotional word or outcome word. Example: 'Care between visits you can <span copper>count on</span>'",
-"line_breaks": "Drop the copper-accented phrase to its own line using <br/> for dramatic emphasis",
-"dark_on_dark": "On dark (#0a0a0a) backgrounds, headings use #F5EEE2, body uses #999999, labels use #999999, accent stays copper",
-"never_bold_headings": "All h1/h2/h3 use font-weight 400 (normal) + italic. Never bold a heading."
-}
-}
-### 3. REQUIRED COMPONENTS
-Build and use these exact React components:
-**<Lbl>** — Small uppercase monospace label
-- font: Roboto Mono, clamp(11px,1vw,14px), weight 400
-- letter-spacing: 3px, uppercase, color: #595959
-- Renders as <span> with display: block
-**<Num n="01">** — Section number badge
-- 40x40px, rounded-[10px], text-center
-- bg: rgba(199,143,86,.08), color: #C78F56, font-sans bold 16px
-- Dark variant: bg rgba(255,255,255,.08), color: #E8C9A0
-**<Card>** — Content container
-- bg: #F5EEE2, rounded-[24px], padding: 40px 48px
-- shadow: 0 4px 24px rgba(0,0,0,.03)
-- border: 1px solid #e8e8e0
-- Optional "accent" prop: adds 4px solid top border OR left border in accent color
-- Use for feature cards, stat cards, comparison cards
-**<BigStat>** — Large metric display
-- Number: font-serif italic clamp(64px,9vw,110px), default color dark, optional copper
-- Label: font-sans semibold clamp(18px,1.8vw,24px), color dark, mt-16px
-- Sub: font-sans clamp(14px,1.2vw,18px), color #999999, mt-8px
-- Container: text-center, flex-[1_1_220px], min-w-[200px]
-**<Pill>** — Status/tag badge
-- font-mono, 9px, tracking 2px, uppercase, white text
-- Colored background (copper, dark, success, lgray, or red)
-- padding: 5px 14px, border-radius: 20px
-### 4. SLIDE ARCHITECTURE
-Each slide is a <section> with:
-- min-height: 100vh
-- padding: clamp(100px,12vh,140px) clamp(32px,5vw,100px) clamp(40px,6vh,100px)
-- display: flex, flex-direction: column, justify-content: center
-- position: relative, box-sizing: border-box
-**Slide background patterns:**
-- Light slides: bg #FEF9EF (default)
-- Dark slides: bg #0a0a0a (use for contrast sections — gap analysis, projections, competitive, why us)
-- Copper wash slides: bg rgba(199,143,86,.08) (use for section dividers, patient journey intro, program definitions)
-- Gradient dark: background linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%) for variety on dark slides
-**Slide content rules:**
-- Max content width: 1300-1400px for card grids, 900-1100px for text-heavy slides
-- Cards in flex-wrap grids: gap 24px-32px, flex-[1_1_calc(50%-24px)] min-w-[360px]
-- Always start each slide with <Num> badge + <Lbl> section label + <h2> headline
-- Headline always contains one copper-accented word/phrase on its own line
-### 5. ANIMATION SYSTEM
-CSS class .animate-up:
-- Default: opacity 0, transform translateY(32px)
-- Visible: opacity 1, transform translateY(0)
-- Transition: 0.8s cubic-bezier(.16, 1, .3, 1) on both opacity and transform
-- Triggered by IntersectionObserver (threshold 0.15) adding class .is-visible
-**Stagger pattern:** Apply sequential transitionDelay inline styles:
-- Section badge: 0ms
-- Label: 0ms (appears with badge)
-- Headline: 100ms
-- Body text: 200ms
-- First card row: 200-400ms (100ms between cards)
-- Second card row: 300-500ms
-- Callout/quote: 400-600ms
-### 6. FIXED ELEMENTS
-**Top navigation bar:**
-- Fixed, top 0, left 0, right 0, height 80px
-- bg: rgba(254,249,239,.9), backdrop-filter: blur(12px)
-- border-bottom: 1px solid rgba(0,0,0,.04)
-- Contains brand logo (left-aligned, height 40px)
-**Page counter (bottom-right):**
-- Fixed, bottom 40px, right 48px
-- font-mono, 14px, color #999999
-- bg: rgba(254,249,239,.85), backdrop-filter: blur(12px)
-- padding: 10px 20px, border-radius: 24px
-- border: 1px solid rgba(0,0,0,.06)
-- Format: "01 / 10"
-**Dot navigation (right side, hidden on mobile):**
-- Fixed, right 24px, top 50%, transform translateY(-50%)
-- Array of 8px circular buttons, one per slide
-- Active: bg copper, scale 1.5. Inactive: bg #999, opacity 0.4
-- onClick scrolls to corresponding section
-### 7. MOBILE RESPONSIVE (@media max-width: 768px)
-- Sections: padding 100px 24px 80px, height auto, min-height 100vh
-- Flex layouts: flex-direction column, gap 24px
-- Cards: min-width 100%, padding 28px
-- h1: 44px, h2: 36px, h3: 24px, body: 16px
-- BigStat numbers: 56px
-- Hide dot navigation
-- Page counter: right 24px, bottom 24px
-### 8. SCROLLBAR & GLOBAL STYLES
-Hide scrollbars:
-#deck::-webkit-scrollbar { display: none; }
-#deck { -ms-overflow-style: none; scrollbar-width: none; }
-All headings: font-weight 400 !important (enforce via CSS rule)
-### 9. CONTENT INSTRUCTIONS
-Generate the report using the outline provided in the content prompt. Apply the stagger animation pattern to every element. Ensure all slides follow the Num → Lbl → h2 → body → cards hierarchy.
-**Brand:** CADE Medical
-**Logo:** https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public
-Write the complete, functional, single-file HTML document. Ensure all components are modular and all styling exactly matches this Design System. Do not deviate.`;
-const prospectTypes={
-clinic:{label:"Independent Clinic"},
-urgent:{label:"Urgent Care System"},
-health_system:{label:"Health System"},
-fqhc:{label:"FQHC / Rural Health"},
-payer:{label:"Insurance Payer"}
-};
-const specialties={
-cardiology:{label:"Cardiology",programs:"RPM + CCM"},
-endocrinology:{label:"Endocrinology",programs:"RPM + CCM + RTM"},
-pulmonology:{label:"Pulmonology",programs:"RPM + CCM + RTM"},
-primary:{label:"Primary Care",programs:"RPM + CCM + APCM"},
-orthopedic:{label:"Orthopedic / MSK",programs:"RTM + CCM"},
-multispecialty:{label:"Multi-Specialty",programs:"Full Stack"},
-wound:{label:"Wound Care",programs:"RTM + CCM"}
-};
-const sizes={
-solo:{label:"Solo Provider",patients:"200-800"},
-small:{label:"Small Group (2-10)",patients:"1,000-5,000"},
-mid:{label:"Mid-Market (10-50)",patients:"5,000-25,000"},
-enterprise:{label:"Enterprise (50+)",patients:"25,000+"}
-};
-const contentPrompt=`NARRATIVE STRUCTURE (Golden Circle):
-WHY: ${prospectType==="payer"?"Connected Care reduces total cost of care by preventing ER visits and hospitalizations. The data proves it.":prospectType==="health_system"?"Your patients deserve continuous care between visits. Your outcomes depend on it. Your value-based contracts reward it.":prospectType==="fqhc"?"The communities you serve face the greatest barriers to continuous care. Connected Care bridges that gap — and CMS funds it.":"Your patients trust you with their health. Right now, no one is watching between visits. Connected Care changes that — and Medicare reimburses the effort."}
-HOW: CADE Medical provides the entire program — not just software. A dedicated clinical care team (NPs, RNs, MAs) monitors patients daily, calls weekly, and escalates to your providers when needed. Cellular devices ship directly to patients. No WiFi. No app. No setup burden on your staff.
-WHAT: ${(specialties[specialty]||{}).programs} powered by the 1bios platform. 30,000+ patients managed nationally since 2016. Zero audit recoupments.
-PROSPECT DETAILS:
-- Type: ${(prospectTypes[prospectType]||{}).label}
-- Specialty: ${(specialties[specialty]||{}).label}
-- Size: ${(sizes[size]||{}).label} (Est. ${(sizes[size]||{}).patients} patients)
-- Recommended Programs: ${(specialties[specialty]||{}).programs}
-SLIDE STRUCTURE:
-01. Cover — [Prospect Name] + CADE Medical
-02. The WHY — Why Connected Care exists for ${(specialties[specialty]||{}).label}
-03. The Data — ${prospectType==="payer"?"Clinical outcomes and cost reduction metrics":"Patient volume opportunity and qualification estimates"}
-04. What is Connected Care — Programs overview (${(specialties[specialty]||{}).programs})
-05. The Gap — What happens between visits today vs. what could happen
-06. Patient Experience — Zero-touch or hands-on enrollment models
-07. ${prospectType==="payer"?"Clinical Outcomes — Published metrics, BP/glucose reduction data":"Per Patient Economics — Revenue per patient per month by program"}
-08. ${prospectType==="health_system"?"Readmission Reduction — 30-day readmission data, value-based benchmarks":"Revenue Projections — Three scenarios (Conservative / Base / Aggressive)"}
-09. How We Work Together — AUC responsibilities vs. CADE responsibilities
-10. Why CADE — Since 1999, Experity compatible, you get paid first
-11. Next Steps — From here to live in 30 days
-BACKGROUNDS: Slides 01, 05, 10 = dark (#0a0a0a). Slide 06 = copper wash. All others = light (#FEF9EF).`;
-const objections=[
-{q:"We don't have the staff to manage another program.",a:"You don't manage it — we do. CADE provides the entire clinical team. Your staff involvement is a 30-second patient intro at the visit and reviewing escalated alerts. That's it."},
-{q:"How do we know patients will actually use the devices?",a:"Our devices are cellular — no WiFi, no app, no pairing. The patient presses one button. Industry adherence rates average 80-90%. Our care team calls weekly to keep engagement high."},
-{q:"What if insurance doesn't reimburse?",a:"You get paid first. CADE invoices only after you receive payer reimbursement. If the program doesn't generate revenue, you owe nothing. Ever."},
-{q:"We tried remote monitoring before and it didn't work.",a:"Most programs fail because the provider is expected to run them. We handle enrollment, devices, monitoring, documentation, and billing. You focus on patients."},
-{q:"Our EHR won't support this.",a:"We integrate with 175+ EHRs including Experity, Epic, athenahealth, eClinicalWorks, and Cerner. No workflow disruption."},
-{q:"What about CMS compliance and audits?",a:"Our care team has managed 30,000+ patients since 2016 with zero audit recoupments nationally. Every interaction is time-stamped, documented, and audit-ready."},
-{q:"This sounds too good to be true — what's the catch?",a:"The catch is that it requires patients with chronic conditions and eligible insurance. If your patient population qualifies, the program works. We can verify eligibility before you commit."},
-{q:"We're too small for this.",a:"Solo providers with 200+ patients can generate $15,000-$25,000 in annual recurring revenue. The program scales down just as well as it scales up."},
-{q:"How is this different from Prevounce or other competitors?",a:"Prevounce is software. We're the entire operation — software, devices, clinical staff, logistics, billing. And we're physically present in your market, not a SaaS platform in another state."},
-{q:"What does the patient pay?",a:"For Medicare patients, Connected Care is a covered benefit. Most patients pay zero out of pocket. We handle benefit verification before enrollment."}
-];
-const templates=[
-{name:"Urgent Care — Multi-Location — Full Stack",desc:"The AUC model. For urgent care systems where 10%+ of patients visit 3+ times/year.",status:"BUILT",color:DS.success},
-{name:"Primary Care — Small Group — RPM + CCM",desc:"Solo or small group PCP offices. Lead with per-patient economics and zero staff burden.",status:"READY",color:DS.copper},
-{name:"Cardiology Practice — RPM + CCM",desc:"Hypertension + CHF monitoring. Lead with clinical outcomes and BP reduction data.",status:"READY",color:DS.copper},
-{name:"Health System — Enterprise — Full Stack",desc:"C-suite audience. Lead with readmission reduction, value-based benchmarks, total cost of care.",status:"READY",color:DS.copper},
-{name:"Endocrinology — RPM + CCM + RTM",desc:"Diabetes management. Glucose monitoring + care coordination + therapy adherence.",status:"READY",color:DS.copper},
-{name:"FQHC / Rural Health — RPM + CCM",desc:"Health equity narrative. Cellular devices for low-connectivity areas. Community health positioning.",status:"DRAFT",color:DS.lgray},
-{name:"Insurance Payer — HMSA / MA Plans",desc:"Utilization management language. Clinical outcome metrics. Total cost reduction proof.",status:"DRAFT",color:DS.lgray},
-{name:"Orthopedic / MSK — RTM + CCM",desc:"Post-surgical rehab monitoring. Therapy adherence tracking. Recovery milestone data.",status:"DRAFT",color:DS.lgray},
-{name:"Pulmonology — RPM + CCM + RTM",desc:"COPD + respiratory therapy monitoring. Readmission prevention for high-utilization patients.",status:"DRAFT",color:DS.lgray},
-{name:"Wound Care — RTM + CCM",desc:"Treatment protocol adherence. Healing trajectory monitoring. Post-acute coordination.",status:"DRAFT",color:DS.lgray}
-];
-const TabBtn=({id,label})=><button onClick={()=>setTab(id)} style={{fontFamily:mono,fontSize:10,fontWeight:400,letterSpacing:2,textTransform:"uppercase",color:tab===id?DS.white:DS.lgray,background:tab===id?"rgba(199,143,86,.3)":"transparent",border:"1px solid "+(tab===id?"rgba(199,143,86,.4)":"rgba(255,255,255,.1)"),borderRadius:8,padding:"10px 18px",cursor:"pointer",transition:"all .3s",whiteSpace:"nowrap"}}>{label}</button>;
-const Select=({value,onChange,options})=><select value={value} onChange={e=>onChange(e.target.value)} style={{fontFamily:mono,fontSize:11,color:DS.white,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.15)",borderRadius:8,padding:"10px 14px",cursor:"pointer",appearance:"none",width:"100%"}}>{Object.entries(options).map(([k,v])=><option key={k} value={k} style={{background:DS.black}}>{v.label}</option>)}</select>;
-const CodeBlock=({code,label})=><div style={{background:"rgba(0,0,0,.4)",border:"1px solid rgba(255,255,255,.08)",borderRadius:12,overflow:"hidden"}}>
-<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderBottom:"1px solid rgba(255,255,255,.06)"}}>
-<Lbl style={{fontSize:9,color:DS.lgray,margin:0}}>{label}</Lbl>
-<CopyBtn text={code}/>
+
+<div class="blob"></div>
+
+<!-- NAV DOCK -->
+<nav class="nav" id="mpnav">
+<button class="ch up" id="mpup" aria-label="Previous"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<div class="inf"><span class="idx" id="mpidx">00</span><span class="lb" id="mplb">COVER</span><span class="tot" id="mptot">/ 10</span></div>
+<button class="ch dn" id="mpdn" aria-label="Next"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+
+<!-- 00 COVER -->
+<section id="mp-cover" class="ctr">
+<div class="wrap">
+<div class="r" data-d="0.05"><img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE" class="covlog" style="margin-bottom:18px"></div>
+<div class="r" data-d="0.12"><span class="lbl lbl-cov">CONNECTED CARE</span></div>
+<div class="r" data-d="0.2"><h1 class="h1">Measured. Managed.<br><span class="ac">Shared risk.</span></h1></div>
+<div class="r" data-d="0.3"><p style="font-size:17px;color:var(--gy);margin-top:6px">A Value-Based Care Proposal</p></div>
+<div class="r" data-d="0.4"><div class="dv"></div></div>
+<div class="r" data-d="0.5"><div class="covprep">
+<span class="lbl lbl-lg">PREPARED FOR</span>
+<img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/b76e915a-61f7-4ab5-71f1-6405e911c800/public" alt="MDX Hawaii" style="height:52px;object-fit:contain">
+<div class="covpil" style="margin-top:6px"><span class="pill dk">Value-Based Risk Share</span><span class="pill dk">Fee-for-Service</span><span class="pill">20+ Chronic Conditions</span></div>
+</div></div>
 </div>
-<pre style={{fontFamily:mono,fontSize:11,color:DS.copperLight,lineHeight:1.6,padding:"16px",margin:0,overflow:"auto",maxHeight:340,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{code}</pre>
-</div>;
-return(
-<section id="demo" style={{...secT,background:G,minHeight:"auto",paddingBottom:"clamp(60px,8vh,120px)"}}>
-<R><Num n="14" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>NARRATIVE ENGINE — LIVE PREVIEW</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 8px",maxWidth:700}}>The rep <span style={{color:DS.copper}}>sales engine</span></h2></R>
-<R delay={.2}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.7,maxWidth:600,marginBottom:28}}>Select a prospect profile. The system generates the design prompt, content narrative, and slide structure — ready to paste into Claude or Gemini and produce a web-hosted pitch in minutes.</p></R>
-{/* Tabs */}
-<R delay={.25}>
-<div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap"}}>
-{tabs.map(t=><TabBtn key={t.id} id={t.id} label={t.l}/>)}
-</div>
-</R>
-{/* ── BUILD TAB ── */}
-{tab==="build"&&<R delay={.1}>
-<div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:900}}>
-{/* Selectors */}
-<div style={{flex:"0 0 240px",minWidth:220,display:"flex",flexDirection:"column",gap:14}}>
-<div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>PROSPECT TYPE</Lbl><Select value={prospectType} onChange={setProspectType} options={prospectTypes}/></div>
-<div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>SPECIALTY</Lbl><Select value={specialty} onChange={setSpecialty} options={specialties}/></div>
-<div><Lbl style={{fontSize:8,color:DS.copper,marginBottom:6}}>SIZE</Lbl><Select value={size} onChange={setSize} options={sizes}/></div>
-<div style={{background:"rgba(199,143,86,.08)",borderRadius:12,padding:16,marginTop:8}}>
-<Lbl style={{fontSize:8,color:DS.copper,marginBottom:8}}>GENERATED PROFILE</Lbl>
-<div style={{fontFamily:sans,fontSize:12,color:DS.white,lineHeight:1.8}}>
-{(prospectTypes[prospectType]||{}).label}<br/>
-<span style={{color:DS.lgray}}>Specialty:</span> {(specialties[specialty]||{}).label}<br/>
-<span style={{color:DS.lgray}}>Size:</span> {(sizes[size]||{}).label}<br/>
-<span style={{color:DS.lgray}}>Patients:</span> {(sizes[size]||{}).patients}<br/>
-<span style={{color:DS.lgray}}>Programs:</span> {(specialties[specialty]||{}).programs}
-</div>
-</div>
-</div>
-{/* Prompts */}
-<div style={{flex:1,minWidth:300,display:"flex",flexDirection:"column",gap:16}}>
-<CodeBlock label="STEP 1 — DESIGN SYSTEM PROMPT (paste first)" code={designSystemPrompt}/>
-<CodeBlock label="STEP 2 — CONTENT & NARRATIVE PROMPT (paste second)" code={contentPrompt}/>
-</div>
-</div>
-</R>}
-{/* ── DESIGN SYSTEM TAB ── */}
-{tab==="system"&&<R delay={.1}>
-<div style={{maxWidth:900}}>
-<p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>The single source of truth for every visual element. This JSON drives every pitch deck, one-pager, and web experience CADE produces. Update it once — everything rebuilds to match.</p>
-<CodeBlock label="CADE DESIGN SYSTEM — JSON" code={`{
-"brand": "CADE Medical",
-"version": "2.0 — Glossy Blanc",
-"logo": "https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public",
-"colors": {
-"bg": "#FEF9EF",
-"copper": "#C78F56",
-"copperLight": "#E8C9A0",
-"copperBg": "rgba(199,143,86,.08)",
-"dark": "#1a1a1a",
-"gray": "#595959",
-"lgray": "#999999",
-"xlight": "#e8e8e0",
-"white": "#F5EEE2",
-"black": "#0a0a0a",
-"success": "#1A8754",
-"successBg": "rgba(26,135,84,.08)",
-"red": "#DC2626"
-},
-"typography": {
-"display": {
-"family": "Playfair Display, serif",
-"style": "italic",
-"weight": "400 — NEVER bold headings",
-"h1": "clamp(56px, 8vw, 110px), leading-[1.05], tracking-[-.03em]",
-"h2": "clamp(40px, 5vw, 84px), leading-[1.1]",
-"h3": "clamp(20px, 2vw, 32px)"
-},
-"body": {
-"family": "Montserrat, sans-serif",
-"weights": "400, 500, 600, 700",
-"size": "clamp(16px, 1.6vw, 24px)",
-"lineHeight": 1.7,
-"color": "#595959"
-},
-"labels": {
-"family": "Roboto Mono, monospace",
-"weight": 400,
-"size": "clamp(11px, 1vw, 14px)",
-"tracking": "3px",
-"transform": "uppercase",
-"color": "#595959"
-},
-"data": {
-"family": "Roboto Mono, monospace",
-"weight": 400,
-"usage": "table cells, percentages, financial figures, metadata"
-}
-},
-"emphasis": {
-"copper_accent": "Use #C78F56 for the key emotional/outcome word in headlines",
-"line_break": "Drop copper phrase to its own line with <br/> for drama",
-"dark_mode": "On #0a0a0a: headings #F5EEE2, body #999, labels #999, accent stays copper"
-},
-"components": {
-"Card": {
-"bg": "#F5EEE2",
-"radius": "24px",
-"padding": "40px 48px",
-"shadow": "0 4px 24px rgba(0,0,0,.03)",
-"border": "1px solid #e8e8e0",
-"accent": "optional 4px top OR left border in accent color"
-},
-"Num": {
-"size": "40x40px",
-"radius": "10px",
-"bg": "rgba(199,143,86,.08)",
-"color": "#C78F56",
-"font": "Montserrat, bold, 16px, centered",
-"darkVariant": { "bg": "rgba(255,255,255,.08)", "color": "#E8C9A0" }
-},
-"Lbl": {
-"element": "span, display block",
-"font": "Roboto Mono, 400",
-"tracking": "3px",
-"transform": "uppercase",
-"color": "#595959"
-},
-"BigStat": {
-"number": "Playfair Display, italic, clamp(64px,9vw,110px), leading-none",
-"label": "Montserrat, semibold, clamp(18px,1.8vw,24px), #1a1a1a, mt-16px",
-"sub": "Montserrat, clamp(14px,1.2vw,18px), #999999, mt-8px",
-"container": "text-center, flex-[1_1_220px], min-w-[200px]"
-},
-"Pill": {
-"font": "Roboto Mono, 9px, tracking 2px, uppercase",
-"color": "#fff on colored bg",
-"padding": "5px 14px",
-"radius": "20px"
-}
-},
-"slides": {
-"layout": "min-h-screen, flex col, justify-center",
-"padding": "clamp(100px,12vh,140px) clamp(32px,5vw,100px) clamp(40px,6vh,100px)",
-"backgrounds": {
-"light": "#FEF9EF",
-"dark": "#0a0a0a",
-"gradientDark": "linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)",
-"copperWash": "rgba(199,143,86,.08)"
-},
-"hierarchy": "Num badge → Lbl section label → h2 headline (with copper accent) → body → cards/content",
-"cardGrids": "flex-wrap, gap 24-32px, flex-[1_1_calc(50%-24px)] min-w-[360px]",
-"maxWidth": "1300-1400px for grids, 900-1100px for text"
-},
-"fixedElements": {
-"topNav": {
-"height": "80px",
-"bg": "rgba(254,249,239,.9)",
-"backdropFilter": "blur(12px)",
-"borderBottom": "1px solid rgba(0,0,0,.04)",
-"logo": "left-aligned, height 40px"
-},
-"pageCounter": {
-"position": "bottom 40px, right 48px",
-"font": "Roboto Mono, 14px, #999",
-"bg": "rgba(254,249,239,.85), blur(12px)",
-"padding": "10px 20px",
-"radius": "24px",
-"format": "01 / 10"
-},
-"dotNav": {
-"position": "right 24px, vertical center",
-"dots": "8px circles, active = copper + scale 1.5",
-"hiddenOnMobile": true
-}
-},
-"animation": {
-"class": "animate-up",
-"trigger": "IntersectionObserver, threshold 0.15",
-"from": "opacity 0, translateY(32px)",
-"to": "opacity 1, translateY(0)",
-"easing": "cubic-bezier(.16, 1, .3, 1)",
-"duration": "0.8s",
-"stagger": "100ms sequential transitionDelay between siblings"
-},
-"mobile": {
-"breakpoint": "768px",
-"sections": "padding 100px 24px 80px, height auto, min-height 100vh",
-"cards": "min-width 100%, padding 28px",
-"typography": { "h1": "44px", "h2": "36px", "h3": "24px", "body": "16px", "stat": "56px" },
-"hide": ["dot navigation"]
-}
-}`}/>
-</div>
-</R>}
-{/* ── OBJECTIONS TAB ── */}
-{tab==="objections"&&<R delay={.1}>
-<div style={{maxWidth:900}}>
-<p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>Every objection Colin and the team have encountered in the field — with the recommended response language. Reps should have these internalized before every first meeting.</p>
-<div style={{display:"flex",flexDirection:"column",gap:10}}>
-{objections.map((o,i)=>(
-<div key={i} style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",borderLeft:`3px solid ${i%2===0?DS.copper:DS.copperLight}`}}>
-<div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
-<span style={{fontFamily:mono,fontSize:9,color:DS.red,flexShrink:0,marginTop:2,letterSpacing:1}}>OBJECTION</span>
-<p style={{fontFamily:serif,fontSize:14,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>{o.q}</p>
-</div>
-<div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
-<span style={{fontFamily:mono,fontSize:9,color:DS.success,flexShrink:0,marginTop:2,letterSpacing:1}}>RESPONSE</span>
-<p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.6,margin:0}}>{o.a}</p>
-</div>
-</div>
-))}
-</div>
-</div>
-</R>}
-{/* ── TEMPLATES TAB ── */}
-{tab==="templates"&&<R delay={.1}>
-<div style={{maxWidth:900}}>
-<p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,marginBottom:20}}>Pre-built prompt templates by prospect type and specialty. Select any template in the "Build a Deck" tab to generate the full prompt — or use these as starting points for custom builds.</p>
-<div style={{display:"flex",flexDirection:"column",gap:8}}>
-{templates.map((t,i)=>(
-<div key={i} style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-<div style={{flex:1,minWidth:240}}>
-<h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 4px"}}>{t.name}</h3>
-<p style={{fontFamily:sans,fontSize:11,color:DS.lgray,lineHeight:1.5,margin:0}}>{t.desc}</p>
-</div>
-<Pill color={t.color}>{t.status}</Pill>
-</div>
-))}
-</div>
-</div>
-</R>}
+<div class="foot"><span class="lbl lbl-lg">CONFIDENTIAL &nbsp;·&nbsp; APRIL 2026</span></div>
 </section>
-);
-}
-function Report(){
-const [active,setActive]=useState("cover");
-const [activeIdx,setActiveIdx]=useState(0);
-const [hovered,setHovered]=useState(false);
-useEffect(()=>{const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){setActive(e.target.id);const idx=NAV.findIndex(n=>n.id===e.target.id);if(idx>=0)setActiveIdx(idx)}})},{threshold:.2});NAV.forEach(n=>{const el=document.getElementById(n.id);if(el)obs.observe(el)});return()=>obs.disconnect()},[]);
-const go=id=>document.getElementById(id)&&document.getElementById(id).scrollIntoView({behavior:"smooth"});
-const goPrev=()=>{if(activeIdx>0)go(NAV[activeIdx-1].id)};
-const goNext=()=>{if(activeIdx<NAV.length-1)go(NAV[activeIdx+1].id)};
-const atTop=activeIdx===0,atBottom=activeIdx===NAV.length-1;
-const currentLabel=(NAV[activeIdx]||{}).l||"";
-const Chev=({up,disabled,onClick})=>(
-<button onClick={onClick} style={{background:"none",border:"none",cursor:disabled?"default":"pointer",padding:"8px 12px",opacity:disabled?0.15:0.5,transition:"opacity .3s",display:"flex",alignItems:"center",justifyContent:"center"}} onMouseEnter={e=>{if(!disabled)e.currentTarget.style.opacity="1"}} onMouseLeave={e=>{if(!disabled)e.currentTarget.style.opacity=".5"}}>
-<svg width="14" height="8" viewBox="0 0 14 8" fill="none" style={{transform:up?"rotate(180deg)":"none",transition:"transform .2s"}}>
-<path d="M1 1L7 7L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
-</button>
-);
-return(
-<div style={{fontFamily:sans,background:DS.bg,color:DS.dark,height:"100vh",overflowY:"auto",scrollSnapType:"y proximity",position:"relative"}}>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet"/>
-<div style={{position:"fixed",top:"-20%",right:"-15%",width:600,height:600,borderRadius:"50%",background:"rgba(199,143,86,.06)",filter:"blur(90px)",pointerEvents:"none",zIndex:0}}/>
-<div style={{position:"fixed",bottom:"-10%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"rgba(200,200,200,.1)",filter:"blur(90px)",pointerEvents:"none",zIndex:0}}/>
-{/* Navigation — Apple-style minimal */}
-<div onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} style={{position:"fixed",bottom:28,left:"50%",transform:"translateX(-50%)",zIndex:100,display:"flex",alignItems:"center",gap:0,background:"rgba(255,255,240,.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:40,border:"1px solid rgba(0,0,0,.06)",boxShadow:"0 2px 20px rgba(0,0,0,.06)",overflow:"hidden",transition:"all .4s cubic-bezier(.25,.46,.45,.94)"}}>
-<Chev up disabled={atTop} onClick={goPrev}/>
-<div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 4px",minWidth:hovered?160:48,transition:"min-width .4s cubic-bezier(.25,.46,.45,.94)",overflow:"hidden",justifyContent:"center"}}>
-<span style={{fontFamily:mono,fontSize:11,fontWeight:400,color:DS.copper,letterSpacing:1,flexShrink:0}}>{String(activeIdx).padStart(2,"0")}</span>
-<span style={{fontFamily:mono,fontSize:9,fontWeight:400,color:DS.lgray,letterSpacing:2,textTransform:"uppercase",whiteSpace:"nowrap",overflow:"hidden",maxWidth:hovered?140:0,opacity:hovered?1:0,transition:"all .4s cubic-bezier(.25,.46,.45,.94)"}}>{currentLabel}</span>
-<span style={{fontFamily:mono,fontSize:11,fontWeight:400,color:"rgba(0,0,0,.2)",flexShrink:0,opacity:hovered?1:0,transition:"opacity .3s"}}>/ {String(NAV.length-1).padStart(2,"0")}</span>
+
+<!-- 01 WHY -->
+<section id="mp-why" class="gbg">
+<div class="wrap">
+<div class="r"><span class="num dk">01</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-lgc">THE PROBLEM</span></div>
+<div class="r" data-d="0.14"><h2 class="h2 h2w">Your highest-cost patients are the least <span class="ac">monitored</span></h2></div>
+<div class="r" data-d="0.22"><p class="w intro">Across your ~85,000 member panel, a small population of chronically ill patients drives an outsized share of total claims spend. They cycle through ERs and hospitalizations not because their conditions are unmanageable — but because nothing monitors them between visits.</p></div>
+<div class="r" data-d="0.3"><span class="lbl lbl-c" style="margin-bottom:16px">U.S. HEALTH SPENDING BY DISEASE CATEGORY</span>
+<div class="spend" id="mp-spend"></div>
+<div style="font-size:13px;color:var(--ulg);margin-top:14px;max-width:680px">The three conditions we monitor = <strong style="color:var(--cl);font-weight:600">$504B in annual spending</strong>. Source: <a href="https://www.kff.org/health-costs/" target="_blank" rel="noopener" class="src-link" style="color:var(--cl)">Kaiser Family Foundation →</a></div>
 </div>
-<Chev disabled={atBottom} onClick={goNext}/>
-</div>
-{/* ═══ COVER ═══ */}
-<section id="cover" style={{...sec,textAlign:"center",alignItems:"center"}}>
-<R delay={0.1}><Lbl style={{fontSize:10,letterSpacing:4}}>DISCOVERY REPORT</Lbl></R>
-<R delay={0.25}><h1 style={{fontFamily:serif,fontSize:"clamp(40px,6.5vw,72px)",fontStyle:"italic",color:DS.dark,lineHeight:1.05,letterSpacing:"-.03em",margin:"16px 0 12px"}}>Sales & Marketing Strategy</h1></R>
-<R delay={0.35}><p style={{fontFamily:sans,fontSize:"clamp(16px,1.8vw,22px)",color:DS.gray,lineHeight:1.7,maxWidth:560}}>Connected Care & CGM Service Lines</p></R>
-<R delay={0.45}><Divider/></R>
-<R delay={0.55}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray}}>Prepared by <strong style={{color:DS.dark}}>Matt Weaver</strong> | April 2026</p></R>
-<R delay={0.65}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,marginTop:4}}>Commissioned by Chris Thibodeaux</p></R>
-<div style={{position:"absolute",bottom:32}}><Lbl style={{fontSize:9,color:DS.lgray}}>CONFIDENTIAL</Lbl></div>
-</section>
-{/* ═══ EXECUTIVE SUMMARY ═══ */}
-<section id="exec" style={{...sec,background:G}}>
-<R><Num n="01" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>EXECUTIVE SUMMARY</Lbl></R>
-<R delay={.2}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,52px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>The service is <span style={{color:DS.copper}}>exceptional.</span><br/>The presentation isn't.</h2></R>
-<R delay={.3}><p style={{fontFamily:sans,fontSize:"clamp(15px,1.5vw,18px)",color:DS.lgray,lineHeight:1.8,maxWidth:660,marginBottom:24}}>Through interviews with Dylan Dyer, Gavin De Jong, Gregg Hoshida, and Colin Smith — alongside a full review of cademed.com, 13+ collateral pieces, and competitor materials — one finding emerged above all others:</p></R>
-<R delay={.4}><Glass style={{padding:"28px 32px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
-<p style={{fontFamily:serif,fontSize:"clamp(18px,2vw,24px)",fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>CADE delivers a strong, differentiated service — but the brand, messaging, and materials don't reflect the caliber of what's actually being offered.</p>
-</Glass></R>
-<R delay={.5}>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:32,maxWidth:700}}>
-{["Brand identity gap in Hawaii","Collateral fragmentation across 13+ pieces","Sales funnel misalignment — too much, too soon","Case study deficit — 30,000 patients, zero proof points"].map((t,i)=>(
-<div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}><span style={{color:DS.copper,fontSize:18,lineHeight:1,marginTop:2}}>—</span><span style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.6}}>{t}</span></div>
-))}
-</div>
-</R>
-</section>
-{/* ═══ CULTURAL INTELLIGENCE ═══ */}
-<section id="culture" style={secT}>
-<R><Num n="02"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>CULTURAL INTELLIGENCE & BRAND IDENTITY</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Be present, be consistent.<br/><span style={{color:DS.copper}}>Drop the Haole energy.</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>The "CADE" name reads mainland in Hawaii. Dylan suggested renaming to "Kai Medical." Gregg — a native Hawaiian — rejected it immediately.</p></R>
-<R delay={.35} direction="left">
-<Glass style={{padding:28,borderLeft:`3px solid ${DS.copper}`,maxWidth:660,marginBottom:28}}>
-<p style={{fontFamily:serif,fontSize:18,fontStyle:"italic",color:DS.dark,lineHeight:1.5,margin:0}}>"That would be like a Caucasian walking onto an Indian reservation and introducing himself as Chief Big Horn."</p>
-<p style={{fontFamily:mono,fontSize:10,color:DS.lgray,marginTop:12,letterSpacing:2}}>— GREGG HOSHIDA, CGM SALES</p>
-</Glass>
-</R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:700}}>
-{[{t:"70%+ Asian/Polynesian",d:"Websites without representation are immediately flagged as non-local."},
-{t:"Drop the word 'local'",d:"Colin and Gregg both recommended removing it. Actually local businesses hear this constantly and see right through it."},
-{t:"Enterprise Rent-A-Car model",d:"A mainland brand that succeeds in Hawaii by showing up — not by announcing it. Hire locally, activate at events, let the community notice."},
-{t:"Recommendation",d:"Do not rename. Do not use 'local' in messaging. Invest in authentic representation — photography, staff visibility, community presence."}
-].map((item,i)=>(
-<R key={i} delay={.2+i*.08} style={{flex:"1 1 320px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</Glass>
-</R>
-))}
+<div class="r" data-d="0.45" style="margin-top:28px"><div class="glass dk" style="padding:22px 28px;border-left:3px solid var(--c);max-width:720px"><p style="font-family:var(--se);font-size:20px;font-style:italic;color:var(--w);line-height:1.5;font-weight:400">&ldquo;5% of patients account for 50% of healthcare costs. Those 5% are exactly who we built this program for.&rdquo;</p></div></div>
 </div>
 </section>
-{/* ═══ COLLATERAL AUDIT ═══ */}
-<section id="collateral" style={secT}>
-<R><Num n="03"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>COLLATERAL AUDIT</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>13+ pieces. Zero <span style={{color:DS.copper}}>cohesion.</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>No unified design system exists. Different reps produce different materials with different layouts, fonts, color schemes, and messaging hierarchies. The company brochure positions CADE as a commodity DME supplier while Connected Care materials position as an innovative care partner — these identities conflict. CADE is actively trying to break into the Hawaii market while already serving clients in California, Montana, and Arizona — yet the web presence doesn't differentiate between these markets or their distinct needs. Either a unified corporate site needs to be created or separate mainland and Hawaii/Pacific Islands market sites should be developed.</p></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
-{[{item:"Rep Education Deck",grade:"C+",note:"15-slide internal training tool. Serves its purpose for onboarding, but no equivalent external sales deck exists — leaving reps without the right collateral for first meetings."},
-{item:"Dylan's CC Flyer",grade:"A-",note:"Strongest individual piece. Clean messaging, clear value prop. But operates outside any unified system."},
-{item:"CGM One-Pagers (×2)",grade:"C",note:"Two overlapping versions creating confusion about which to use and when."},
-{item:"Patient Flyer",grade:"C-",note:"Contains a typo ('avaialable'). Small, but erodes credibility with providers."},
-{item:"Company Brochure",grade:"D+",note:"Positions CADE as commodity supplier. Conflicts with the innovative positioning of Connected Care materials."},
-].map((c,i)=>(
-<R key={i} delay={.15+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",display:"flex",gap:16,alignItems:"flex-start",height:"100%"}}>
-<div style={{fontFamily:serif,fontSize:28,fontStyle:"italic",color:c.grade.startsWith("A")?DS.success:c.grade.startsWith("D")?DS.red:DS.copper,lineHeight:1,flexShrink:0,width:48,textAlign:"center"}}>{c.grade}</div>
-<div><h3 style={{fontFamily:sans,fontSize:13,fontWeight:600,color:DS.dark,margin:"0 0 6px"}}>{c.item}</h3><p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:0}}>{c.note}</p></div>
-</Glass>
-</R>
-))}
+
+<!-- 02 TARGET -->
+<section id="mp-target" class="sct">
+<div class="wrap">
+<div class="r"><span class="num">02</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">TARGET POPULATION</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">5,000 of your <span class="ac">most expensive</span> members</h2></div>
+<div class="r" data-d="0.2"><p class="intro">Identified by claims data, risk scores, and utilization history. Three target conditions, three evidence-backed outcomes.</p></div>
+<div class="g3" id="mp-cond"></div>
 </div>
 </section>
-{/* ═══ WEBSITE ANALYSIS ═══ */}
-<section id="website" style={{...sec,background:G}}>
-<R><Num n="04" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>CADEMED.COM</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>A list of services<br/>without a <span style={{color:DS.copper}}>story.</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>CADE has 25+ years serving providers, a clinical care team with over a decade of Connected Care experience, and 30,000+ patients managed nationally. None of that comes through on the website. The site lists services without narrative structure — no belief, no proof, no journey. A decision maker landing on cademed.com should think: these people have done this longer, better, and more passionately than anyone else. I trust them. Right now, they'd never know.</p></R>
-<R delay={.3}><Lbl style={{color:DS.copper,marginBottom:16}}>WHAT THE SITE COMMUNICATES TODAY</Lbl></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:36}}>
-{[{t:"Services without narrative",d:"The site lists what CADE does but never explains why it matters, who it's for, or what makes CADE different. There's no story arc — just a flat inventory of offerings."},
-{t:"No self-segmentation",d:"Providers, health systems, FQHCs, and payers all land on the same pages. Competitors use 'Who We Serve' navigation to route visitors to role-specific messaging instantly."},
-{t:"25 years of credibility — invisible",d:"CADE's longevity, local relationships, and operational track record are the most powerful trust signals in the business. The site barely mentions them. A decade of Connected Care experience and 30,000+ patients go unstated."},
-{t:"Missing programs entirely",d:"PCM and APCM do not appear anywhere. Dual enrollment — the revenue multiplier — goes unmentioned. Decision makers researching these programs will find competitors, not CADE."},
-{t:"No proof of outcomes",d:"No clinical data, no case studies, no ROI calculator, no CPT billing guides, no compliance certifications. Every competitor publishes at least two of these trust signals."},
-{t:"No emotional resonance",d:"The site doesn't convey passion, mission, or the human side of what CADE does. It reads as transactional — not as a care partner with deep conviction about keeping patients safe at home."}
-].map((item,i)=>(
-<R key={i} delay={.2+i*.06} style={{flex:"1 1 340px",minWidth:280}}>
-<div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"20px 24px",borderLeft:`3px solid ${DS.lgray}`,height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</div>
-</R>
-))}
-</div>
-<R delay={.5}><Lbl style={{color:DS.copper,marginBottom:16}}>WHAT A DECISION MAKER SHOULD FEEL</Lbl></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:32}}>
-{[{t:"Simple sophistication",d:"The site should feel premium and confident — not cluttered, not salesy. Clean design, generous whitespace, and a narrative that unfolds naturally. The sophistication of the presentation should mirror the sophistication of the care."},
-{t:"25+ years of authority",d:"CADE's longevity needs to be a centerpiece, not a footnote. Serving providers since 1999, navigating every CMS change, every payer evolution, every industry shift. That track record is the trust signal no competitor can manufacture."},
-{t:"A clinical team that's been doing this for over a decade",d:"30,000+ patients. A care team operating since 2016. Zero audit recoupments. These aren't features — they're proof. They should be impossible to miss on the homepage."},
-{t:"Audience-segmented pathways",d:"'Who We Serve' as primary navigation — dedicated pages for independent practices, health systems, FQHCs, and payers. Each speaking the language of that decision maker's priorities and pain points."},
-{t:"Interactive financial proof",d:"Embedded ROI calculator where providers input patient count and payer mix and see projected revenue. The prototype already exists from the AUC project. Make the math undeniable."},
-{t:"Every program — clearly defined",d:"RPM, CCM, PCM, RTM, APCM, dual enrollment. Each with a dedicated page explaining what it is, who qualifies, and what the provider does — at the right depth for the right reader."},
-{t:"Patient journey visualization",d:"Show — don't tell — how simple the devices are. The patient unpacks, presses one button, data transmits. No WiFi. No app. Video loops and step-by-step infographics, not paragraphs of description."},
-{t:"Regional market strategy",d:"CADE serves Hawaii, California, Montana, and Arizona. Either a unified corporate site with regional messaging or distinct market-specific sites — the Hawaii audience and the mainland audience have fundamentally different expectations."}
-].map((item,i)=>(
-<R key={i} delay={.3+i*.05} style={{flex:"1 1 340px",minWidth:280}}>
-<div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"20px 24px",borderLeft:`3px solid ${DS.copper}`,height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</div>
-</R>
-))}
-</div>
-<R delay={.7}>
-<Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
-<p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>A decision maker should land on cademed.com and think one thing: these people have done this longer, better, and more passionately than anyone else. I trust them. Everything on the site should serve that single conviction.</p>
-</Glass>
-</R>
-</section>
-{/* ═══ COMPETITIVE ═══ */}
-<section id="competitive" style={secT}>
-<R><Num n="05"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>COMPETITIVE MARKETING ANALYSIS</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Weaker services.<br/><span style={{color:DS.copper}}>Stronger materials.</span></h2></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
-{[{name:"Prevounce",d:"Polished deck, named case studies, 36K+ patients, strong LinkedIn. Leads with stories and outcomes, not CPT codes. The benchmark.",grade:"A"},
-{name:"Thoroughcare",d:"Educational video library, LinkedIn thought leadership. Makes Connected Care accessible to providers who've never heard of it.",grade:"A-"},
-{name:"ADS",d:"Initiated pharmacy-to-DME pipeline. Relevant to CADE's CGM opportunity from pharmacy dropouts.",grade:"B"},
-{name:"CADE Medical",d:"On-island presence competitors can never replicate. 25+ years of relationships. 1bios platform with 30,000+ patients. The moat is real — the marketing doesn't reflect it.",grade:"C+"}
-].map((c,i)=>(
-<R key={i} delay={.2+i*.1} style={{flex:"1 1 340px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",borderLeft:i===3?`3px solid ${DS.copper}`:undefined,height:"100%"}}>
-<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-<h3 style={{fontFamily:serif,fontSize:18,fontStyle:"italic",color:DS.dark,margin:0}}>{c.name}</h3>
-<span style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:c.grade.startsWith("A")?DS.success:c.grade.startsWith("C")?DS.copper:DS.dark}}>{c.grade}</span>
-</div>
-<p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{c.d}</p>
-</Glass>
-</R>
-))}
+
+<!-- 03 HOW -->
+<section id="mp-how" class="sct gbg">
+<div class="wrap">
+<div class="r"><span class="num dk">03</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-lgc">THE PROCESS</span></div>
+<div class="r" data-d="0.14"><h2 class="h2 h2w">Continuous care,<br>zero <span class="ac">gaps</span></h2></div>
+<div class="r" data-d="0.2"><p class="w intro">CADE deploys remote monitoring devices directly to enrolled members. Our clinical team watches the data so nothing falls through the cracks.</p></div>
+<div class="g4" id="mp-steps"></div>
 </div>
 </section>
-{/* ═══ PROGRAM DEFINITIONS ═══ */}
-<section id="programs" style={{...sec,background:DS.copperBg}}>
-<R><Num n="06"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>CONNECTED CARE PROGRAMS — SINGLE SOURCE OF TRUTH</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 8px",maxWidth:700}}>Every program. <span style={{color:DS.copper}}>Clearly defined.</span></h2></R>
-<R delay={.2}><p style={{fontFamily:sans,fontSize:14,color:DS.gray,lineHeight:1.7,maxWidth:640,marginBottom:28}}>A consistent issue across CADE's materials is that programs are either over-explained with clinical detail, under-explained with critical info missing, or omitted entirely. PCM and APCM do not appear anywhere in current marketing. Dual enrollment — the revenue multiplier — goes unmentioned in provider-facing materials.</p></R>
-<div style={{display:"flex",flexDirection:"column",gap:14,maxWidth:780}}>
-{[{a:"RPM",n:"Remote Patient Monitoring",d:"Daily monitoring of blood pressure, glucose, weight, oxygen via cellular devices. Transmits automatically. No WiFi, no app.",q:"1+ chronic conditions",gap:"Most referenced but buried in CPT detail"},
-{a:"CCM",n:"Chronic Care Management",d:"Monthly coordination for 2+ chronic conditions. Care planning, medication review, proactive follow-up.",q:"2+ chronic conditions, 12+ months",gap:"Often conflated with RPM in materials"},
-{a:"PCM",n:"Principal Care Management",d:"Like CCM but for a single high-complexity chronic condition. Fills the gap for patients who don't meet CCM's two-condition threshold.",q:"1 serious, high-risk condition",gap:"ABSENT from all current materials"},
-{a:"RTM",n:"Remote Therapeutic Monitoring",d:"Tracks therapy adherence and treatment response. Common in MSK, respiratory, wound care, rehab.",q:"Active treatment regimen",gap:"Rarely distinguished from RPM"},
-{a:"APCM",n:"Advanced Primary Care Mgmt",d:"Newest program. Value-based primary care coordination — access, navigation, proactive outreach. The future of Medicare reimbursement.",q:"Attributed primary care patients",gap:"ABSENT from all current materials"},
-{a:"DUAL",n:"Dual Enrollment",d:"A single patient can be in RPM + CCM simultaneously — separate reimbursements for each. This is where the revenue model compounds.",q:"Eligible for 2+ programs",gap:"Referenced internally, never communicated to providers"}
-].map((p,i)=>(
-<R key={i} delay={.1+i*.06}>
-<Glass style={{padding:"20px 24px",display:"flex",gap:20,alignItems:"flex-start"}}>
-<div style={{fontFamily:serif,fontSize:28,fontStyle:"italic",color:DS.copper,lineHeight:1,flexShrink:0,width:64,textAlign:"center"}}>{p.a}</div>
-<div style={{flex:1}}>
-<h3 style={{fontFamily:sans,fontSize:14,fontWeight:600,color:DS.dark,margin:"0 0 4px"}}>{p.n}</h3>
-<p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:"0 0 8px"}}>{p.d}</p>
-<div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-<Pill color={DS.dark}>{p.q}</Pill>
-<Pill color={p.gap.includes("ABSENT")?DS.red:DS.lgray}>{p.gap}</Pill>
-</div>
-</div>
-</Glass>
-</R>
-))}
+
+<!-- 04 BREAK: PROGRAM ONE -->
+<section id="mp-vbc" class="brk">
+<div class="wrap">
+<div class="r"><div class="prog">Program One · 01 / 02</div></div>
+<div class="r" data-d="0.15"><h2>Value-Based<br><span class="ac">Care.</span></h2></div>
+<div class="r" data-d="0.3"><p class="sub">A flat monthly fee. Outcomes measured. Savings shared. Downside owned.</p></div>
+<div class="r" data-d="0.4"><div class="tags"><span class="pill dk">$50 PMPM</span><span class="pill dk">5,000 Members</span><span class="pill">Risk-Shared</span></div></div>
 </div>
 </section>
-{/* ═══ CONNECTED CARE FINDINGS ═══ */}
-<section id="cc" style={secT}>
-<R><Num n="07"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>CONNECTED CARE — FIELD FINDINGS</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Universal interest.<br/><span style={{color:DS.copper}}>Universal friction.</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>Colin visited 20+ provider offices in 3 months. Every single one was interested. Every single one had the same concern: administrative burden. Staff training, account management, and the need for a dedicated contact they can call when something goes wrong. Behind the individual friction points lies a deeper structural issue: there are no defined pipeline stages, no stage-specific collateral, and no documented criteria for when a prospect is ready to move from introduction to financial modeling to close.</p></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
-{[{t:"MDX Deal Collapsed",d:"According to Colin, he couldn't provide customized financial projections for their payer mix. This is a repeatable failure without a structural fix.",icon:"⚠"},
-{t:"Case Study Deficit",d:"1bios has 30,000+ patients and years of data. Colin says the sales team has not been able to access any of it for prospect conversations.",icon:"📊"},
-{t:"Collateral Without Standards",d:"Reps build materials for each prospect, but the output isn't polished or consistent. There's no standardized messaging framework — every deck is a one-off with different quality, different language, and different design.",icon:"📑"},
-{t:"'Turnkey' Creates Skepticism",d:"According to Colin and Hunter, experienced operators have heard this promise before. Replace with specific language: 'You Get Paid First.'",icon:"💬"}
-].map((item,i)=>(
-<R key={i} delay={.2+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",borderTop:`3px solid ${DS.copper}`,height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</Glass>
-</R>
-))}
+
+<!-- 05 PRICING -->
+<section id="mp-pricing" class="sct cbg">
+<div class="wrap">
+<div class="r"><span class="num">04</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">PRICING + RISK SHARE</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">Simple. Flat.<br><span class="ac">Fully aligned.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">One fee. Everything included. Our fee tied directly to your savings.</p></div>
+<div class="prc-row">
+<div class="r" data-d="0.28">
+<div class="prc-big"><div class="n">$50</div><div class="sub">per member <em>/ month</em></div><div class="u">All-In · Everything Included</div></div>
+<div class="prc-incl">
+<div class="hd">— What&rsquo;s Included —</div>
+<ul>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>FDA-approved monitoring devices</li>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>24/7 clinical review by NPs, RNs, MAs</li>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Member enrollment &amp; consent</li>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Escalation &amp; care coordination</li>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monthly reporting &amp; analytics</li>
+<li><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5L5 10.5L12 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>DME &amp; CGM licensing held directly</li>
+</ul>
+<div class="ftr">No setup fees. No per-event charges. No surprises.</div>
+</div>
+</div>
+<div class="r" data-d="0.36" style="margin-top:8px"><span class="lbl lbl-c" style="margin-bottom:14px">THREE OUTCOMES. THREE TIERS.</span><div class="tiers" id="mp-tiers"></div></div>
+</div>
 </div>
 </section>
-{/* ═══ CGM FINDINGS ═══ */}
-<section id="cgm" style={{...secT,background:G}}>
-<R><Num n="08" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>CGM SERVICE LINE — HAWAII</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>180,000 diabetics in Hawaii.<br/><span style={{color:DS.copper}}>Wide open.</span></h2></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:20,maxWidth:700,marginBottom:32}}>
-{[{n:"180K",l:"Estimated diabetics in Hawaii",s:"Low CGM saturation — most not yet served"},
-{n:"70%",l:"HMSA market coverage",s:"Exclusive partnership in pursuit"},
-{n:"~10%",l:"Adult diabetes prevalence",s:"NHPI communities disproportionately affected"}
-].map((s,i)=>(
-<R key={i} delay={.2+i*.1} style={{flex:"1 1 180px",minWidth:160,textAlign:"center"}}>
-<div style={{fontFamily:serif,fontSize:"clamp(36px,5vw,52px)",fontStyle:"italic",color:i===1?DS.copper:DS.white,lineHeight:1}}>{s.n}</div>
-<div style={{fontFamily:mono,fontSize:9,letterSpacing:2,color:DS.lgray,textTransform:"uppercase",marginTop:8}}>{s.l}</div>
-<div style={{fontFamily:sans,fontSize:11,color:DS.lgray,marginTop:4}}>{s.s}</div>
-</R>
-))}
+
+<!-- 05 SAVINGS -->
+<section id="mp-savings" class="sct">
+<div class="wrap">
+<div class="r"><span class="num">05</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">PROJECTED SAVINGS</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">What this could <span class="ac">look like.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">Based on national benchmarks for similar high-risk managed populations and CADE's historical performance across comparable programs.</p></div>
+
+<!-- Scenario breakdown -->
+<div class="r" data-d="0.25"><div class="scn-grid">
+<div class="scn-card"><div class="scn-n">$4.5M</div><div class="scn-t">Hypertension cohort</div><div class="scn-s">3:1 ROI target</div></div>
+<div class="scn-card"><div class="scn-n">$3.0M</div><div class="scn-t">Diabetes cohort</div><div class="scn-s">2:1 ROI target</div></div>
+<div class="scn-card"><div class="scn-n">$1.2M</div><div class="scn-t">COPD — exacerbation</div><div class="scn-s">reduction avoided</div></div>
+</div></div>
+<div class="r" data-d="0.35"><div class="scn-total">
+<div class="scn-total-l">
+<div class="scn-total-n">$8.7M<span class="plus">+</span></div>
+<div class="scn-total-lbl">Total Projected Annual Savings</div>
 </div>
-<R delay={.35}><p style={{fontFamily:sans,fontSize:14,color:DS.lgray,lineHeight:1.8,maxWidth:660,marginBottom:12}}>Hawaii already has CGM coverage on the books. This is not a coverage-creation play — it's a utilization and access simplification play. The opportunity is making each stakeholder feel the program works for them. That requires five coordinated motions, not one campaign.</p></R>
-<R delay={.4}><Lbl style={{color:DS.copper,marginBottom:14,marginTop:20}}>GO-TO-MARKET — BUILD THE SYSTEM BEFORE CREATING THE DEMAND</Lbl></R>
-<div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:740,marginBottom:28}}>
-{[{n:"01",t:"Payer Alignment",d:"HMSA is the keystone. If that exclusive partnership lands, it unlocks the entire cascade — provider enablement, community trust, and patient demand all become easier. QUEST Medicaid plans (AlohaCare, Kaiser, ʻOhana, UHC) are the next tier.",c:DS.copper},
-{n:"02",t:"Provider Enablement",d:"Target PAs, NPs, PCPs, OB-GYN, nephrology, cardiology, wound care, and diabetes educators — not just endocrinology. Arm them with referral kits, reimbursement guides, EHR order-set support, and case studies by specialty. The message: we make CGM easy to prescribe, train, support, and document.",c:DS.copper},
-{n:"03",t:"Community Trust",d:"In Hawaii, being seen in community IS advertising. Church networks, kūpuna programs, health fairs, employer wellness events, culturally grounded content — 'how to manage glucose at a potluck' outperforms every Meta campaign. Partner with trusted nonprofits and local physician champions.",c:DS.copperLight},
-{n:"04",t:"Patient Demand Capture",d:"Only after coverage, referral, and support are in place. Awareness through community channels, activation through friction-free landing pages with eligibility screening and benefit checks, retention through localized education — meal content, family support, success stories grounded in local life.",c:DS.copperLight},
-{n:"05",t:"Pharmacy & Employer Amplification",d:"Pharmacies are trust nodes and advertising surfaces, not just distribution. Employer wellness programs, unions, hospitality/tourism workforce, public sector groups — an underused lane in Hawaii's strong employer-coverage culture.",c:DS.lgray}
-].map((step,i)=>(
-<R key={i} delay={.3+i*.06}>
-<div style={{display:"flex",gap:16,background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:12,padding:"16px 20px",borderLeft:`3px solid ${step.c}`}}>
-<span style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:step.c,flexShrink:0}}>{step.n}</span>
-<div>
-<h3 style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white,margin:"0 0 6px"}}>{step.t}</h3>
-<p style={{fontFamily:sans,fontSize:12,color:DS.lgray,lineHeight:1.6,margin:0}}>{step.d}</p>
+<div class="scn-total-r">
+<div class="scn-roi">2.9<span>×</span></div>
+<div class="scn-total-lbl">Blended ROI in year one</div>
 </div>
+</div></div>
+
+<!-- Calculator intro -->
+<div class="r" data-d="0.45" style="margin-top:48px">
+<span class="lbl lbl-c">INTERACTIVE MODEL</span>
+<h3 style="font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(24px,3vw,34px);color:var(--d);margin:10px 0 12px;line-height:1.15">Or run your own scenario.</h3>
+<p class="intro" style="max-width:620px">Adjust patient volume and ROI per condition below. Starts with a conservative 1,000-per-condition baseline.</p>
 </div>
-</R>
-))}
+
+<div class="g3" id="mp-sc-cards"></div>
+<div class="sc-hero">
+<div class="n" id="mp-sc-ts"></div>
+<div class="l">Your Modeled Savings</div>
 </div>
-<R delay={.6}><Lbl style={{color:DS.copper,marginBottom:14}}>CLINIC PITCHES MUST VARY BY TYPE</Lbl></R>
-<R delay={.65}>
-<div style={{display:"flex",flexWrap:"wrap",gap:10,maxWidth:740,marginBottom:28}}>
-{[{t:"Independent PCPs",d:"Simplicity + adherence support"},{t:"FQHCs",d:"Equity, access, staff relief"},{t:"Multi-Site Groups",d:"Standardized pathways + reporting"},{t:"Rural Sites",d:"Remote support + logistics confidence"},{t:"OB / Specialty",d:"Condition-specific use cases"}].map((c,i)=>(
-<div key={i} style={{flex:"1 1 calc(33%-10px)",minWidth:200,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:10,padding:"12px 16px"}}>
-<span style={{fontFamily:serif,fontSize:13,fontStyle:"italic",color:DS.white}}>{c.t}</span>
-<span style={{fontFamily:sans,fontSize:11,color:DS.lgray,display:"block",marginTop:4}}>{c.d}</span>
+<div class="sc-sub">
+<div class="box"><div class="n s" id="mp-sc-net"></div><div class="l">Net After Program</div></div>
+<div class="box"><div class="n d" id="mp-sc-roi"></div><div class="l">Blended ROI</div></div>
 </div>
-))}
+<div class="sc-meta" id="mp-sc-sum"></div>
 </div>
-</R>
-<R delay={.7}>
-<Glass style={{padding:"24px 28px",borderLeft:`3px solid ${DS.copper}`,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
-<p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>"We are saving these individuals from making yet another trip to the pharmacy and giving them access to a tool they can benefit from."</p>
-<p style={{fontFamily:mono,fontSize:10,color:DS.lgray,marginTop:10,letterSpacing:2}}>— GREGG HOSHIDA</p>
-</Glass>
-</R>
-<R delay={.8}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.7,maxWidth:640,marginTop:20}}>Target prescribers are PAs and NPs, not physicians. Low tech adoption rate in Hawaii means messaging must lead with patient benefit, not technology sophistication.</p></R>
 </section>
-{/* ═══ SALES STRATEGY ═══ */}
-<section id="sales" style={{...sec,background:G}}>
-<R><Num n="09" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>SALES STRATEGY & MESSAGING</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>Lead with <span style={{color:DS.copper}}>belief,</span> not billing codes</h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>The current pitch leads with information density — CPT codes, reimbursement tables, clinical protocols. Providers in a first meeting need to understand three things: how does this help my patients, how does this help my bottom line, and what do I actually have to do. Each stage below should map to a defined pipeline stage with clear entry criteria, exit criteria, and purpose-built collateral.</p></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:740}}>
-{[{stage:"STAGE 1",title:"The Intro",d:"8-10 slide deck. WHY-HOW-WHAT. Who CADE is, what Connected Care is, why it matters, high-level economics.",color:DS.copper},
-{stage:"STAGE 2",title:"The Numbers",d:"Custom financial model using the prospect's own payer mix and patient data. Three scenarios. According to Colin, this is what killed the MDX deal.",color:DS.copperLight},
-{stage:"STAGE 3",title:"The Close",d:"Case studies from 1bios, performance data, contract terms. Proof that CADE delivers at scale.",color:DS.white}
-].map((s,i)=>(
-<R key={i} delay={.3+i*.12} style={{flex:"1 1 220px",minWidth:200}}>
-<div style={{background:"rgba(255,255,255,.04)",border:`1px solid rgba(255,255,255,.08)`,borderTop:`3px solid ${s.color}`,borderRadius:16,padding:"20px 24px",height:"100%"}}>
-<Lbl style={{color:s.color,fontSize:10}}>{s.stage}</Lbl>
-<h3 style={{fontFamily:serif,fontSize:20,fontStyle:"italic",color:DS.white,margin:"8px 0 10px"}}>{s.title}</h3>
-<p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.65,margin:0}}>{s.d}</p>
+
+<!-- 06 BREAKEVEN -->
+<section id="mp-breakeven" class="sct gbg">
+<div class="wrap">
+<div class="r"><span class="num dk">06</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-lgc">BREAK-EVEN ANALYSIS</span></div>
+<div class="r" data-d="0.14"><h2 class="h2 h2w">The minimum bar<br>to <span class="ac">break even.</span></h2></div>
+<div class="r" data-d="0.2"><p class="w intro">Through avoided inpatient stays alone — here is how low the bar is.</p></div>
+<div class="be-grid">
+<div class="r" data-d="0.28"><div class="dcard be-card">
+<div class="be-hero">
+<div class="n" id="mp-be-pp"></div>
+<div class="lead">of the 5,000 panel prevented from hospitalization = <span class="ac">break-even.</span></div>
 </div>
-</R>
-))}
+<div class="be-sub">
+<div class="col"><div class="n" id="mp-be-po"></div><div class="lbl3">Patients to Keep Out</div></div>
+<div class="col"><div class="n" id="mp-be-cv">$13K</div><div class="lbl3">Per Inpatient Event</div></div>
 </div>
-<R delay={.6}><div style={{display:"flex",flexWrap:"wrap",gap:12,marginTop:32}}>
-{["Optimize What You're Already Doing","Compliant by Design","You Get Paid First"].map((m,i)=>(
-<Glass key={i} style={{padding:"12px 20px",background:"rgba(255,255,255,.04)",borderLeft:`2px solid ${DS.copper}`}}>
-<span style={{fontFamily:serif,fontSize:15,fontStyle:"italic",color:DS.white}}>{m}</span>
-</Glass>
-))}
-</div></R>
+<div style="margin-top:24px"><span class="lbl lbl-c" style="font-size:11px;letter-spacing:2px">ADJUST THE ASSUMPTION</span>
+<div class="sld cl" style="margin-top:10px"><input type="range" id="mp-be-c" min="8000" max="80000" step="1000" value="13000"></div>
+<div class="be-bt" id="mp-be-bt"></div>
+</div>
+<div class="be-note"><p>Our model uses <strong>$13,000</strong> per event. <a href="https://www.ahrq.gov/data/hcup/index.html" target="_blank" rel="noopener" style="color:var(--cl);text-decoration:underline;text-decoration-color:rgba(232,201,160,.4)">AHRQ 2023 data</a> shows the actual average is <strong>$16,300</strong> with 11% YOY growth. Ultra-conservative.</p></div>
+</div></div>
+<div class="r" data-d="0.36"><div class="dcard be-card be-right">
+<span class="lbl lbl-c">WHAT IF WE PREVENT...?</span>
+<div class="sld s" style="margin-top:14px"><div class="sld-hd"><span class="l">% prevented</span><span class="v" id="mp-be-pv">5%</span></div><input type="range" id="mp-be-p" min="1" max="15" step="0.5" value="5"></div>
+<div class="big" id="mp-be-sv"></div><span class="lbl3">Annual Savings</span>
+<div class="mid" id="mp-be-nt"></div><span class="lbl3">Net After Program Cost</span>
+<div class="be-bars" id="mp-be-bars"></div>
+<div class="be-bm" id="mp-be-bm"></div>
+</div></div>
+</div>
+</div>
 </section>
-{/* ═══ SALES PIPELINE ARCHITECTURE ═══ */}
-<section id="pipeline" style={secT}>
-<R><Num n="10"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>SALES PIPELINE ARCHITECTURE</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Process first. <span style={{color:DS.copper}}>Then scale.</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>The staged funnel isn't just a collateral strategy — it's the foundation of a pipeline architecture. Without defined stages, entry criteria, and stage-specific materials, every deal relies on individual rep judgment. That works at 5 prospects. It breaks at 50. Before layering AI-generated pitch systems or scaling nationally, the pipeline itself needs to be clean.</p></R>
-<R delay={.3}><Lbl style={{marginBottom:16,color:DS.copper}}>THE QUESTIONS THAT NEED ANSWERS</Lbl></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740,marginBottom:32}}>
-{[{t:"What defines 'qualified'?",d:"Do Sales, Marketing, and Operations share the same definition? When Colin marks a prospect as interested, what criteria were met? Is it documented?"},
-{t:"What happens at each stage?",d:"Is there a defined moment where the intro deck is replaced by a financial model? A milestone confirming the economic buyer has been identified? Entry and exit criteria for every stage?"},
-{t:"What collateral maps where?",d:"Which white paper, one-pager, case study, or interactive tool gets deployed at which moment? Or does the rep decide in the moment based on instinct?"},
-{t:"Where does the data live?",d:"Does CADE have a CRM with pipeline stages? Are those stages designed for the actual go-to-market motion — or are they generic defaults that nobody configured?"},
-{t:"What questions should reps ask?",d:"At each stage, what qualifying questions should the rep be asking? Is that documented? Can they find it? Or is tribal knowledge the system?"},
-{t:"Can you forecast?",d:"Clean stages produce clean data. Clean data produces reliable forecasts. Reliable forecasts produce executive confidence and board-level visibility into growth."}
-].map((item,i)=>(
-<R key={i} delay={.2+i*.06} style={{flex:"1 1 340px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</Glass>
-</R>
-))}
+
+<!-- 08 BREAK: PROGRAM TWO -->
+<section id="mp-ffsintro" class="brk">
+<div class="wrap">
+<div class="r"><div class="prog">Program Two · 02 / 02</div></div>
+<div class="r" data-d="0.15"><h2>Fee-for-<br><span class="ac">Service.</span></h2></div>
+<div class="r" data-d="0.3"><p class="sub">Our technology enables your providers. Your network bills the insurer. MDX earns passively.</p></div>
+<div class="r" data-d="0.4"><div class="tags"><span class="pill dk">Zero Clinical Work</span><span class="pill dk">Passive Revenue</span><span class="pill">Provider-Delivered</span></div></div>
 </div>
-<R delay={.6}><Lbl style={{marginBottom:16,color:DS.copper}}>PROPOSED PIPELINE STAGES</Lbl></R>
-<R delay={.65}>
-<div style={{display:"flex",flexDirection:"column",gap:2,maxWidth:740}}>
-{[{stage:"01  PROSPECT IDENTIFIED",entry:"Matches ICP (specialty, size, payer mix, geography)",exit:"Initial outreach scheduled",collateral:"None — research phase",color:DS.lgray},
-{stage:"02  DISCOVERY CALL",entry:"Decision-maker engaged, 15-min call scheduled",exit:"Pain points confirmed, interest validated, data request made",collateral:"Stage 1 intro deck (WHY-HOW-WHAT)",color:DS.lgray},
-{stage:"03  DATA RECEIVED",entry:"Prospect has shared payer mix, patient volume, or EHR data",exit:"Custom financial model built and review meeting scheduled",collateral:"Stage 2 financial model, program overview one-pager",color:DS.copper},
-{stage:"04  PROPOSAL PRESENTED",entry:"Economic buyer in the room, custom projections presented live",exit:"Verbal alignment on scope, pilot locations, timeline",collateral:"Stage 2 deck, interactive web pitch, ROI calculator",color:DS.copper},
-{stage:"05  NEGOTIATION",entry:"Terms under discussion, contract in review",exit:"Agreement signed",collateral:"Stage 3 case studies, compliance documentation, contract",color:DS.copper},
-{stage:"06  ONBOARDING",entry:"Agreement signed, kickoff scheduled",exit:"First patients enrolled, devices shipping",collateral:"Implementation guide, staff training materials, EHR setup docs",color:DS.success},
-].map((s,i)=>(
-<div key={i} style={{display:"flex",gap:0,background:DS.white,border:`1px solid rgba(0,0,0,.06)`,borderLeft:`3px solid ${s.color}`,padding:"16px 20px",borderRadius:i===0?"12px 12px 0 0":i===5?"0 0 12px 12px":"0"}}>
-<div style={{flex:"0 0 220px"}}>
-<span style={{fontFamily:mono,fontSize:10,fontWeight:400,letterSpacing:2,color:s.color}}>{s.stage}</span>
-</div>
-<div style={{flex:1,display:"flex",flexWrap:"wrap",gap:16}}>
-<div style={{flex:"1 1 200px",minWidth:160}}>
-<span style={{fontFamily:mono,fontSize:8,letterSpacing:2,color:DS.lgray,textTransform:"uppercase"}}>ENTRY</span>
-<p style={{fontFamily:sans,fontSize:11,color:DS.gray,lineHeight:1.5,margin:"4px 0 0"}}>{s.entry}</p>
-</div>
-<div style={{flex:"1 1 200px",minWidth:160}}>
-<span style={{fontFamily:mono,fontSize:8,letterSpacing:2,color:DS.lgray,textTransform:"uppercase"}}>COLLATERAL</span>
-<p style={{fontFamily:sans,fontSize:11,color:DS.gray,lineHeight:1.5,margin:"4px 0 0"}}>{s.collateral}</p>
-</div>
-</div>
-</div>
-))}
-</div>
-</R>
-<R delay={.8}>
-<Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,marginTop:28,maxWidth:700}}>
-<p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.dark,lineHeight:1.5,margin:0}}>The Narrative Engine generates the collateral. The pipeline architecture tells it when, for whom, and why. Without clean stages, AI produces beautiful decks for undefined moments in an undefined process.</p>
-</Glass>
-</R>
 </section>
-{/* ═══ AUC ADJACENT PROJECT ═══ */}
-<section id="auc" style={secT}>
-<R><Num n="11"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>ADJACENT PROJECT</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>Accelerated Urgent Care —<br/><span style={{color:DS.copper}}>what it taught us</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.gray,lineHeight:1.8,maxWidth:640,marginBottom:28}}>During discovery, we worked alongside CADE's sales team on a live Connected Care opportunity with AUC — the largest privately held urgent care system in the country. 16 locations, 5 California counties plus telehealth. This wasn't a Phase 1 deliverable, but it provided direct insight into how CADE's sales process operates in the field.</p></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:14,maxWidth:740}}>
-{[{t:"Custom projections move deals forward",d:"When Gavin built the calculator using AUC's actual payer mix, the conversation advanced immediately. Generic numbers don't close enterprise deals."},
-{t:"Narrative structure eliminates friction",d:"Starting with belief — your patients chose you — creates engagement that starting with CPT codes never could."},
-{t:"Urgent care is an untapped vertical",d:"AUC's data revealed 16% of patients visit 3+ times over 3 years. Any urgent care with high repeat rates is a Connected Care candidate."},
-{t:"Telehealth = lowest friction enrollment",d:"Patients already comfortable with remote care require the least behavior change to adopt Connected Care monitoring."}
-].map((item,i)=>(
-<R key={i} delay={.2+i*.08} style={{flex:"1 1 340px",minWidth:280}}>
-<Glass style={{padding:"20px 24px",height:"100%"}}>
-<h3 style={{fontFamily:serif,fontSize:16,fontStyle:"italic",color:DS.dark,margin:"0 0 8px"}}>{item.t}</h3>
-<p style={{fontFamily:sans,fontSize:13,color:DS.gray,lineHeight:1.65,margin:0}}>{item.d}</p>
-</Glass>
-</R>
-))}
+
+<!-- 09 FFS -->
+<section id="mp-ffs" class="sct">
+<div class="wrap">
+<div class="r"><span class="num">07</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">FEE-FOR-SERVICE MODEL</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">A second path:<br><span class="ac">passive revenue.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">MDX introduces Connected Care to its provider network. Providers bill. MDX earns a cut off the top. CADE handles the rest.</p></div>
+<div class="ff-grid">
+<div class="r" data-d="0.28"><div class="card ff-card">
+<span class="lbl lbl-c" style="margin-bottom:18px">ADJUST THE MODEL</span>
+<div class="sld"><div class="sld-hd"><span class="l">FFS Patient Volume</span><span class="v" id="mp-ff-vv">1,000</span></div><input type="range" id="mp-ff-v" min="100" max="5000" step="100" value="1000"></div>
+<div class="sld s" style="margin-top:18px"><div class="sld-hd"><span class="l">Dual Enrollment (RPM+CCM)</span><span class="v" id="mp-ff-dv">50%</span></div><input type="range" id="mp-ff-d" min="0" max="100" step="5" value="50"></div>
+<div class="sld cl" style="margin-top:18px"><div class="sld-hd"><span class="l">MDX Program Fee</span><span class="v" id="mp-ff-uv">10%</span></div><input type="range" id="mp-ff-u" min="5" max="25" step="1" value="10"></div>
+</div></div>
+<div class="r" data-d="0.36"><div class="ff-res">
+<div class="big"><div class="n" id="mp-ff-mc"></div><div class="l">MDX MONTHLY REVENUE</div><div class="s" id="mp-ff-ma"></div></div>
+<div class="pair">
+<div class="box"><div class="n" id="mp-ff-pk"></div><div class="l">PROVIDER KEEPS/MO</div></div>
+<div class="box"><div class="n" id="mp-ff-cs"></div><div class="l">CADE FEE/MO</div></div>
 </div>
-<R delay={.5}><p style={{fontFamily:sans,fontSize:13,color:DS.lgray,fontStyle:"italic",marginTop:20}}>Materials developed: interactive web pitch, 18-slide presentation, financial model, workflow journey map. This opportunity remains active.</p></R>
+</div></div>
+</div>
+<div class="r" data-d="0.48" style="margin-top:28px"><span class="lbl lbl-c" style="margin-bottom:10px">HOW THE MONEY FLOWS</span><div class="ff-flow" id="mp-ff-flow"></div></div>
+
+<!-- Risk Offset: combining program one (VBC) + program two (FFS) math -->
+<div class="r" data-d="0.56" style="margin-top:44px">
+<span class="lbl lbl-c">HOW THE TWO PROGRAMS WORK TOGETHER</span>
+<h3 style="font-family:var(--se);font-style:italic;font-weight:400;font-size:clamp(24px,3vw,34px);color:var(--d);margin:10px 0 18px;line-height:1.15">FFS revenue <span class="ac">offsets</span> the worst case.</h3>
+<p class="intro" style="max-width:620px;margin-bottom:24px">If the Value-Based program ever fell below ROI target — the hypothetical worst case — here's the math MDX should know:</p>
+
+<div class="offset-grid">
+<div class="offset-card">
+<div class="offset-tag">WORST CASE · RISK-SHARE</div>
+<div class="offset-n rd">$25K<span class="unit">/mo</span></div>
+<div class="offset-l">Maximum monthly clawback</div>
+<div class="offset-s">If VBC misses ROI target. $5 × 5,000 members.</div>
+</div>
+<div class="offset-vs">vs.</div>
+<div class="offset-card pos">
+<div class="offset-tag">FFS REVENUE FLOOR</div>
+<div class="offset-n sc">$20–40K<span class="unit">/mo</span></div>
+<div class="offset-l">Passive monthly revenue</div>
+<div class="offset-s">From ~2,000 FFS patients across your provider network.</div>
+</div>
+</div>
+<div class="offset-result">
+<div class="offset-r-icon">→</div>
+<div class="offset-r-txt">FFS revenue covers the worst-case clawback entirely. MDX's downside on Program One is <strong>absorbed</strong> by Program Two — before any VBC savings are counted.</div>
+</div>
+</div>
+</div>
 </section>
-{/* ═══ RECOMMENDATIONS ═══ */}
-<section id="recs" style={{...sec,background:DS.copperBg,paddingTop:"clamp(100px,12vh,140px)",justifyContent:"flex-start"}}>
-<R><Num n="12"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>20 STRATEGIC RECOMMENDATIONS</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,44px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>The path <span style={{color:DS.copper}}>forward</span></h2></R>
-{[{cat:"BRAND & IDENTITY",items:["Commission authentic Hawaii photography and videography — testimonials, lifestyle pieces, CADE staff, real patients, island settings","Develop unified design system — typography, color, layout, photography guidelines","Consolidate overlapping materials into one high-quality version per use case","Do not rename. Do not use 'local.' Show up and be present.","Determine web strategy: unified corporate site or separate mainland and Hawaii/Pacific Islands market sites — CADE now serves Hawaii, California, Montana, and Arizona"]},
-{cat:"SALES ENABLEMENT",items:["Implement staged sales funnel: intro → custom financials → close with case studies","Lead with CPT optimization question, not product features","Negotiate 1bios case study access from 30,000+ patient base","Build early Hawaii case studies from first 50-100 patients","Develop repeatable custom financial projection capability"]},
-{cat:"SALES PIPELINE ARCHITECTURE",items:["Define pipeline stages with entry/exit criteria — align Sales, Marketing, and Operations on what 'qualified' means","Map specific collateral to each pipeline stage — no rep should decide in the moment what to send","Document qualifying questions for each stage so reps know what to ask and when","Audit or implement CRM with stages designed for CADE's actual go-to-market motion","Build the foundation before layering AI — clean stages produce clean data, clean data produces reliable forecasts"]},
-{cat:"CONNECTED CARE GO-TO-MARKET",items:["Position: Optimize / Compliant by Design / You Get Paid First","Deploy WHY → HOW → WHAT narrative for all conversations","Pursue urgent care systems with high repeat-visit rates as new vertical","Target telehealth cohorts as initial enrollment population"]},
-{cat:"CGM GO-TO-MARKET — HAWAII",items:["Pursue HMSA exclusive CGM partnership","Target PAs and NPs — they're the prescribers","Education-first campaign: biweekly newsletter at 8:00 AM HST","November Diabetes Awareness Month tentpole activation"]},
-{cat:"EVENT MATERIAL DESIGN",items:["PMAH Memorial Weekend CME — provider education","EHIIPA Big Island Symposium — expand beyond Oahu","Arthritis Foundation Walk — community activation"]}
-].map((section,si)=>(
-<R key={si} delay={.1+si*.05}>
-<div style={{marginBottom:24,maxWidth:700}}>
-<Lbl style={{fontSize:10,color:DS.copper,marginBottom:12}}>{section.cat}</Lbl>
-{section.items.map((item,ii)=>(
-<div key={ii} style={{display:"flex",gap:10,marginBottom:8}}>
-<span style={{fontFamily:mono,fontSize:11,color:DS.copper,flexShrink:0,marginTop:2}}>{String(si*4+ii+1+(si>0?si-1:0)).padStart(2,"0")}</span>
-<span style={{fontFamily:sans,fontSize:13,color:DS.dark,lineHeight:1.6}}>{item}</span>
+
+<!-- 10 WHY CADE -->
+<section id="mp-whycade" class="sct">
+<div class="wrap">
+<div class="r"><span class="num">08</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">WHY CADE</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">Rigor. Care. <span class="ac">Accountability.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">Six commitments, held without exception.</p></div>
+<div class="wc-stats" id="mp-stats"></div>
+<div class="wc-diffs" id="mp-diffs"></div>
+<div class="team-sec r" data-d="0.5">
+<span class="lbl lbl-c">YOUR TEAM</span>
+<div class="team-grid" id="mp-team"></div>
+<div class="ros-sec">
+<div class="ros-hd"><h4>Customer Success</h4><div class="line"></div><span class="count">02</span></div>
+<div class="ros-grid cs" id="mp-cs-team"></div>
 </div>
-))}
+<div class="ros-sec">
+<div class="ros-hd"><h4>Care Team</h4><div class="line"></div><span class="count">05</span></div>
+<div class="ros-grid ct" id="mp-ct-team"></div>
 </div>
-</R>
-))}
+</div>
+</div>
 </section>
-{/* ═══ THE NARRATIVE ENGINE ═══ */}
-<section id="engine" style={{...sec,background:G}}>
-<R><Num n="13" dark/></R>
-<R delay={.1}><Lbl style={{color:DS.lgray,marginTop:16}}>THE CADE NARRATIVE ENGINE</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.white,lineHeight:1.1,margin:"12px 0 28px",maxWidth:700}}>From manual decks<br/>to <span style={{color:DS.copper}}>infinite scale</span></h2></R>
-<R delay={.25}><p style={{fontFamily:sans,fontSize:15,color:DS.lgray,lineHeight:1.8,maxWidth:640,marginBottom:32}}>Right now, every pitch is manual, inconsistent, and hard to scale. The AUC deck isn't a one-off — it's the proof of concept for a system that can produce that quality for every prospect, in minutes.</p></R>
-<div style={{display:"flex",flexWrap:"wrap",gap:16,maxWidth:740}}>
-{[{n:"01",t:"Design System",sub:"JSON",d:"Single source of truth for every visual element. When it updates, everything rebuilds to match."},
-{n:"02",t:"Narrative Library",sub:"PROMPTS",d:"Golden Circle frameworks by prospect type × service focus × size. Pre-built, ready to deploy."},
-{n:"03",t:"Content Generation",sub:"AI-ASSISTED",d:"Rep inputs prospect data → AI generates full deck content structured to the design system."},
-{n:"04",t:"Web-Hosted Output",sub:"REACT + WEBFLOW",d:"Minified HTML on cademed.com/offers/[prospect]. Interactive, trackable, shareable via URL."}
-].map((layer,i)=>(
-<R key={i} delay={.3+i*.1} style={{flex:"1 1 340px",minWidth:280}}>
-<div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"24px 28px",height:"100%"}}>
-<div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
-<span style={{fontFamily:serif,fontSize:32,fontStyle:"italic",color:DS.copper}}>{layer.n}</span>
-<div><span style={{fontFamily:sans,fontSize:14,fontWeight:600,color:DS.white}}>{layer.t}</span><br/><Lbl style={{fontSize:8,color:DS.lgray,marginTop:2}}>{layer.sub}</Lbl></div>
+
+<!-- 11 PILOT -->
+<section id="mp-pilot" class="sct cbg">
+<div class="wrap">
+<div class="r"><span class="num">09</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">THE PILOT OPTION</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">Start small.<br><span class="ac">Prove it first.</span></h2></div>
+<div class="r" data-d="0.2"><p class="intro">Before committing to the full 5,000-member program, MDX can run a bounded 90-day pilot. Same risk-share structure. Lower investment. Clear go/no-go at day 90.</p></div>
+<div class="pl-grid">
+<div class="r"><div class="pl-card ac"><div class="n">500</div><span class="u">members</span><div class="l">Pilot Cohort</div></div></div>
+<div class="r" data-d="0.06"><div class="pl-card ac"><div class="n">90</div><span class="u">days</span><div class="l">Program Length</div></div></div>
+<div class="r" data-d="0.12"><div class="pl-card ac"><div class="n">$75K</div><span class="u">total</span><div class="l">Pilot Investment</div></div></div>
+<div class="r" data-d="0.18"><div class="pl-card ac"><div class="n">Day 90</div><span class="u">decision</span><div class="l">Go / No-Go</div></div></div>
 </div>
-<p style={{fontFamily:sans,fontSize:13,color:DS.lgray,lineHeight:1.65,margin:0}}>{layer.d}</p>
+<div class="pl-row">
+<div class="r" data-d="0.28"><div class="pl-col">
+<h4>What gets measured.</h4>
+<ul>
+<li><span class="bullet"></span>ER visits avoided vs baseline cohort</li>
+<li><span class="bullet"></span>Hospitalizations avoided vs baseline</li>
+<li><span class="bullet"></span>Member enrollment rate</li>
+<li><span class="bullet"></span>Device engagement &amp; adherence</li>
+<li><span class="bullet"></span>BP, A1C, SpO2 clinical trends</li>
+</ul>
+</div></div>
+<div class="r" data-d="0.36"><div class="pl-col">
+<h4>What happens at day 90.</h4>
+<ul>
+<li><span class="bullet"></span>Full baseline-vs-actual reconciliation</li>
+<li><span class="bullet"></span>Risk-share terms previewed against real data</li>
+<li><span class="bullet"></span>Scale to full 5,000 members, or exit clean</li>
+<li><span class="bullet"></span>If scaled, pilot cohort rolls into main program</li>
+<li><span class="bullet"></span>If exit, no further obligation. No fees. No claim on future.</li>
+</ul>
+</div></div>
 </div>
-</R>
-))}
 </div>
-<R delay={.7}><Glass style={{padding:"20px 28px",borderLeft:`3px solid ${DS.copper}`,marginTop:32,maxWidth:700,background:"rgba(255,255,255,.04)"}}>
-<p style={{fontFamily:serif,fontSize:17,fontStyle:"italic",color:DS.white,lineHeight:1.5,margin:0}}>The AUC deck is the demo. The system is the product. The retainer is how you access it.</p>
-</Glass></R>
 </section>
-{/* ═══ ENGINE DEMO ═══ */}
-<EngineDemo/>
-{/* ═══ PHASE 2 SCOPE ═══ */}
-<section id="phase2" style={secT}>
-<R><Num n="15"/></R>
-<R delay={.1}><Lbl style={{marginTop:16}}>PHASE 2 IMPLEMENTATION</Lbl></R>
-<R delay={.15}><h2 style={{fontFamily:serif,fontSize:"clamp(28px,4.5vw,48px)",fontStyle:"italic",color:DS.dark,lineHeight:1.1,margin:"12px 0 24px",maxWidth:700}}>5 priorities. <span style={{color:DS.copper}}>Est. 120 hours.</span></h2></R>
-<div style={{display:"flex",flexDirection:"column",gap:14,maxWidth:700}}>
-{[{p:"P1",t:"Brand Foundation",hrs:10,cost:"$1,600",items:"Brand strategy, visual identity, photography & videography brief, messaging framework",wk:"Weeks 1-2"},
-{p:"P2",t:"Website Overhaul",hrs:50,cost:"$8,000",items:"Audit, sitemap, key page designs, copywriting, development oversight. Corporate vs. regional site strategy for Hawaii, California, Montana, Arizona.",wk:"Weeks 2-8"},
-{p:"P3",t:"Sales Collateral",hrs:40,cost:"$6,400",items:"Stage 1/2/3 decks, one-pagers (CC + CGM, provider + patient), web pitch template, ROI calculator, workflow map",wk:"Weeks 3-10"},
-{p:"P4",t:"CGM Campaign — Hawaii",hrs:5,cost:"$800",items:"Campaign setup: email template, launch sequence framework, Diabetes Awareness Month kit structure, HMSA pitch materials",wk:"Week 8-9"},
-{p:"P5",t:"Event Material Design",hrs:15,cost:"$2,400",items:"Booth design, banner concepts, leave-behind kit, follow-up email template",wk:"Weeks 9-12"}
-].map((phase,i)=>(
-<R key={i} delay={.15+i*.08}>
-<Glass style={{padding:"20px 24px",display:"flex",gap:20,alignItems:"flex-start"}}>
-<div style={{fontFamily:serif,fontSize:24,fontStyle:"italic",color:DS.copper,flexShrink:0,width:40,textAlign:"center"}}>{phase.p}</div>
-<div style={{flex:1}}>
-<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
-<h3 style={{fontFamily:sans,fontSize:15,fontWeight:600,color:DS.dark,margin:0}}>{phase.t}</h3>
-<div style={{display:"flex",gap:12}}>
-<Pill color={DS.dark}>Est. {phase.hrs} HRS</Pill>
-<Pill color={DS.copper}>{phase.cost}</Pill>
+
+<!-- 12 ROLLOUT -->
+<section id="mp-rollout" class="sct">
+<div class="wrap">
+<div class="r"><span class="num">10</span></div>
+<div class="r" data-d="0.08"><span class="lbl lbl-c">FULL ROLLOUT PLAN</span></div>
+<div class="r" data-d="0.14"><h2 class="h2">From agreement to<br><span class="ac">active monitoring.</span></h2></div>
+<div class="tl" id="mp-tl"></div>
 </div>
-</div>
-<p style={{fontFamily:sans,fontSize:12,color:DS.gray,lineHeight:1.6,margin:"8px 0 0"}}>{phase.items}</p>
-<Lbl style={{fontSize:9,color:DS.lgray,marginTop:6}}>{phase.wk}</Lbl>
-</div>
-</Glass>
-</R>
-))}
-</div>
-<R delay={.6}><div style={{display:"flex",flexWrap:"wrap",gap:20,marginTop:32,maxWidth:700}}>
-{[{n:"Est. 120",l:"TOTAL HOURS"},{n:"$160",l:"HOURLY RATE"},{n:"6-12",l:"WEEKS"},{n:"10-20",l:"HRS / WEEK"}].map((s,i)=>(
-<div key={i} style={{textAlign:"center",flex:"1 1 120px",minWidth:100}}>
-<div style={{fontFamily:serif,fontSize:32,fontStyle:"italic",color:DS.copper,lineHeight:1}}>{s.n}</div>
-<div style={{fontFamily:mono,fontSize:9,letterSpacing:2,color:DS.lgray,textTransform:"uppercase",marginTop:6}}>{s.l}</div>
-</div>
-))}
-</div></R>
 </section>
-{/* ═══ CLOSE ═══ */}
-<section id="close" style={{...sec,background:G,textAlign:"center",alignItems:"center"}}>
-<R><h2 style={{fontFamily:serif,fontSize:"clamp(36px,6vw,64px)",fontStyle:"italic",color:DS.white,lineHeight:1.05,margin:"0 0 16px"}}>The service is ready.<br/>Let's make the brand <span style={{color:DS.copper}}>match.</span></h2></R>
-<R delay={.2}><Divider/></R>
-<R delay={.3}><div style={{fontFamily:sans,fontSize:15,color:DS.white,lineHeight:2.2}}>
-<strong>Matt Weaver</strong><br/>
-<span style={{color:DS.lgray}}>Marketing Consultant & Fractional CMO</span>
-</div></R>
-<R delay={.4}><div style={{marginTop:24}}><Lbl style={{color:DS.lgray,fontSize:10}}>APRIL 2026 | CONFIDENTIAL</Lbl></div></R>
-</section>
+
+<!-- 13 CLOSE -->
+<section id="mp-close" class="ctr gbg">
+<div class="wrap">
+<div class="r"><h2 class="h1 h1w">Let's put 5,000 members<br>on a better <span class="ac">path</span></h2></div>
+<div class="r" data-d="0.2"><p class="w close">We are ready to run the numbers against your actual claims data and build a tailored baseline. The risk is shared from day one.</p></div>
+<div class="r" data-d="0.3"><div class="dv"></div></div>
+<div class="r" data-d="0.4"><img src="https://imagedelivery.net/qJvpJU9hpeX3lEcmqZfcwg/ea71bdc8-b2c0-4c20-b8a2-e702a7164900/public" alt="CADE" style="height:46px;object-fit:contain;margin:0 auto 10px;filter:brightness(0) invert(1)"></div>
+<div class="r" data-d="0.45"><div style="font-size:13px;color:var(--ulg);letter-spacing:.5px">Value-Based &nbsp;·&nbsp; Risk-Shared &nbsp;·&nbsp; Results-Driven</div></div>
+<div class="r" data-d="0.55"><div style="margin-top:32px"><span class="lbl lbl-lg">CONFIDENTIAL &nbsp;·&nbsp; APRIL 2026</span></div></div>
 </div>
-);
-}
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(Report));
+</section>
+
+<script>
+(function(){
+var mp=document.getElementById('mp');
+var NAV=[['cover','COVER'],['why','THE WHY'],['target','TARGET'],['how','HOW IT WORKS'],['vbc','PROGRAM ONE'],['pricing','PRICING'],['savings','SAVINGS'],['breakeven','BREAK EVEN'],['ffsintro','PROGRAM TWO'],['ffs','FFS MODEL'],['whycade','WHY CADE'],['pilot','THE PILOT'],['rollout','ROLLOUT'],['close','CLOSE']];
+var ai=0,idxEl=document.getElementById('mpidx'),lbEl=document.getElementById('mplb'),totEl=document.getElementById('mptot'),upEl=document.getElementById('mpup'),dnEl=document.getElementById('mpdn');
+totEl.textContent='/ '+String(NAV.length-1).padStart(2,'0');
+function setNav(i){ai=i;idxEl.textContent=String(i).padStart(2,'0');lbEl.textContent=NAV[i][1];upEl.disabled=i===0;dnEl.disabled=i===NAV.length-1}
+setNav(0);
+var sobs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id.replace('mp-','');for(var i=0;i<NAV.length;i++)if(NAV[i][0]===id){setNav(i);break}}})},{root:mp,threshold:.2});
+NAV.forEach(function(n){var el=document.getElementById('mp-'+n[0]);if(el)sobs.observe(el)});
+var robs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('v');robs.unobserve(e.target)}})},{root:mp,threshold:.12});
+function obsR(){mp.querySelectorAll('.r:not(.v)').forEach(function(el){if(!el.dataset.o){el.dataset.o='1';var d=el.getAttribute('data-d');if(d)el.style.transitionDelay=d+'s';robs.observe(el)}})}
+upEl.onclick=function(){if(ai>0)document.getElementById('mp-'+NAV[ai-1][0]).scrollIntoView({behavior:'smooth'})};
+dnEl.onclick=function(){if(ai<NAV.length-1)document.getElementById('mp-'+NAV[ai+1][0]).scrollIntoView({behavior:'smooth'})};
+function sldP(i){var v=+i.value,mn=+i.min,mx=+i.max;i.style.setProperty('--p',((v-mn)/(mx-mn))*100+'%')}
+var fmt=function(n){return'$'+Math.round(n/1e6*10)/10+'M'};
+var fK=function(n){return n>=1e6?fmt(n):'$'+Math.round(n/1000)+'K'};
+var fD=function(n){return n>=1000?'$'+(n/1000).toFixed(n>=10000?0:1)+'K':'$'+n};
+var nfmt=function(n){return n.toLocaleString()};
+
+/* Section 1: spend bars */
+var spend=[['Circulatory (HTN, Heart Attack)',234,1],['Prevention & Basic Care',207,0],['Musculoskeletal',170,0],['Respiratory (COPD, Asthma)',144,1],['Endocrine (Diabetes)',126,1],['Nervous System',120,0],['Cancers',116,0]];
+var spH='';spend.forEach(function(d){var w=Math.round(d[1]/234*100);var c1=d[2]?'var(--cl)':'var(--lg)';var c2=d[2]?'var(--c)':'rgba(255,255,255,.12)';spH+='<div class="row"><span class="lbl2" style="color:'+c1+'">'+d[0]+'</span><div class="bar"><div style="width:'+w+'%;background:'+c2+'"></div></div><span class="val" style="color:'+c1+'">$'+d[1]+'B</span></div>'});
+document.getElementById('mp-spend').innerHTML=spH;
+
+/* Section 2: conditions */
+var cond=[['Hypertension','3:1 ROI','74%','achieved BP control','AHA / Geisinger 2024','https://www.ahajournals.org/','Uncontrolled blood pressure drives stroke, kidney disease, and cardiac events.'],['Diabetes','2:1 ROI','59%','fewer hospitalizations','U of Michigan 2026','https://www.michiganmedicine.org/','Glucose monitoring and proactive coaching reduce hospitalizations and ER utilization.'],['COPD','2:1 ROI','50%','readmission reduction','Medical Economics 2024','https://www.medicaleconomics.com/','Remote monitoring catches deterioration early — before it becomes a $30K hospitalization.']];
+var cH='';cond.forEach(function(c,i){cH+='<div class="r cond" data-d="'+(0.22+i*.08)+'"><div class="card ac"><div class="hd"><h3 style="font-family:var(--se);font-style:italic;font-weight:400;font-size:22px;color:var(--d);line-height:1.1">'+c[0]+'</h3><span class="pill sc">'+c[1]+'</span></div><div class="stat">'+c[2]+'</div><div class="sl">'+c[3]+'</div><a class="src src-link" href="'+c[5]+'" target="_blank" rel="noopener" style="font-family:var(--mo);font-size:10.5px;color:var(--lg);letter-spacing:1.5px;margin-top:6px;font-weight:500;display:block">'+c[4]+' →</a><p class="d">'+c[6]+'</p></div></div>'});
+document.getElementById('mp-cond').innerHTML=cH;
+
+/* Section 3: steps */
+var steps=[['01','Identify','We analyze your claims data to identify the 5,000 highest-risk members across hypertension, diabetes, and COPD.'],['02','Enroll',"Devices ship directly to members' homes. Setup, education, and verbal consent handled by phone. No WiFi. No app."],['03','Monitor','Licensed clinical staff review readings 24/7. Escalation protocols trigger provider alerts before emergencies. No AI calls.'],['04','Report','Monthly dashboards show utilization changes, engagement rates, and documented savings against baseline.']];
+var sH='';steps.forEach(function(s,i){sH+='<div class="r" data-d="'+(0.22+i*.06)+'"><div class="dcard ac step"><span class="n">'+s[0]+'</span><h3>'+s[1]+'</h3><p>'+s[2]+'</p></div></div>'});
+document.getElementById('mp-steps').innerHTML=sH;
+
+/* Section 4: tiers */
+var tiers=[['HIT TARGET ROI','We keep the full $50/member fee','2:1 diabetes, 3:1 hypertension. You get the savings. We get paid in full.','var(--s)'],['EXCEED TARGET ROI','Full fee + 10% of excess savings','We share the upside. MDX keeps 90% of every dollar saved above target.','var(--c)'],['FALL BELOW TARGET ROI','We pay back $5 per member','We return $25,000 to MDX. Our downside is real.','var(--rd)']];
+var tH='';tiers.forEach(function(t){tH+='<div class="glass tier" style="border-left:3px solid '+t[3]+'"><span class="lbl" style="color:'+t[3]+';font-size:9px;letter-spacing:1.5px">'+t[0]+'</span><h3>'+t[1]+'</h3><p>'+t[2]+'</p></div>'});
+document.getElementById('mp-tiers').innerHTML=tH;
+
+/* Section 5: Savings calculator */
+var scItems=[['HYPERTENSION','htn',1000,3],['DIABETES','dia',1000,2],['COPD','copd',1000,3]];
+var scH='';scItems.forEach(function(x,i){scH+='<div class="r" data-d="'+(0.22+i*.07)+'"><div class="card sc-card"><span class="lbl lbl-c title">'+x[0]+'</span><div class="sld"><div class="sld-hd"><span class="l">Patients</span><span class="v" id="mp-sc-'+x[1]+'v">'+nfmt(x[2])+'</span></div><input type="range" id="mp-sc-'+x[1]+'p" min="0" max="5000" step="100" value="'+x[2]+'"></div><div class="sld s" style="margin-top:14px"><div class="sld-hd"><span class="l">ROI</span><span class="v" id="mp-sc-'+x[1]+'rv">'+x[3]+':1</span></div><input type="range" id="mp-sc-'+x[1]+'r" min="1" max="5" step="0.5" value="'+x[3]+'"></div><div class="sv" id="mp-sc-'+x[1]+'s"></div><div class="svl">PROJECTED SAVINGS</div></div></div>'});
+document.getElementById('mp-sc-cards').innerHTML=scH;
+function scCalc(){var pm=50,tot=0,ts=0;scItems.forEach(function(x){var p=+document.getElementById('mp-sc-'+x[1]+'p').value,r=+document.getElementById('mp-sc-'+x[1]+'r').value;document.getElementById('mp-sc-'+x[1]+'v').textContent=nfmt(p);document.getElementById('mp-sc-'+x[1]+'rv').textContent=r+':1';var sv=p*pm*12*r;document.getElementById('mp-sc-'+x[1]+'s').textContent=fK(sv);tot+=p;ts+=sv});var ac=tot*pm*12;document.getElementById('mp-sc-ts').textContent=fmt(ts);document.getElementById('mp-sc-roi').textContent=(ac>0?(ts/ac).toFixed(1):0)+'x';document.getElementById('mp-sc-net').textContent=fmt(ts-ac);document.getElementById('mp-sc-sum').textContent=nfmt(tot)+' members covered at $50/mo all-in'}
+scItems.forEach(function(x){['p','r'].forEach(function(k){var el=document.getElementById('mp-sc-'+x[1]+k);el.addEventListener('input',function(){sldP(el);scCalc()})})});
+scCalc();
+
+/* Section 6: Break-even */
+var beMarks=[['CADE Model',13000,'var(--c)'],['AHRQ Avg',16300,'var(--cl)'],['Circulatory',17700,'#fff'],['Respiratory',16400,'var(--ulg)']];
+var beBH='';beMarks.forEach(function(m){beBH+='<button data-v="'+m[1]+'" style="color:'+m[2]+'">'+m[0]+': $'+(m[1]/1000).toFixed(1)+'K</button>'});
+document.getElementById('mp-be-bt').innerHTML=beBH;
+document.getElementById('mp-be-bt').addEventListener('click',function(e){if(e.target.tagName==='BUTTON'){var el=document.getElementById('mp-be-c');el.value=e.target.getAttribute('data-v');sldP(el);beCalc()}});
+function beCalc(){var cost=+document.getElementById('mp-be-c').value,prev=+document.getElementById('mp-be-p').value;var mo=250000,pan=5000,po=Math.ceil(mo/cost),pp=((po/pan)*100).toFixed(1);var sv=Math.round(prev/100*pan*cost*12),ac=mo*12,nt=sv-ac;
+document.getElementById('mp-be-cv').textContent='$'+Math.round(cost/1000)+'K';
+document.getElementById('mp-be-pv').textContent=prev+'%';
+document.getElementById('mp-be-po').textContent=po;
+document.getElementById('mp-be-pp').textContent=pp+'%';
+document.getElementById('mp-be-sv').textContent='$'+(sv/1e6).toFixed(1)+'M';
+var ntEl=document.getElementById('mp-be-nt');ntEl.textContent=(nt>0?'+':'')+'$'+(nt/1e6).toFixed(1)+'M';ntEl.style.color=nt>0?'var(--s)':'var(--rd)';
+var pcts=[1,3,5,7,10,15],bH='';pcts.forEach(function(p){var s2=Math.round(p/100*pan*cost*12),n2=s2-ac,w=Math.min(100,Math.max(8,s2/15e6*100));var c=n2>0?'var(--s)':'var(--c)';var tc=n2>0?'var(--s)':'var(--ulg)';bH+='<div class="row"><span class="p">'+p+'%</span><div class="tr"><div style="width:'+w+'%;background:'+c+'"></div></div><span class="val" style="color:'+tc+'">$'+(s2/1e6).toFixed(1)+'M</span></div>'});
+document.getElementById('mp-be-bars').innerHTML=bH;
+document.getElementById('mp-be-bm').textContent='RPM benchmark: 50% reduction. We need '+pp+'%.'}
+['mp-be-c','mp-be-p'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){sldP(el);beCalc()})});
+beCalc();
+
+/* Section 7: stats, diffs, team */
+var stats=[['100K+','Active patients'],['20+','Conditions'],['12yr','Experience'],['0','Recoupments']];
+var stH='';stats.forEach(function(s,i){stH+='<div class="r st" data-d="'+(0.2+i*.07)+'"><div class="n">'+s[0]+'</div><div class="l">'+s[1]+'</div></div>'});
+document.getElementById('mp-stats').innerHTML=stH;
+var diffs=[['Zero-Touch Enrollment','We handle all member outreach, consent, device fulfillment, and setup. Your team does nothing.'],['Licensed Clinical Staff','NPs, RNs, MAs review readings. Human judgment closes the gap between a bad reading and a bad outcome.'],['No AI Calling. Ever.','Every patient interaction is a real person. Some RPM companies automate with AI. We never will.'],['Local Hawaii Staff','Dedicated clinical team on ground. Multi-lingual clinicians with ever expanding language support.'],['Risk-Shared Accountability','The only vendor proposing to put our fee at risk. Incentives structurally aligned with yours.'],['FDA-Approved, CMS Compliant','Every device FDA approved. DME and CGM licensing held directly. Ships within 48 hours.']];
+var dH='';diffs.forEach(function(d,i){dH+='<div class="r" data-d="'+(0.3+i*.05)+'"><div class="card ac diff"><h3>'+d[0]+'</h3><p>'+d[1]+'</p></div></div>'});
+document.getElementById('mp-diffs').innerHTML=dH;
+var team=[['Dylan Dyer','Director of Sales',['Leads commercial relationship and program structure','Oversees rollout and risk-share terms']],['Colin Smith','Hawaii Account Executive',['Day-to-day MDX point of contact','Manages enrollment coordination and reporting','Leads monthly performance reviews']]];
+var teH='';team.forEach(function(p){var itm='';p[2].forEach(function(i){itm+='<div class="tmi"><span class="dash">—</span><span class="txt">'+i+'</span></div>'});teH+='<div class="card tm"><div class="hd"><div class="av"><span>'+p[0][0]+'</span></div><div><div class="nm">'+p[0]+'</div><div class="tt">'+p[1]+'</div></div></div>'+itm+'</div>'});
+document.getElementById('mp-team').innerHTML=teH;
+
+/* Roster sub-teams */
+function rosterH(people){var h='';people.forEach(function(p){var parts=p[0].split(' ');var ini=parts[0][0]+(parts[1]?parts[1][0]:'');h+='<div class="roster"><div class="av"><span>'+ini+'</span></div><div class="nm">'+p[0]+'</div><div class="tt">'+p[1]+'</div></div>'});return h}
+var csTeam=[['Diane Chavez','Director'],['Anna Gaskin','Manager']];
+var ctTeam=[['Stefanie Maier','Director'],['Stacy Gillham','Manager'],['Mariah Meyer','Manager'],['Felicia Rhoden','Manager'],['Amanda Lopez','Manager']];
+document.getElementById('mp-cs-team').innerHTML=rosterH(csTeam);
+document.getElementById('mp-ct-team').innerHTML=rosterH(ctTeam);
+
+/* Section 8: FFS */
+function ffCalc(){var vol=+document.getElementById('mp-ff-v').value,dual=+document.getElementById('mp-ff-d').value,up=+document.getElementById('mp-ff-u').value;
+document.getElementById('mp-ff-vv').textContent=nfmt(vol);
+document.getElementById('mp-ff-dv').textContent=dual+'%';
+document.getElementById('mp-ff-uv').textContent=up+'%';
+var br=90,bc=62,dp=Math.round(vol*dual/100),sp=vol-dp;
+var tr=sp*br+dp*(br+bc),mc=Math.round(tr*up/100),cs=Math.round(tr*.45),pk=tr-cs-mc,ma=mc*12;
+document.getElementById('mp-ff-mc').textContent=fD(mc);
+document.getElementById('mp-ff-ma').textContent='$'+(ma/1000).toFixed(0)+'K annually';
+document.getElementById('mp-ff-pk').textContent=fD(pk);
+document.getElementById('mp-ff-cs').textContent=fD(cs);
+var flow=[['Provider bills insurance (CMS allowable)','~$120–160','Billed under provider NPI'],['Provider pays MDX (program fee)',up+'% cut','MDX enablement fee'],['Provider keeps their share','~45%','Zero clinical work required'],['MDX pays CADE (service fee)','~45%','Devices, monitoring, staffing'],['MDX keeps their margin',fD(mc)+'/mo','Passive recurring revenue']];
+var fH='';flow.forEach(function(r){fH+='<div class="row"><div class="lft"><span class="ttl">'+r[0]+'</span><span class="sub">'+r[2]+'</span></div><span class="v">'+r[1]+'</span></div>'});
+document.getElementById('mp-ff-flow').innerHTML=fH}
+['mp-ff-v','mp-ff-d','mp-ff-u'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){sldP(el);ffCalc()})});
+ffCalc();
+
+/* Section 9: rollout */
+var tl=[['WEEK 1-2','Data Access + Population Analysis','MDX provides claims data. CADE identifies 5,000 highest-risk members.'],['WEEK 3-4','Contracting + Enrollment Plan','Risk-share finalized. Baseline documented. FFS provider outreach begins.'],['WEEK 5-6','Member Outreach Begins','CADE clinical team calls and enrolls. Devices ship within 48 hours.'],['MONTH 2','Full Monitoring Active','First cohort enrolled. Escalation protocols live. First report delivered.'],['MONTH 6','Interim ROI Review','Halfway review against baseline. Savings documented. Risk-share previewed.'],['MONTH 12','Annual Settlement + Renewal','Full reconciliation. Risk-share applied. Year two terms discussed.']];
+var tlH='';tl.forEach(function(s,i){var pc=i>=3?'':'dk';tlH+='<div class="r" data-d="'+(0.15+i*.06)+'"><div class="row"><div class="tg"><span class="pill '+pc+'">'+s[0]+'</span></div><div><h3>'+s[1]+'</h3><p>'+s[2]+'</p></div></div></div>'});
+document.getElementById('mp-tl').innerHTML=tlH;
+
+/* Init sliders + observe dynamic reveals */
+mp.querySelectorAll('.sld input[type=range]').forEach(sldP);
+obsR();
+})();
 </script>
-</body>
-</html>
+</div>
